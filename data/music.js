@@ -37,7 +37,7 @@ window.MUSIC = {
   },
 
   // 04 · Album ratings
-  albumsIntro: "These are my opinions, not the final word.",
+  albumsIntro: "", // optional line under the heading; leave empty to hide
   ratingScale: 10, // ratings are out of 10
   // Tip: to use your own cover image, drop it in assets/img/covers/ and set cover: "../assets/img/covers/<file>.jpg"
   albums: [
