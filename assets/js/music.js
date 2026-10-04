@@ -36,7 +36,7 @@
 
   function cover(src, i, alt, label) {
     var bg = SWATCHES[i % SWATCHES.length];
-    if (src) return '<div class="cover" style="background:' + bg + '"><img src="' + esc(src) + '" alt="' + esc(alt) + '" loading="lazy"></div>';
+    if (src) return '<div class="cover" style="background:' + bg + '"><img src="' + esc(src) + '" alt="' + esc(alt) + '" loading="lazy" onerror="this.remove()"></div>';
     return '<div class="cover" style="background:' + bg + '"><span class="tag">' + (label || 'Cover art') + '</span></div>';
   }
 
@@ -184,6 +184,7 @@
 
   (function albums() {
     var slot = $('[data-slot="albums"]');
+    var scale = M.ratingScale || 5;
     var ring = '<svg viewBox="0 0 100 50" preserveAspectRatio="none" fill="none" stroke="#c0352b" stroke-width="2.2" stroke-linecap="round"><path d="M60 3C30 1 3 9 3 26s28 22 52 21 42-8 42-23S72 2 44 4"/></svg>';
 
     slot.innerHTML = (M.albums || []).map(function (a, i) {
@@ -195,7 +196,7 @@
         '<div class="player" data-player></div>' +
         '<div class="specimen-body">' +
           '<div><h3' + (isPlaceholder(a.title) ? ' class="placeholder"' : '') + '>' + esc(a.title) + '</h3><p class="by">' + esc(a.artist) + ' · ' + esc(a.year) + '</p></div>' +
-          '<span class="rating" aria-label="Rated ' + esc(a.rating) + ' out of 5">' + ring + esc(a.rating) + '/5</span>' +
+          '<span class="rating" aria-label="Rated ' + esc(a.rating) + ' out of ' + scale + '">' + ring + esc(a.rating) + '/' + scale + '</span>' +
         '</div>' +
         '<p class="best hide-when-playing"><span>Best song</span><strong>' + esc(a.bestSong) + '</strong></p>' +
         '<div class="hide-when-playing">' + listenButton(sp).replace('btn btn--solid', 'btn') + '</div>' +

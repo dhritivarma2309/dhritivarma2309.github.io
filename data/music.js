@@ -38,11 +38,33 @@ window.MUSIC = {
 
   // 04 · Album ratings
   albumsIntro: "[One line in your voice describing this section.]",
+  ratingScale: 10, // ratings are out of 10
+  // Tip: to use your own cover image, drop it in assets/img/covers/ and set cover: "../assets/img/covers/<file>.jpg"
   albums: [
-    { title: "[Album title]", artist: "[Artist]", year: "[Year]", rating: "x.x", bestSong: "[Track name]", date: "[DATE]", cover: "", spotify: "" },
-    { title: "[Album title]", artist: "[Artist]", year: "[Year]", rating: "x.x", bestSong: "[Track name]", date: "[DATE]", cover: "", spotify: "" },
-    { title: "[Album title]", artist: "[Artist]", year: "[Year]", rating: "x.x", bestSong: "[Track name]", date: "[DATE]", cover: "", spotify: "" },
-    { title: "[Album title]", artist: "[Artist]", year: "[Year]", rating: "x.x", bestSong: "[Track name]", date: "[DATE]", cover: "", spotify: "" },
+    {
+      title: "Random Access Memories", artist: "Daft Punk", year: "2013",
+      rating: "9", bestSong: "Doin' It Right (feat. Panda Bear)", date: "OCT 2026",
+      cover: "https://i.scdn.co/image/ab67616d0000b2739b9b36b0e22870b9f542d937",
+      spotify: "https://open.spotify.com/album/4m2880jivSbbyEGAKfITCa",
+    },
+    {
+      title: "Graceland", artist: "Paul Simon", year: "1986",
+      rating: "8", bestSong: "You Can Call Me Al", date: "OCT 2026",
+      cover: "https://i.scdn.co/image/ab67616d0000b273dd83eef605c1ce2f27722ea1",
+      spotify: "https://open.spotify.com/album/4WoQ94qzwQj28n3nlSOVLB",
+    },
+    {
+      title: "The Velvet Underground & Nico", artist: "The Velvet Underground", year: "1967",
+      rating: "9", bestSong: "Venus in Furs", date: "OCT 2026",
+      cover: "https://i.scdn.co/image/ab67616d0000b2739759797d8f426b634fde281d",
+      spotify: "https://open.spotify.com/album/2z1nix8wW4fspJSjZTcGF2",
+    },
+    {
+      title: "Transformer", artist: "Lou Reed", year: "1972",
+      rating: "7", bestSong: "Vicious", date: "OCT 2026",
+      cover: "https://i.scdn.co/image/ab67616d0000b2737af33100829e8ad29c790cf0",
+      spotify: "https://open.spotify.com/album/0ut7Kp2wU9k3nNCFk3f71W",
+    },
   ],
 
   // Lab results: "What I Listened To" chart. Values are relative (hours, plays, %)
