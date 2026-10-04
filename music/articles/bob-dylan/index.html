@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>10 Best Bob Dylan Songs · Dhriti Varma</title>
+  <meta name="description" content="My ten favourite Bob Dylan songs, ranked, with a playlist to listen while you read.">
+  <link rel="icon" href="../../../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Caveat+Brush&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../assets/css/site.css">
+  <link rel="stylesheet" href="../../../assets/css/article.css">
+</head>
+<body>
+  <div class="article-wrap">
+    <header class="article-top">
+      <a class="back" href="../../#articles">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+        Music
+      </a>
+      <a class="logo" href="../../../">Dhriti Varma</a>
+    </header>
+
+    <main>
+      <p class="article-meta">Article · [Month Year] · [x] min read</p>
+      <h1 class="display article-title">10 Best Bob Dylan Songs</h1>
+
+      <div class="prose">
+        <p class="placeholder">[Intro, paragraph 1: why this list, and what Dylan means to you. Maybe when you first heard him or the record that hooked you.]</p>
+        <p class="placeholder">[Paragraph 2: how you picked. What counted (lyrics, a performance, how often you return to it) and what you left off on purpose.]</p>
+        <p class="placeholder">[Optional paragraph 3: how to read the list, e.g. start the playlist below and read along. Whole intro: about 100 to 200 words.]</p>
+      </div>
+
+      <!-- Paste your Spotify playlist link in data-playlist="" -->
+      <section class="paper listen-along tape" data-playlist="">
+        <div class="thumb-lg"></div>
+        <div class="grow">
+          <span class="tag">Spotify playlist</span>
+          <h2>All 10 songs, in order</h2>
+          <p>Listen while you read</p>
+        </div>
+        <button class="play-round" aria-label="Play the playlist">
+          <svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>
+        </button>
+        <div class="embed"></div>
+      </section>
+
+      <ol class="rank-list" data-slot="ranks"></ol>
+
+      <nav class="read-next" aria-label="Read next">
+        <p class="kicker">Read next</p>
+        <a href="../../#articles" class="placeholder">[Another article title] →</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer" style="margin-top:72px">
+      <div class="inner">
+        <span>Dhriti Varma</span>
+        <nav aria-label="Elsewhere">
+          <a href="https://www.linkedin.com/" data-link="linkedin" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://github.com/" data-link="github" target="_blank" rel="noopener">GitHub Repo</a>
+        </nav>
+      </div>
+    </footer>
+  </div>
+
+  <script src="../../../data/site.js"></script>
+  <script src="../../../assets/js/site.js"></script>
+  <script>
+    /* ---- Edit the list here: #10 first, counting down to #1 ---- */
+    var SONGS = [
+      { title: "[Song title]", album: "[Album]", year: "[Year]", take: "[Your take in two or three sentences: the line that gets you, when you first heard it, why it ranks here.]" },
+      { title: "[Song title]", album: "[Album]", year: "[Year]", take: "[Your take in two or three sentences.]" },
+      { title: "[Song title]", album: "[Album]", year: "[Year]", take: "[Your take in two or three sentences.]" },
+      { title: "[Song title]", album: "[Album]", year: "[Year]", take: "[Your take in two or three sentences.]" },
+      { title: "[Song title]", album: "[Album]", year: "[Year]", take: "[Your take in two or three sentences.]" },
+      { title: "[Song title]", album: "[Album]", year: "[Year]", take: "[Your take in two or three sentences.]" },
+      { title: "[Song title]", album: "[Album]", year: "[Year]", take: "[Your take in two or three sentences.]" },
+      { title: "[Song title]", album: "[Album]", year: "[Year]", take: "[Your take in two or three sentences.]" },
+      { title: "[Song title]", album: "[Album]", year: "[Year]", take: "[Your take in two or three sentences.]" },
+      { title: "[Song title]", album: "[Album]", year: "[Year]", take: "[Your take in two or three sentences.]" },
+    ];
+
+    (function () {
+      function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+      var ph = function (s) { return /^\[.*\]$/.test(s) ? ' placeholder' : ''; };
+
+      document.querySelector('[data-slot="ranks"]').innerHTML = SONGS.map(function (s, i) {
+        var n = SONGS.length - i;
+        return '<li class="paper rank tape" value="' + n + '">' +
+          '<span class="n" aria-hidden="true">' + n + '</span>' +
+          '<div><h3 class="' + ph(s.title) + '">' + esc(s.title) + '</h3>' +
+          '<p class="album">' + esc(s.album) + ' · ' + esc(s.year) + '</p>' +
+          '<p class="take' + ph(s.take) + '">' + esc(s.take) + '</p></div></li>';
+      }).join('');
+
+      // playlist: hybrid player, reveals Spotify's embed on click
+      var box = document.querySelector('.listen-along');
+      var btn = box.querySelector('.play-round');
+      var m = (box.dataset.playlist || '').match(/playlist[/:]([A-Za-z0-9]+)/);
+      if (!m) { btn.disabled = true; btn.title = 'Add a Spotify playlist link to data-playlist'; return; }
+      btn.addEventListener('click', function () {
+        var open = box.classList.toggle('is-open');
+        box.querySelector('.embed').innerHTML = open
+          ? '<iframe src="https://open.spotify.com/embed/playlist/' + m[1] + '?utm_source=generator" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="Spotify playlist"></iframe>'
+          : '';
+        btn.setAttribute('aria-label', open ? 'Hide the player' : 'Play the playlist');
+      });
+    })();
+  </script>
+</body>
+</html>
