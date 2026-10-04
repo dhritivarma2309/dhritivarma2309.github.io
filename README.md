@@ -4,7 +4,7 @@ My personal site: the things I build with AI (prototypes, agents, side projects)
 
 I'm a product manager, and I think PMs today should build as well as spec. So I designed and shipped this site myself: I wireframed it, then built it with Claude as my pair programmer.
 
-**Live site:** `https://<username>.github.io`
+**Live site:** https://dhritivarma2309.github.io (not live yet)
 
 ## Pages
 
