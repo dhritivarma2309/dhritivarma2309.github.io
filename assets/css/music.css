@@ -284,10 +284,19 @@ main { position: relative; }
 .specimen .polaroid { transform: rotate(1deg); margin: 0 4px; }
 .specimen:nth-child(even) .polaroid { transform: rotate(-1.5deg); }
 .specimen .polaroid::before { display: none; }
-.specimen.is-playing .polaroid { visibility: hidden; }
-.specimen .player { position: absolute; inset: 0; margin: 0; }
-.specimen .player iframe { height: 100%; }
-.specimen .player-foot { display: none; }
+/* the album that's playing in the deck below */
+.specimen.is-active { box-shadow: 0 0 0 2px var(--ink), var(--shadow); }
+
+.album-deck .player { margin-top: 28px; }
+.album-deck .player.is-open {
+  background: var(--card);
+  border: 1px solid #e6e8ee;
+  box-shadow: var(--shadow);
+  padding: 16px 16px 12px;
+}
+.album-deck iframe { height: 152px; }
+.albums > .album-deck { grid-column: 1 / -1; }
+.albums > .album-deck .player { margin-top: 0; }
 
 .specimen-body {
   display: grid;

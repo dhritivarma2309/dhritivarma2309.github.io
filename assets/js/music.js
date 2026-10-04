@@ -65,16 +65,17 @@
     var t = $('[data-toggle-label]', card);
     if (t) t.innerHTML = '<span class="play"></span>Listen';
     if (openCard === card) openCard = null;
+    if (card._onClose) card._onClose();
   }
 
   function openPlayer(card, sp, opts) {
     if (!sp) return;
     if (openCard && openCard !== card) closePlayer(openCard);
     var p = $('[data-player]', card);
-    var h = sp.type === 'track' || sp.type === 'episode' ? 152 : (opts && opts.tall ? 380 : 352);
+    var h = (opts && opts.height) || (sp.type === 'track' || sp.type === 'episode' ? 152 : (opts && opts.tall ? 380 : 352));
     p.innerHTML =
       '<iframe src="' + sp.embed + '" height="' + h + '" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="Spotify player"></iframe>' +
-      '<div class="player-foot"><small>Player by Spotify. Previews play when logged out.</small>' +
+      '<div class="player-foot"><small>' + ((opts && opts.caption) || 'Player by Spotify. Previews play when logged out.') + '</small>' +
       '<button class="btn" data-hide>Hide player</button></div>';
     p.classList.add('is-open');
     card.classList.add('is-playing');
@@ -198,7 +199,6 @@
         '<div class="specimen-meta"><span>' + n + '</span><span>' + esc(a.year) + '</span></div>' +
         '<div class="specimen-media">' +
           '<div class="polaroid">' + cover(a.cover, i, a.title + ' cover') + '</div>' +
-          '<div class="player" data-player></div>' +
         '</div>' +
         '<div class="specimen-body">' +
           '<h3' + (isPlaceholder(a.title) ? ' class="placeholder"' : '') + '>' + esc(a.title) + '</h3>' +
@@ -210,12 +210,36 @@
       '</article>';
     }).join('');
 
-    $$('.specimen', slot).forEach(function (card, i) {
-      var b = $('[data-listen]', card);
-      b.setAttribute('data-toggle-label', '');
-      b.addEventListener('click', function () {
-        if (card.classList.contains('is-playing')) { closePlayer(card); return; }
-        openPlayer(card, spotify(M.albums[i].spotify));
+    // One full-width Spotify player strip under the cards ("the deck")
+    var deck = $('#album-deck');
+    var current = null;
+    var cards = $$('.specimen', slot);
+
+    function setActive(i) {
+      cards.forEach(function (c, j) {
+        var on = j === i;
+        c.classList.toggle('is-active', on);
+        $('[data-listen]', c).innerHTML = on
+          ? '<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" rx="1.5" fill="currentColor"/></svg>Hide player'
+          : '<span class="play"></span>Listen';
+      });
+    }
+    deck._onClose = function () { current = null; setActive(-1); };
+
+    cards.forEach(function (card, i) {
+      $('[data-listen]', card).addEventListener('click', function () {
+        if (current === i) { closePlayer(deck); return; }
+        var a = M.albums[i];
+        // phones (one card per row): open right under the tapped card; otherwise under the whole row
+        if (window.matchMedia('(max-width: 520px)').matches) card.after(deck); else slot.after(deck);
+        openPlayer(deck, spotify(a.spotify), {
+          height: 152,
+          caption: 'Now playing: ' + esc(a.title) + ' · ' + esc(a.artist) + '. Full tracks if you\'re signed in to Spotify, previews otherwise.',
+        });
+        current = i;
+        setActive(i);
+        var r = deck.getBoundingClientRect();
+        if (r.bottom > window.innerHeight || r.top < 0) deck.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       });
     });
   })();

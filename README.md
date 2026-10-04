@@ -20,7 +20,7 @@ I'm a product manager, and I think PMs today should build as well as spec. So I 
 
 - **Plain HTML, CSS and JavaScript.** No framework and no build step, so the code is easy to read and GitHub Pages serves it as is.
 - **Content lives apart from the layout.** Everything on the Music page comes from [`data/music.js`](data/music.js), so updating a song or a rating is a one-line edit.
-- **Hybrid Spotify player.** Cards load as my own design. Clicking **Listen** swaps in Spotify's embedded player inside the same card, and only one player is open at a time. The page stays light and on-brand, and audio always plays through Spotify (logged-out visitors hear previews).
+- **Hybrid Spotify player.** Cards load as my own design. Clicking **Listen** opens Spotify's embedded player (inside the card for songs and playlists, in a full-width strip under the album cards), and only one player is open at a time. The page stays light and on-brand, and audio always plays through Spotify (logged-out visitors hear previews).
 - **Notebook look.** Graph-paper background, washi tape, polaroids and hand-drawn SVG doodles. The listening chart is drawn in code with a seeded "pencil wobble", so it looks sketched but renders the same every time.
 - Responsive down to phone width, with keyboard and screen-reader support (carousel arrow keys, ARIA labels, reduced-motion support).
 
