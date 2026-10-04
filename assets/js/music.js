@@ -193,8 +193,9 @@
 
     slot.innerHTML = (M.albums || []).map(function (a, i) {
       var sp = spotify(a.spotify);
+      var n = String(i + 1).padStart(3, '0');
       return '<article class="paper specimen tape" data-card>' +
-        '<div class="specimen-meta"><span>' + esc(a.year) + '</span></div>' +
+        '<div class="specimen-meta"><span>' + n + '</span><span>' + esc(a.year) + '</span></div>' +
         '<div class="specimen-media">' +
           '<div class="polaroid">' + cover(a.cover, i, a.title + ' cover') + '</div>' +
           '<div class="player" data-player></div>' +

@@ -271,7 +271,7 @@ main { position: relative; }
 
 .specimen-meta {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   font: 500 12px/1 var(--mono);
   letter-spacing: 1.5px;
   color: var(--ink-soft);
@@ -331,7 +331,8 @@ main { position: relative; }
 /* ---------- Turntable doodle (album ratings heading) ---------- */
 
 .section-head--turntable { padding-left: 222px; min-height: 170px; padding-top: 8px; }
-.section-head--turntable .lede { max-width: 620px; }
+.section-head--turntable .display { margin-top: 0; }
+.section-head--turntable .lede { max-width: 620px; margin-top: 14px; }
 .section-head--turntable .icon.turntable { width: 196px; height: auto; top: 6px; left: 0; overflow: visible; }
 
 .turntable .record {
