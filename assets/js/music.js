@@ -198,7 +198,10 @@
       return '<article class="paper specimen tape" data-card>' +
         '<div class="specimen-meta"><span>' + n + '</span><span>' + esc(a.year) + '</span></div>' +
         '<div class="specimen-media">' +
-          '<div class="polaroid">' + cover(a.cover, i, a.title + ' cover') + '</div>' +
+          '<div class="polaroid">' +
+            (sp ? '<a class="cover-link" href="' + sp.open + '" target="_blank" rel="noopener" aria-label="Listen to ' + esc(a.title) + ' on Spotify">' + cover(a.cover, i, a.title + ' cover') + '</a>'
+                : cover(a.cover, i, a.title + ' cover')) +
+          '</div>' +
         '</div>' +
         '<div class="specimen-body">' +
           '<h3' + (isPlaceholder(a.title) ? ' class="placeholder"' : '') + '>' + esc(a.title) + '</h3>' +
@@ -206,7 +209,9 @@
           '<p class="by">' + esc(a.artist) + '</p>' +
         '</div>' +
         '<p class="best"><span>Favorite song</span><strong>' + esc(a.favoriteSong || a.bestSong) + '</strong></p>' +
-        '<div class="specimen-actions">' + listenButton(sp).replace('btn btn--solid', 'btn') + '</div>' +
+        '<div class="specimen-actions">' + listenButton(sp).replace('btn btn--solid', 'btn') +
+          (sp ? '<a class="spotify-link" href="' + sp.open + '" target="_blank" rel="noopener">LISTEN ON SPOTIFY ↗</a>' : '') +
+        '</div>' +
       '</article>';
     }).join('');
 

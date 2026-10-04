@@ -214,3 +214,7 @@ button { font: inherit; color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
 }
+
+/* ---------- Credits line (footer) ---------- */
+.credits { font-size: 12.5px; color: var(--ink-faint); margin: 14px 0 0; }
+.credits a { color: inherit; }

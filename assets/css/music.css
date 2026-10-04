@@ -102,7 +102,14 @@ main { position: relative; }
   overflow: hidden;
 }
 .cover img { width: 100%; height: 100%; object-fit: cover; }
-.cover::after { content: ""; position: absolute; inset: 0; box-shadow: inset 0 0 0 1px rgba(31,42,68,.12); pointer-events: none; }
+/* Real album artwork is shown exactly as published (Spotify guidelines):
+   no tilt, nothing layered on top, softly rounded corners, thin outline outside the art. */
+.cover:has(img) { border-radius: 6px; box-shadow: 0 0 0 1px rgba(31,42,68,.12); }
+.polaroid:has(img),
+.specimen .polaroid:has(img),
+.specimen:nth-child(even) .polaroid:has(img) { transform: none; }
+a.cover-link { display: block; border-radius: 6px; }
+a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
 .cover .tag,
 .thumb .tag {
   position: absolute;
@@ -267,7 +274,7 @@ main { position: relative; }
   transition: transform .2s ease;
 }
 .specimen:nth-child(odd) { --tape-rot: 2deg; }
-.specimen:hover { transform: translateY(-4px) rotate(-.4deg); }
+.specimen:hover { transform: translateY(-4px); }
 
 .specimen-meta {
   display: flex;
@@ -335,7 +342,18 @@ main { position: relative; }
 .best span { font-family: var(--hand); font-size: 20px; color: var(--ink-soft); display: block; line-height: 1.1; }
 .best strong { font-weight: 500; }
 
-.specimen-actions { align-self: end; }
+.specimen-actions { align-self: end; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.spotify-link {
+  font: 600 11px/1 var(--mono);
+  letter-spacing: 1px;
+  color: var(--ink-soft);
+  text-decoration: none;
+  border-bottom: 1.5px solid currentColor;
+  padding-bottom: 2px;
+  white-space: nowrap;
+}
+.spotify-link:hover { color: var(--red); }
+
 
 /* ---------- Turntable doodle (album ratings heading) ---------- */
 
