@@ -37,7 +37,7 @@ window.MUSIC = {
   },
 
   // 04 · Album ratings
-  albumsIntro: "Albums I've lived with, rated purely on personal taste. These are my opinions, not the final word. You may disagree, and I'd love to hear why.",
+  albumsIntro: "These are my opinions, not the final word.",
   ratingScale: 10, // ratings are out of 10
   // Tip: to use your own cover image, drop it in assets/img/covers/ and set cover: "../assets/img/covers/<file>.jpg"
   albums: [
