@@ -62,6 +62,8 @@
     p.classList.remove('is-open');
     p.innerHTML = '';
     card.classList.remove('is-playing');
+    var t = $('[data-toggle-label]', card);
+    if (t) t.innerHTML = '<span class="play"></span>Listen';
     if (openCard === card) openCard = null;
   }
 
@@ -76,6 +78,8 @@
       '<button class="btn" data-hide>Hide player</button></div>';
     p.classList.add('is-open');
     card.classList.add('is-playing');
+    var t = $('[data-toggle-label]', card);
+    if (t) t.innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" rx="1.5" fill="currentColor"/></svg>Hide player';
     openCard = card;
     $('[data-hide]', p).addEventListener('click', function () { closePlayer(card); });
   }
@@ -180,6 +184,29 @@
     listen.addEventListener('click', function () { openPlayer(card, sp, { tall: true }); });
   })();
 
+  // ---------- Turntable doodle: shows the album that's "on" ----------
+
+  window.Turntable = (function () {
+    var svg = $('.turntable');
+    if (!svg) return null;
+    var label = $('[data-turntable-label]', svg);
+    var arm = $('.arm', svg);
+    var caption = $('[data-now-playing]');
+    function play(album, replay) {
+      if (!album) return;
+      if (album.cover) label.setAttribute('href', album.cover);
+      else label.removeAttribute('href');
+      if (caption) caption.textContent = album.title;
+      if (replay) {             // lift the arm and drop it again
+        arm.style.animation = 'none';
+        void arm.getBoundingClientRect();
+        arm.style.animation = '';
+      }
+    }
+    return { play: function (a) { play(a, true); }, set: play };
+  })();
+  if (window.Turntable && M.albums && M.albums.length) window.Turntable.set(M.albums[0]);
+
   // ---------- 04 · Album ratings ----------
 
   (function albums() {
@@ -191,21 +218,28 @@
       var sp = spotify(a.spotify);
       var n = String(i + 1).padStart(3, '0');
       return '<article class="paper specimen tape" data-card>' +
-        '<div class="specimen-meta"><span>SPECIMEN NO. ' + n + '</span><span>' + esc(a.date) + '</span></div>' +
-        '<div class="polaroid">' + cover(a.cover, i, a.title + ' cover') + '</div>' +
-        '<div class="player" data-player></div>' +
+        '<div class="specimen-meta"><span>' + n + '</span></div>' +
+        '<div class="specimen-media">' +
+          '<div class="polaroid">' + cover(a.cover, i, a.title + ' cover') + '</div>' +
+          '<div class="player" data-player></div>' +
+        '</div>' +
         '<div class="specimen-body">' +
           '<div><h3' + (isPlaceholder(a.title) ? ' class="placeholder"' : '') + '>' + esc(a.title) + '</h3><p class="by">' + esc(a.artist) + ' · ' + esc(a.year) + '</p></div>' +
           '<span class="rating" aria-label="Rated ' + esc(a.rating) + ' out of ' + scale + '">' + ring + esc(a.rating) + '/' + scale + '</span>' +
         '</div>' +
-        '<p class="best hide-when-playing"><span>Best song</span><strong>' + esc(a.bestSong) + '</strong></p>' +
-        '<div class="hide-when-playing">' + listenButton(sp).replace('btn btn--solid', 'btn') + '</div>' +
+        '<p class="best"><span>Favorite song</span><strong>' + esc(a.favoriteSong || a.bestSong) + '</strong></p>' +
+        '<div class="specimen-actions">' + listenButton(sp).replace('btn btn--solid', 'btn') + '</div>' +
       '</article>';
     }).join('');
 
     $$('.specimen', slot).forEach(function (card, i) {
       var b = $('[data-listen]', card);
-      b.addEventListener('click', function () { openPlayer(card, spotify(M.albums[i].spotify)); });
+      b.setAttribute('data-toggle-label', '');
+      b.addEventListener('click', function () {
+        if (card.classList.contains('is-playing')) { closePlayer(card); return; }
+        openPlayer(card, spotify(M.albums[i].spotify));
+        if (window.Turntable) window.Turntable.play(M.albums[i]);
+      });
     });
   })();
 

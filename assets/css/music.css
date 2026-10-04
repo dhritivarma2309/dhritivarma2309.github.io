@@ -251,27 +251,50 @@ main { position: relative; }
 .albums {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 28px;
+  column-gap: 28px;
+  row-gap: 36px;
 }
-.specimen { padding: 16px 16px 20px; transition: transform .2s ease; }
+
+/* Each card spans 5 shared rows (number, cover, title, favourite, button)
+   so the text lines up across every album, whatever the title length. */
+.specimen {
+  display: grid;
+  grid-row: span 5;
+  grid-template-rows: subgrid;
+  row-gap: 0;
+  padding: 16px 16px 20px;
+  transition: transform .2s ease;
+}
 .specimen:nth-child(odd) { --tape-rot: 2deg; }
 .specimen:hover { transform: translateY(-4px) rotate(-.4deg); }
+
 .specimen-meta {
-  display: flex;
-  justify-content: space-between;
-  font: 500 11px/1 var(--mono);
-  letter-spacing: 1.2px;
+  font: 500 12px/1 var(--mono);
+  letter-spacing: 1.5px;
   color: var(--ink-soft);
   padding-bottom: 10px;
   border-bottom: 1.5px dashed var(--rule);
   margin-bottom: 16px;
 }
+
+.specimen-media { position: relative; }
 .specimen .polaroid { transform: rotate(1deg); margin: 0 4px; }
 .specimen:nth-child(even) .polaroid { transform: rotate(-1.5deg); }
 .specimen .polaroid::before { display: none; }
-.specimen-body { display: flex; justify-content: space-between; gap: 8px; margin-top: 20px; }
+.specimen.is-playing .polaroid { visibility: hidden; }
+.specimen .player { position: absolute; inset: 0; margin: 0; }
+.specimen .player iframe { height: 100%; }
+.specimen .player-foot { display: none; }
+
+.specimen-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 20px;
+}
 .specimen h3 { font-size: 17px; margin: 0; line-height: 1.25; }
-.specimen .by { color: var(--ink-soft); font-size: 14px; margin: 2px 0 0; }
+.specimen .by { color: var(--ink-soft); font-size: 14px; margin: 3px 0 0; }
 .rating {
   position: relative;
   flex: none;
@@ -280,16 +303,66 @@ main { position: relative; }
   color: var(--red);
   padding: 4px 12px;
   line-height: 1;
-  align-self: flex-start;
 }
 .rating svg { position: absolute; inset: -4px -6px; width: calc(100% + 12px); height: calc(100% + 8px); overflow: visible; }
-.best { margin: 14px 0 16px; }
-.best span { font-family: var(--hand); font-size: 20px; color: var(--ink-soft); display: block; line-height: 1; }
+
+.best { margin: 16px 0 18px; align-self: start; }
+.best span { font-family: var(--hand); font-size: 20px; color: var(--ink-soft); display: block; line-height: 1.1; }
 .best strong { font-weight: 500; }
-.specimen .player { margin-top: 0; margin-bottom: 4px; }
-.specimen.is-playing .polaroid { display: none; }
-.specimen .player-foot small { display: none; }
-.specimen .player-foot { justify-content: flex-end; }
+
+.specimen-actions { align-self: end; }
+
+/* ---------- Turntable doodle (album ratings heading) ---------- */
+
+.section-head--turntable { padding-left: 222px; min-height: 170px; }
+.section-head--turntable .icon.turntable { width: 196px; height: auto; top: 6px; left: 0; overflow: visible; }
+
+.turntable .record {
+  transform-box: view-box;
+  transform-origin: 60px 60px;
+  animation: spin 1.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* tonearm swings onto the record when the page loads, and again for each new album */
+.turntable .arm {
+  transform-box: view-box;
+  transform-origin: 134px 22px;
+  animation: arm-in 1.1s cubic-bezier(.4,.1,.3,1) both, arm-ride 3.6s ease-in-out 1.1s infinite;
+}
+@keyframes arm-in { from { transform: rotate(-32deg); } }
+@keyframes arm-ride { 50% { transform: rotate(1.4deg); } }
+
+.turntable .notes path,
+.turntable .notes ellipse { stroke: var(--red); }
+.turntable .notes g { opacity: 0; animation: note-rise 3s ease-out infinite; }
+.turntable .notes g:nth-child(2) { animation-delay: 1s; }
+.turntable .notes g:nth-child(3) { animation-delay: 2s; }
+@keyframes note-rise {
+  0% { opacity: 0; transform: translate(0, 6px); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translate(10px, -26px) rotate(12deg); }
+}
+
+.turntable .power { fill: var(--red); animation: blink 2.4s ease-in-out infinite; }
+@keyframes blink { 50% { opacity: .35; } }
+
+.now-playing {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 0;
+  font-family: var(--hand);
+  font-size: 22px;
+  line-height: 1.2;
+  color: var(--red);
+}
+.now-playing .eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; }
+.now-playing .eq i { width: 3px; background: var(--red); border-radius: 1px; animation: eq 0.9s ease-in-out infinite; }
+.now-playing .eq i:nth-child(2) { animation-delay: -.3s; }
+.now-playing .eq i:nth-child(3) { animation-delay: -.6s; }
+@keyframes eq { 0%, 100% { height: 4px; } 50% { height: 14px; } }
+.now-playing strong { color: var(--ink); font-weight: 600; }
 
 /* ---------- Lab results chart ---------- */
 
@@ -374,8 +447,9 @@ main { position: relative; }
   .hero { grid-template-columns: minmax(0, 1fr); padding-top: 24px; }
   .hero-art { justify-self: center; max-width: 360px; margin-top: 30px; }
   .start-here { margin-top: 70px; }
-  .section-head { padding-left: 0; }
+  .section-head, .section-head--turntable { padding-left: 0; }
   .section-head .icon { display: none; }
+  .section-head--turntable .icon.turntable { display: block; position: static; width: 120px; margin-bottom: 14px; }
   .articles { grid-template-columns: minmax(0, 1fr); }
   .liner-head { flex-direction: column; }
   .ticket { margin: 0 0 36px 12px; }
