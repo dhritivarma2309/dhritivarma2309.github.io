@@ -43,7 +43,7 @@ window.MUSIC = {
   albums: [
     {
       title: "Random Access Memories", artist: "Daft Punk", year: "2013",
-      rating: "9", favoriteSong: "Doin' It Right (feat. Panda Bear)",
+      rating: "9", favoriteSong: "Giorgio by Moroder",
       cover: "https://i.scdn.co/image/ab67616d0000b2739b9b36b0e22870b9f542d937",
       spotify: "https://open.spotify.com/album/4m2880jivSbbyEGAKfITCa",
     },

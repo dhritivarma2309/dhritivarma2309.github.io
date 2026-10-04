@@ -184,29 +184,6 @@
     listen.addEventListener('click', function () { openPlayer(card, sp, { tall: true }); });
   })();
 
-  // ---------- Turntable doodle: shows the album that's "on" ----------
-
-  window.Turntable = (function () {
-    var svg = $('.turntable');
-    if (!svg) return null;
-    var label = $('[data-turntable-label]', svg);
-    var arm = $('.arm', svg);
-    var caption = $('[data-now-playing]');
-    function play(album, replay) {
-      if (!album) return;
-      if (album.cover) label.setAttribute('href', album.cover);
-      else label.removeAttribute('href');
-      if (caption) caption.textContent = album.title;
-      if (replay) {             // lift the arm and drop it again
-        arm.style.animation = 'none';
-        void arm.getBoundingClientRect();
-        arm.style.animation = '';
-      }
-    }
-    return { play: function (a) { play(a, true); }, set: play };
-  })();
-  if (window.Turntable && M.albums && M.albums.length) window.Turntable.set(M.albums[0]);
-
   // ---------- 04 · Album ratings ----------
 
   (function albums() {
@@ -224,8 +201,9 @@
           '<div class="player" data-player></div>' +
         '</div>' +
         '<div class="specimen-body">' +
-          '<div><h3' + (isPlaceholder(a.title) ? ' class="placeholder"' : '') + '>' + esc(a.title) + '</h3><p class="by">' + esc(a.artist) + ' · ' + esc(a.year) + '</p></div>' +
+          '<h3' + (isPlaceholder(a.title) ? ' class="placeholder"' : '') + '>' + esc(a.title) + '</h3>' +
           '<span class="rating" aria-label="Rated ' + esc(a.rating) + ' out of ' + scale + '">' + ring + esc(a.rating) + '/' + scale + '</span>' +
+          '<p class="by">' + esc(a.artist) + ' · ' + esc(a.year) + '</p>' +
         '</div>' +
         '<p class="best"><span>Favorite song</span><strong>' + esc(a.favoriteSong || a.bestSong) + '</strong></p>' +
         '<div class="specimen-actions">' + listenButton(sp).replace('btn btn--solid', 'btn') + '</div>' +
@@ -238,7 +216,6 @@
       b.addEventListener('click', function () {
         if (card.classList.contains('is-playing')) { closePlayer(card); return; }
         openPlayer(card, spotify(M.albums[i].spotify));
-        if (window.Turntable) window.Turntable.play(M.albums[i]);
       });
     });
   })();

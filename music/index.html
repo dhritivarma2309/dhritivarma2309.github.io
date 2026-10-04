@@ -151,8 +151,7 @@
       <svg class="doodle doodle--red hide-md" style="left:-80px; top:340px; width:42px" aria-hidden="true"><use href="#i-star"/></svg>
       <div class="section-head section-head--turntable">
         <svg class="icon turntable" viewBox="0 0 160 130" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="A turntable playing a record">
-          <defs><clipPath id="label-clip"><circle cx="60" cy="60" r="15"/></clipPath></defs>
-          <!-- plinth -->
+                    <!-- plinth -->
           <path d="M8 3 H152 C156 3 158 5 158 9 L157 120 C157 124 155 126 151 126 H9 C5 126 3 124 3 120 L2 9 C2 5 4 3 8 3 Z" fill="#fff"/>
           <!-- platter -->
           <circle cx="60" cy="60" r="51" stroke-width="1.6"/>
@@ -163,7 +162,8 @@
             <path d="M33 33 A38 38 0 0 1 60 22" stroke="#fff" stroke-opacity=".45" stroke-width="3"/>
             <path d="M87 87 A38 38 0 0 1 60 98" stroke="#fff" stroke-opacity=".25" stroke-width="3"/>
             <circle cx="60" cy="60" r="15" fill="#c0352b" stroke="none"/>
-            <image data-turntable-label href="" x="45" y="45" width="30" height="30" clip-path="url(#label-clip)" preserveAspectRatio="xMidYMid slice"/>
+            <circle cx="60" cy="60" r="9" stroke="#fcfcf9" stroke-opacity=".6" stroke-width="1"/>
+            <path d="M52 55 h9 M52 59 h6" stroke="#fcfcf9" stroke-width="1.4"/>
             <circle cx="60" cy="60" r="15" stroke="#1f2a44" stroke-width="1"/>
             <circle cx="60" cy="60" r="2" fill="#fcfcf9" stroke="none"/>
           </g>
@@ -188,7 +188,6 @@
         <p class="kicker">04 · Album ratings</p>
         <h2 class="display" id="albums-title">Album Ratings</h2>
         <p class="lede" data-bind="albumsIntro"></p>
-        <p class="now-playing" aria-live="polite"><span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>now playing: <strong data-now-playing></strong></p>
       </div>
       <div class="albums" data-slot="albums"></div>
     </section>
