@@ -37,7 +37,7 @@ window.MUSIC = {
   },
 
   // 04 · Album ratings
-  albumsIntro: "[Two lines in your voice describing this section: how you rate albums, what makes a 10, and what you're listening for.]",
+  albumsIntro: "Albums I've lived with, rated purely on personal taste. These are my opinions, not the final word. You may disagree, and I'd love to hear why.",
   ratingScale: 10, // ratings are out of 10
   // Tip: to use your own cover image, drop it in assets/img/covers/ and set cover: "../assets/img/covers/<file>.jpg"
   albums: [
