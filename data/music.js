@@ -56,8 +56,8 @@ window.MUSIC = {
     {
       title: "The Velvet Underground & Nico", artist: "The Velvet Underground", year: "1967",
       rating: "9", favoriteSong: "Venus in Furs",
-      cover: "https://i.scdn.co/image/ab67616d0000b2739759797d8f426b634fde281d",
-      spotify: "https://open.spotify.com/album/2z1nix8wW4fspJSjZTcGF2",
+      cover: "https://i.scdn.co/image/ab67616d0000b273449911a105dba137b650d3e7",
+      spotify: "https://open.spotify.com/album/2QkDDVLuh025znjaxvTfAY",
     },
     {
       title: "Transformer", artist: "Lou Reed", year: "1972",

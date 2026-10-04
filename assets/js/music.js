@@ -195,7 +195,7 @@
       var sp = spotify(a.spotify);
       var n = String(i + 1).padStart(3, '0');
       return '<article class="paper specimen tape" data-card>' +
-        '<div class="specimen-meta"><span>' + n + '</span></div>' +
+        '<div class="specimen-meta"><span>' + n + '</span><span>' + esc(a.year) + '</span></div>' +
         '<div class="specimen-media">' +
           '<div class="polaroid">' + cover(a.cover, i, a.title + ' cover') + '</div>' +
           '<div class="player" data-player></div>' +
@@ -203,7 +203,7 @@
         '<div class="specimen-body">' +
           '<h3' + (isPlaceholder(a.title) ? ' class="placeholder"' : '') + '>' + esc(a.title) + '</h3>' +
           '<span class="rating" aria-label="Rated ' + esc(a.rating) + ' out of ' + scale + '">' + ring + esc(a.rating) + '/' + scale + '</span>' +
-          '<p class="by">' + esc(a.artist) + ' · ' + esc(a.year) + '</p>' +
+          '<p class="by">' + esc(a.artist) + '</p>' +
         '</div>' +
         '<p class="best"><span>Favorite song</span><strong>' + esc(a.favoriteSong || a.bestSong) + '</strong></p>' +
         '<div class="specimen-actions">' + listenButton(sp).replace('btn btn--solid', 'btn') + '</div>' +
