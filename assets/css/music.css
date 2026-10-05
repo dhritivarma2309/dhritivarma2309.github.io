@@ -14,16 +14,16 @@ main { position: relative; }
 
 .hero {
   position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  align-items: center;
-  gap: 40px;
-  padding-top: 56px;
+  display: flex;
+  flex-direction: column;   /* illustration on top, intro line underneath */
+  align-items: flex-start;
+  gap: 28px;
+  padding-top: 40px;
 }
 .hero .display { font-size: clamp(96px, 13vw, 168px); margin-top: 6px; }
 .hero .lede { max-width: 540px; }
 
-.hero-art { position: relative; justify-self: end; width: 100%; max-width: 460px; }
+.hero-art { position: relative; order: -1; width: 100%; max-width: 440px; }
 .hero-art svg { width: 100%; height: auto; overflow: visible; }
 
 .hero-art .spinning-label {
@@ -497,8 +497,8 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
 
 @media (max-width: 760px) {
   .section { margin-top: 88px; }
-  .hero { grid-template-columns: minmax(0, 1fr); padding-top: 24px; }
-  .hero-art { justify-self: center; max-width: 360px; margin-top: 30px; }
+  .hero { padding-top: 20px; gap: 20px; }
+  .hero-art { max-width: 320px; }
   .group-title { margin-top: 72px; }
   .section-head, .section-head--turntable { padding-left: 0; }
   .section-head .icon { display: none; }
