@@ -183,7 +183,7 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
 .dots { display: flex; gap: 2px; }
 /* small visible dot, comfortable 24px tap target */
 .dot {
-  width: 24px; height: 24px;
+  width: 20px; height: 24px;
   border: 0;
   background: none;
   cursor: pointer;
@@ -192,13 +192,13 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
 }
 .dot::before {
   content: "";
-  width: 9px; height: 9px;
-  border-radius: 5px;
+  width: 6px; height: 6px;
+  border-radius: 3px;
   background: #c9ccd3;
   transition: width .2s ease, background .2s ease;
 }
 .dot:hover::before { background: var(--ink-faint); }
-.dot[aria-current="true"]::before { width: 20px; background: var(--red); }
+.dot[aria-current="true"]::before { width: 14px; background: var(--red); }
 
 /* On rotation list */
 .rotation-list { list-style: none; margin: 0; padding: 0; }
