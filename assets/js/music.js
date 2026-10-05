@@ -199,19 +199,19 @@
         '<div class="specimen-meta"><span>' + n + '</span><span>' + esc(a.year) + '</span></div>' +
         '<div class="specimen-media">' +
           '<div class="polaroid">' +
-            (sp ? '<a class="cover-link" href="' + sp.open + '" target="_blank" rel="noopener" aria-label="Listen to ' + esc(a.title) + ' on Spotify">' + cover(a.cover, i, a.title + ' cover') + '</a>'
+            (sp ? '<a class="cover-link" href="' + sp.open + '" target="_blank" rel="noopener" title="Open in Spotify" aria-label="Open ' + esc(a.title) + ' in Spotify">' + cover(a.cover, i, a.title + ' cover') + '</a>'
                 : cover(a.cover, i, a.title + ' cover')) +
           '</div>' +
         '</div>' +
         '<div class="specimen-body">' +
-          '<h3' + (isPlaceholder(a.title) ? ' class="placeholder"' : '') + '>' + esc(a.title) + '</h3>' +
+          '<h3' + (isPlaceholder(a.title) ? ' class="placeholder"' : '') + '>' +
+            (sp ? '<a class="title-link" href="' + sp.open + '" target="_blank" rel="noopener" title="Open in Spotify">' + esc(a.title) + '</a>' : esc(a.title)) +
+          '</h3>' +
           '<span class="rating" aria-label="Rated ' + esc(a.rating) + ' out of ' + scale + '">' + ring + esc(a.rating) + '/' + scale + '</span>' +
           '<p class="by">' + esc(a.artist) + '</p>' +
         '</div>' +
         '<p class="best"><span>Favorite song</span><strong>' + esc(a.favoriteSong || a.bestSong) + '</strong></p>' +
-        '<div class="specimen-actions">' + listenButton(sp).replace('btn btn--solid', 'btn') +
-          (sp ? '<a class="spotify-link" href="' + sp.open + '" target="_blank" rel="noopener">LISTEN ON SPOTIFY ↗</a>' : '') +
-        '</div>' +
+        '<div class="specimen-actions">' + listenButton(sp).replace('btn btn--solid', 'btn') + '</div>' +
       '</article>';
     }).join('');
 

@@ -343,16 +343,8 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
 .best strong { font-weight: 500; }
 
 .specimen-actions { align-self: end; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
-.spotify-link {
-  font: 600 11px/1 var(--mono);
-  letter-spacing: 1px;
-  color: var(--ink-soft);
-  text-decoration: none;
-  border-bottom: 1.5px solid currentColor;
-  padding-bottom: 2px;
-  white-space: nowrap;
-}
-.spotify-link:hover { color: var(--red); }
+.title-link { color: inherit; text-decoration: none; }
+.title-link:hover { color: var(--red); text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
 
 
 /* ---------- Turntable doodle (album ratings heading) ---------- */
