@@ -572,7 +572,6 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
 @keyframes theme-in-r { from { opacity: 0; transform: translateX(14px); } }
 @keyframes theme-in-l { from { opacity: 0; transform: translateX(-14px); } }
 @media (max-width: 520px) {
-  .theme-name { font-size: 23px; }
   .theme-bar { gap: 8px; }
 }
 
@@ -592,3 +591,21 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
 
 /* Playlists song covers: no tape strip on the photo frame */
 .slide .polaroid::before { display: none; }
+
+/* ---------- Playlists: hand-drawn theme arrows ---------- */
+.hand-arrow {
+  width: 44px; height: 30px;           /* same footprint as before, so the row alignment holds */
+  border: 0; background: none; padding: 0;
+  color: var(--ink);
+  display: grid; place-items: center;
+  cursor: pointer;
+  transition: color .15s ease, transform .2s ease;
+}
+.hand-arrow--prev svg { transform: scaleX(-1); }
+.hand-arrow:hover { color: var(--red); transform: translateX(3px); }
+.hand-arrow--prev:hover { transform: translateX(-3px); }
+.hand-arrow:focus-visible { outline: 2px dashed var(--red); outline-offset: 2px; border-radius: 4px; }
+@media (max-width: 520px) {
+  .theme-name { font-size: 16px; text-wrap: balance; }
+  .hand-arrow { width: 36px; }
+}
