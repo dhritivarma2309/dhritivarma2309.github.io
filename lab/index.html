@@ -4,24 +4,22 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Lab · Dhriti Varma</title>
-  <meta name="description" content="Dhriti Varma: product manager who builds. Prototypes, agents and personal projects.">
+  <meta name="description" content="Prototypes, agents and side projects Dhriti Varma has built with AI.">
+  <meta property="og:title" content="Lab · Dhriti Varma">
+  <meta property="og:description" content="Prototypes, agents and side projects Dhriti Varma has built with AI.">
   <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Caveat+Brush&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/site.css">
-  <style>
-    .stub { padding: 90px 0 40px; min-height: 52vh; }
-    .stub .display { font-size: clamp(64px, 10vw, 128px); margin-top: 6px; }
-    .stub .btn { margin-top: 28px; }
-  </style>
+  <link rel="stylesheet" href="../assets/css/lab.css">
 </head>
 <body>
   <header class="wrap site-header">
     <a class="logo" href="../">Dhriti Varma</a>
     <nav class="nav" aria-label="Main">
       <a href="../">Home</a>
-      <a href="../lab/" aria-current="page">Lab</a>
+      <a href="./" aria-current="page">Lab</a>
       <a href="../tennis/">Tennis</a>
       <a href="../music/">Music</a>
     </nav>
@@ -30,12 +28,62 @@
       <a class="btn" href="https://www.linkedin.com/" data-link="linkedin" target="_blank" rel="noopener">LinkedIn</a>
     </div>
   </header>
-  <main class="wrap stub">
-    <p class="kicker">coming soon</p>
-    <h1 class="display">Lab</h1>
-    <p class="lede">Prototypes, agents and side projects I've built with AI. Coming soon.</p>
-    <a class="btn btn--solid" href="../music/"><span class="play"></span>Visit the Music page</a>
+
+  <main class="wrap">
+    <section class="lab-hero" aria-labelledby="lab-title">
+      <!-- laptop typing code + a bubbling flask -->
+      <svg class="lab-art" viewBox="20 30 400 210" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <defs>
+          <clipPath id="flask-clip"><path d="M320 126 L272 222 Q268 232 280 232 H380 Q392 232 388 222 L340 126 Z"/></clipPath>
+        </defs>
+
+        <!-- desk -->
+        <path d="M24 236 H416" stroke-width="1.6" stroke-dasharray="2 7"/>
+
+        <!-- laptop -->
+        <rect x="48" y="62" width="196" height="144" rx="8" fill="#fff"/>
+        <rect x="60" y="74" width="172" height="120" rx="3" fill="#1f2a44" stroke="none"/>
+        <g class="code" stroke-width="3.4">
+          <path class="ln ln0" d="M72 92 h10" stroke="#c0352b" pathLength="100"/>
+          <path class="ln ln1" d="M90 92 h70" stroke="#f2d5c6" pathLength="100"/>
+          <path class="ln ln2" d="M84 108 h56" stroke="#d3e2ef" pathLength="100"/>
+          <path class="ln ln3" d="M84 124 h92" stroke="#dfe8cf" pathLength="100"/>
+          <path class="ln ln4" d="M96 140 h48" stroke="#e7d9ef" pathLength="100"/>
+          <path class="ln ln5" d="M96 156 h76" stroke="#d3e2ef" pathLength="100"/>
+          <path class="ln ln6" d="M72 172 h38" stroke="#f2d5c6" pathLength="100"/>
+        </g>
+        <rect class="cursor" x="116" y="166" width="7" height="12" fill="#fcfcf9" stroke="none"/>
+        <path d="M30 206 H262 L252 224 H40 Z" fill="#fff"/>
+        <path d="M128 213 h36" stroke-width="1.6"/>
+
+        <!-- flask -->
+        <g clip-path="url(#flask-clip)">
+          <path class="liquid" d="M220 172 q15 -9 30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 V240 H220 Z" fill="#f2d5c6" stroke="none"/>
+          <path class="liquid" d="M220 172 q15 -9 30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0" stroke="#c0352b" stroke-width="1.8"/>
+        </g>
+        <path d="M318 56 V124 L270 222 Q264 234 280 234 H380 Q396 234 390 222 L342 124 V56" fill="none"/>
+        <path d="M310 54 H350" stroke-width="2.6"/>
+        <path d="M300 196 h10 M296 210 h14" stroke-width="1.4"/>
+        <g class="bubbles" stroke-width="1.8" fill="#fff">
+          <circle class="bub b0" cx="326" cy="176" r="5"/>
+          <circle class="bub b1" cx="336" cy="186" r="3.5"/>
+          <circle class="bub b2" cx="330" cy="194" r="4"/>
+          <circle class="bub b3" cx="322" cy="184" r="3"/>
+        </g>
+
+        <!-- sparkles -->
+        <path class="spark s0" d="M276 64 v14 M269 71 h14" stroke="#c0352b" stroke-width="2"/>
+        <path class="spark s1" d="M396 92 v10 M391 97 h10" stroke="#c0352b" stroke-width="2"/>
+        <path class="spark s2" d="M34 50 v10 M29 55 h10" stroke-width="1.8"/>
+      </svg>
+
+      <h1 class="display lab-title" id="lab-title" data-bind="title"></h1>
+      <p class="lede" data-bind="intro"></p>
+    </section>
+
+    <section class="projects" data-slot="projects" aria-label="Projects"></section>
   </main>
+
   <footer class="wrap site-footer">
     <div class="inner">
       <nav aria-label="Elsewhere">
@@ -44,7 +92,10 @@
       </nav>
     </div>
   </footer>
+
   <script src="../data/site.js"></script>
+  <script src="../data/lab.js"></script>
   <script src="../assets/js/site.js"></script>
+  <script src="../assets/js/lab.js"></script>
 </body>
 </html>
