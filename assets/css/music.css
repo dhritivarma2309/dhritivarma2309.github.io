@@ -147,7 +147,7 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
   grid-template-columns: 170px minmax(0, 1fr);
   gap: 26px;
   align-items: center;
-  padding: 12px 6px 6px;
+  padding: 12px 18px 6px;   /* keeps the next slide's frame + shadow fully out of view */
 }
 .slide .hypothesis {
   font-family: var(--hand);
