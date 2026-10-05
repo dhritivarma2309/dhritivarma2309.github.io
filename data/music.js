@@ -57,7 +57,7 @@ window.MUSIC = {
   },
 
   // 04 · Album ratings
-  albumsIntro: "Not a critic, just a listener with a scorecard", // optional line under the heading; leave empty to hide
+  albumsIntro: "Not a critic, just an enthusiastic listener with a scorecard", // optional line under the heading; leave empty to hide
   ratingScale: 10, // ratings are out of 10
   // Tip: to use your own cover image, drop it in assets/img/covers/ and set cover: "../assets/img/covers/<file>.jpg"
   albums: [
