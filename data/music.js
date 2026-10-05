@@ -152,7 +152,4 @@ window.MUSIC = {
     { title: "[Article Title]", minutes: "x", href: "", image: "" },
     { title: "[Article Title]", minutes: "x", href: "", image: "" },
   ],
-
-  // Ticket-stub doodle next to Liner Notes (a gig you loved)
-  ticket: { artist: "[Artist]", venue: "[Venue]", date: "[Date]", number: "000" },
 };
