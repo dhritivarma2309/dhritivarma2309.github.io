@@ -614,3 +614,7 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
 /* Playlists: round play button, same as Heavy Rotation rows */
 .track-play--lg { width: 44px; height: 44px; }
 .track-play.is-on { background: var(--ink); color: #fff; }
+/* tighter gap from the record player to "Add To Queue" */
+.hero:has(.lede:empty) { gap: 0; }
+.group-title { margin-top: 36px; }
+@media (max-width: 760px) { .group-title { margin-top: 32px; } }
