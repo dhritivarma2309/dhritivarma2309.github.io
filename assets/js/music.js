@@ -99,29 +99,49 @@
     var card = $('#discover');
     var track = $('[data-slot="discover"]', card);
     var dots = $('[data-slot="dots"]', card);
-    var items = M.discover || [];
-    var idx = 0;
+    var D = M.discover || {};
+    var themes = Array.isArray(D) ? [{ name: 'Discover New', blurb: '', songs: D }] : (D.themes || []);
+    var t = 0, idx = 0, items = [];
+    var nameEl = $('[data-theme-name]', card), blurbEl = $('[data-theme-blurb]', card), label = $('.theme-label', card);
 
-    track.innerHTML = items.map(function (s, i) {
-      var sp = spotify(s.spotify);
-      return '<article class="slide" role="group" aria-roledescription="slide" aria-label="' + (i + 1) + ' of ' + items.length + '">' +
-        '<div class="polaroid">' + cover(s.cover, i, s.title + ' cover') + '</div>' +
-        '<div>' +
-          (s.hypothesis ? '<p class="hypothesis">' + esc(s.hypothesis) + '</p>' : '') +
-          '<h3>' + esc(s.title) + '</h3>' +
-          '<p class="by">' + esc(s.artist) + (s.album && !isPlaceholder(s.album) ? ' · ' + esc(s.album) : '') + '</p>' +
-          '<div class="actions hide-when-playing">' + listenButton(sp) + openButton(sp) + '</div>' +
-        '</div>' +
-      '</article>';
-    }).join('');
+    function renderTheme(n, dir) {
+      t = (n + themes.length) % themes.length;
+      var th = themes[t];
+      items = th.songs || [];
+      if (openCard === card) closePlayer(card);
 
-    dots.innerHTML = items.map(function (_, i) {
-      return '<button class="dot" role="tab" aria-label="Song ' + (i + 1) + '"></button>';
-    }).join('');
+      nameEl.textContent = th.name; nameEl.classList.toggle('placeholder', isPlaceholder(th.name));
+      blurbEl.textContent = th.blurb || ''; blurbEl.classList.toggle('placeholder', isPlaceholder(th.blurb));
+      $('[data-bind="theme-index"]', card).textContent = t + 1;
+      $('[data-bind="theme-total"]', card).textContent = themes.length;
+      if (dir) { label.classList.remove('flip-l', 'flip-r'); void label.offsetWidth; label.classList.add(dir < 0 ? 'flip-l' : 'flip-r'); }
 
-    $('[data-bind="slide-total"]', card).textContent = items.length;
+      track.style.transition = 'none';
+      track.innerHTML = items.map(function (s, i) {
+        var sp = spotify(s.spotify);
+        var art = cover(s.cover, i + t, s.title + ' cover');
+        var title = esc(s.title);
+        return '<article class="slide" role="group" aria-roledescription="slide" aria-label="' + (i + 1) + ' of ' + items.length + '">' +
+          '<div class="polaroid">' + (sp ? '<a class="cover-link" href="' + sp.open + '" target="_blank" rel="noopener" title="Open in Spotify">' + art + '</a>' : art) + '</div>' +
+          '<div>' +
+            (s.hypothesis ? '<p class="hypothesis">' + esc(s.hypothesis) + '</p>' : '') +
+            '<h3' + (isPlaceholder(s.title) ? ' class="placeholder"' : '') + '>' + (sp ? '<a class="title-link" href="' + sp.open + '" target="_blank" rel="noopener" title="Open in Spotify">' + title + '</a>' : title) + '</h3>' +
+            '<p class="by">' + esc(s.artist) + '</p>' +
+            '<div class="actions hide-when-playing">' + listenButton(sp) + openButton(sp) + '</div>' +
+          '</div>' +
+        '</article>';
+      }).join('');
+      dots.innerHTML = items.map(function (_, i) {
+        return '<button class="dot" role="tab" aria-label="Song ' + (i + 1) + '"></button>';
+      }).join('');
+      $$('.dot', dots).forEach(function (d, i) { d.addEventListener('click', function () { go(i); }); });
+      $('[data-bind="slide-total"]', card).textContent = items.length;
+      go(0);
+      void track.offsetWidth; track.style.transition = '';
+    }
 
     function go(n) {
+      if (!items.length) return;
       idx = (n + items.length) % items.length;
       track.style.transform = 'translateX(' + (-100 * idx) + '%)';
       $$('.dot', dots).forEach(function (d, i) { d.setAttribute('aria-current', i === idx ? 'true' : 'false'); });
@@ -130,16 +150,17 @@
       if (openCard === card) closePlayer(card);
     }
 
+    $('[data-theme-prev]', card).addEventListener('click', function () { renderTheme(t - 1, -1); });
+    $('[data-theme-next]', card).addEventListener('click', function () { renderTheme(t + 1, 1); });
     $('[data-prev]', card).addEventListener('click', function () { go(idx - 1); });
     $('[data-next]', card).addEventListener('click', function () { go(idx + 1); });
-    $$('.dot', dots).forEach(function (d, i) { d.addEventListener('click', function () { go(i); }); });
     card.addEventListener('keydown', function (e) {
       if (e.target.closest('iframe')) return;
       if (e.key === 'ArrowLeft') go(idx - 1);
       if (e.key === 'ArrowRight') go(idx + 1);
     });
 
-    // swipe on touch
+    // swipe songs on touch
     var x0 = null;
     track.addEventListener('touchstart', function (e) { x0 = e.touches[0].clientX; }, { passive: true });
     track.addEventListener('touchend', function (e) {
@@ -151,10 +172,11 @@
 
     track.addEventListener('click', function (e) {
       if (!e.target.closest('[data-listen]')) return;
-      openPlayer(card, spotify(items[idx].spotify));
+      var s = items[idx];
+      openPlayer(card, spotify(s.spotify), { caption: 'Now playing: ' + esc(s.title) + ' · ' + esc(s.artist) + '. Full track if you\'re signed in to Spotify, a preview otherwise.' });
     });
 
-    go(0);
+    renderTheme(0);
   })();
 
   // ---------- 03 · On rotation ----------

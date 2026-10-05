@@ -15,14 +15,45 @@ window.MUSIC = {
   intro:
     "[One line in your voice on what music is to you, e.g. what you listen to and why you rate albums.]",
 
-  // 02 · Discover New: a carousel of songs you think visitors should hear
-  discover: [
-    { title: "[Song title 1]", artist: "[Artist]", album: "[Album]", hypothesis: "Hypothesis: you'll like this", cover: "", spotify: "" },
-    { title: "[Song title 2]", artist: "[Artist]", album: "[Album]", hypothesis: "Hypothesis: perfect for a long drive", cover: "", spotify: "" },
-    { title: "[Song title 3]", artist: "[Artist]", album: "[Album]", hypothesis: "Hypothesis: you'll replay the bridge", cover: "", spotify: "" },
-    { title: "[Song title 4]", artist: "[Artist]", album: "[Album]", hypothesis: "Hypothesis: a new favourite", cover: "", spotify: "" },
-    { title: "[Song title 5]", artist: "[Artist]", album: "[Album]", hypothesis: "Hypothesis: trust me on this one", cover: "", spotify: "" },
-  ],
+  // 02 · Discover New: themed recommendations.
+  // Each theme has a name, a one-line blurb and 5 songs. Add or remove themes freely.
+  discover: {
+    themes: [
+      {
+        name: "[Theme 1, e.g. Indie Gems]",
+        blurb: "[One line on this theme, e.g. songs that deserve way more plays]",
+        songs: [
+        { title: "[Song title 1]", artist: "[Artist]", hypothesis: "Hypothesis: you'll like this", cover: "", spotify: "" },
+        { title: "[Song title 2]", artist: "[Artist]", hypothesis: "Hypothesis: perfect for a long drive", cover: "", spotify: "" },
+        { title: "[Song title 3]", artist: "[Artist]", hypothesis: "Hypothesis: you'll replay the bridge", cover: "", spotify: "" },
+        { title: "[Song title 4]", artist: "[Artist]", hypothesis: "Hypothesis: your new favourite", cover: "", spotify: "" },
+        { title: "[Song title 5]", artist: "[Artist]", hypothesis: "Hypothesis: trust me on this one", cover: "", spotify: "" },
+        ],
+      },
+      {
+        name: "[Theme 2, e.g. Holiday Songs]",
+        blurb: "[One line on this theme]",
+        songs: [
+        { title: "[Song title 1]", artist: "[Artist]", hypothesis: "Hypothesis: you'll like this", cover: "", spotify: "" },
+        { title: "[Song title 2]", artist: "[Artist]", hypothesis: "Hypothesis: perfect for a long drive", cover: "", spotify: "" },
+        { title: "[Song title 3]", artist: "[Artist]", hypothesis: "Hypothesis: you'll replay the bridge", cover: "", spotify: "" },
+        { title: "[Song title 4]", artist: "[Artist]", hypothesis: "Hypothesis: your new favourite", cover: "", spotify: "" },
+        { title: "[Song title 5]", artist: "[Artist]", hypothesis: "Hypothesis: trust me on this one", cover: "", spotify: "" },
+        ],
+      },
+      {
+        name: "[Theme 3, e.g. Late-Night Drives]",
+        blurb: "[One line on this theme]",
+        songs: [
+        { title: "[Song title 1]", artist: "[Artist]", hypothesis: "Hypothesis: you'll like this", cover: "", spotify: "" },
+        { title: "[Song title 2]", artist: "[Artist]", hypothesis: "Hypothesis: perfect for a long drive", cover: "", spotify: "" },
+        { title: "[Song title 3]", artist: "[Artist]", hypothesis: "Hypothesis: you'll replay the bridge", cover: "", spotify: "" },
+        { title: "[Song title 4]", artist: "[Artist]", hypothesis: "Hypothesis: your new favourite", cover: "", spotify: "" },
+        { title: "[Song title 5]", artist: "[Artist]", hypothesis: "Hypothesis: trust me on this one", cover: "", spotify: "" },
+        ],
+      },
+    ],
+  },
 
   // 03 · On rotation: the five songs I can't get enough of right now (#1 = most played)
   onRotation: {

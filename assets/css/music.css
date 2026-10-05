@@ -538,3 +538,38 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
   .card-head .kicker { font-size: 25px; }
   .counter { font-size: 22px; letter-spacing: 1px; }
 }
+
+/* ---------- Discover New: theme carousel (outer) ---------- */
+.theme-bar {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  margin: 2px 0 18px;
+  padding-bottom: 16px;
+  border-bottom: 1.5px dashed var(--rule);
+}
+.round-btn--sm { width: 36px; height: 36px; }
+.theme-label { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0; }
+.theme-count { font: 500 11px/1 var(--mono); letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink-faint); }
+.theme-name {
+  font-family: var(--hand);
+  font-weight: 700;
+  font-size: 27px;
+  line-height: 1.1;
+  color: var(--ink);
+  background: var(--tape);
+  padding: 2px 14px 4px;
+  transform: rotate(-1.5deg);
+  max-width: 100%;
+}
+.theme-name.placeholder { font-style: normal; color: var(--ink-soft); }
+.theme-blurb { font-size: 14px; color: var(--ink-soft); line-height: 1.35; }
+.theme-label.flip-r { animation: theme-in-r .35s ease; }
+.theme-label.flip-l { animation: theme-in-l .35s ease; }
+@keyframes theme-in-r { from { opacity: 0; transform: translateX(14px); } }
+@keyframes theme-in-l { from { opacity: 0; transform: translateX(-14px); } }
+@media (max-width: 520px) {
+  .theme-name { font-size: 23px; }
+  .theme-bar { gap: 8px; }
+}
