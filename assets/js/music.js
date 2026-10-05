@@ -162,27 +162,50 @@
   (function rotation() {
     var card = $('#rotation');
     var R = M.onRotation || { tracks: [] };
-    var sp = spotify(R.playlist);
+    var list = $('[data-slot="rotation"]', card);
+    var playIcon = '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M4 2.5v9l7.5-4.5z" fill="currentColor"/></svg>';
+    var stopIcon = '<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="1.5" y="1.5" width="9" height="9" rx="1.5" fill="currentColor"/></svg>';
+    var current = null;
 
-    $('[data-slot="rotation"]', card).innerHTML = R.tracks.map(function (t, i) {
+    list.innerHTML = R.tracks.map(function (t, i) {
       var bg = SWATCHES[i % SWATCHES.length];
+      var sp = spotify(t.spotify);
+      var art = '<span class="thumb" style="background:' + bg + '">' + (t.cover ? '<img src="' + esc(t.cover) + '" alt="" loading="lazy">' : '') + '</span>';
+      var title = esc(t.title);
       return '<li>' +
         '<span class="num">' + (i + 1) + '</span>' +
-        '<span class="thumb" style="background:' + bg + '">' + (t.cover ? '<img src="' + esc(t.cover) + '" alt="" loading="lazy">' : '') + '</span>' +
-        '<span><span class="t' + (isPlaceholder(t.title) ? ' placeholder' : '') + '">' + esc(t.title) + '</span><br><span class="a">' + esc(t.artist) + '</span></span>' +
+        (sp ? '<a class="thumb-link" href="' + sp.open + '" target="_blank" rel="noopener" title="Open in Spotify" aria-label="Open ' + title + ' in Spotify">' + art + '</a>' : art) +
+        '<span class="track-text"><span class="t' + (isPlaceholder(t.title) ? ' placeholder' : '') + '">' +
+          (sp ? '<a class="title-link" href="' + sp.open + '" target="_blank" rel="noopener" title="Open in Spotify">' + title + '</a>' : title) +
+        '</span><span class="a">' + esc(t.artist) + '</span></span>' +
         '<span class="note">' + (t.note ? '<svg width="22" height="12" viewBox="0 0 22 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M21 6H3M7 1L2 6l5 5"/></svg>' + esc(t.note) : '') + '</span>' +
         '<span class="len">' + esc(t.length) + '</span>' +
+        '<button class="track-play" data-i="' + i + '"' + (sp ? '' : ' disabled') + ' aria-label="Play ' + title + '">' + playIcon + '</button>' +
       '</li>';
     }).join('');
 
-    var open = $('[data-open-playlist]', card);
-    var listen = $('[data-listen-playlist]', card);
-    if (sp) { open.href = sp.open; }
-    else {
-      open.removeAttribute('href'); open.style.opacity = '.45'; open.style.pointerEvents = 'none';
-      listen.disabled = true; listen.title = 'Add a Spotify playlist link in data/music.js';
+    var rows = $$('li', list);
+    function setActive(i) {
+      rows.forEach(function (r, j) {
+        var on = j === i;
+        r.classList.toggle('is-active', on);
+        var b = $('.track-play', r);
+        b.innerHTML = on ? stopIcon : playIcon;
+        b.setAttribute('aria-label', (on ? 'Stop ' : 'Play ') + R.tracks[j].title);
+      });
     }
-    listen.addEventListener('click', function () { openPlayer(card, sp, { tall: true }); });
+    card._onClose = function () { current = null; setActive(-1); };
+
+    list.addEventListener('click', function (e) {
+      var b = e.target.closest('.track-play');
+      if (!b) return;
+      var i = +b.getAttribute('data-i');
+      if (current === i) { closePlayer(card); return; }
+      var t = R.tracks[i];
+      openPlayer(card, spotify(t.spotify), { caption: 'Now playing: ' + esc(t.title) + ' · ' + esc(t.artist) + '. Full track if you\'re signed in to Spotify, a preview otherwise.' });
+      current = i;
+      setActive(i);
+    });
   })();
 
   // ---------- 04 · Album ratings ----------

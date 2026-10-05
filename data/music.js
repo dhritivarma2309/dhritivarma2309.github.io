@@ -24,15 +24,35 @@ window.MUSIC = {
     { title: "[Song title 5]", artist: "[Artist]", album: "[Album]", hypothesis: "Hypothesis: trust me on this one", cover: "", spotify: "" },
   ],
 
-  // 03 · On rotation: what you're playing most right now
+  // 03 · On rotation: the five songs I can't get enough of right now (#1 = most played)
   onRotation: {
-    playlist: "", // Spotify playlist link for the "Listen" + "Open in Spotify" buttons
+    intro: "Five songs I can't get enough of right now.",
     tracks: [
-      { title: "[Track]", artist: "[Artist]", length: "3:42", cover: "", note: "on repeat" },
-      { title: "[Track]", artist: "[Artist]", length: "4:05", cover: "" },
-      { title: "[Track]", artist: "[Artist]", length: "2:58", cover: "" },
-      { title: "[Track]", artist: "[Artist]", length: "3:17", cover: "" },
-      { title: "[Track]", artist: "[Artist]", length: "3:51", cover: "" },
+      {
+        title: "Born Under Punches", artist: "Talking Heads", length: "5:49", note: "on repeat",
+        cover: "https://i.scdn.co/image/ab67616d00001e02be729cf3617a0be917fafc71",
+        spotify: "https://open.spotify.com/track/378M7erMwhXqPxk5hhkfyv",
+      },
+      {
+        title: "Merry Christmas, Please Don't Call", artist: "Bleachers", length: "3:22",
+        cover: "https://i.scdn.co/image/ab67616d00001e027fbed05d7226834da74c652b",
+        spotify: "https://open.spotify.com/track/0UOG0zUn7t8m8QcxfzR7AH",
+      },
+      {
+        title: "Dirty Blvd.", artist: "Lou Reed", length: "3:29",
+        cover: "https://i.scdn.co/image/ab67616d00001e026386bf63d1326306c9b168ef",
+        spotify: "https://open.spotify.com/track/4TDLfAmx45EpSiQYG6hCzT",
+      },
+      {
+        title: "Sunday Morning", artist: "Amanaz", length: "4:59",
+        cover: "https://i.scdn.co/image/ab67616d00001e021a3e9f74688b6c8f7fe97751",
+        spotify: "https://open.spotify.com/track/7rFu5IhLj50r2tNM2d2cat",
+      },
+      {
+        title: "In the Aeroplane Over the Sea", artist: "Neutral Milk Hotel", length: "3:22",
+        cover: "https://i.scdn.co/image/ab67616d00001e022dde3ceb3548ffbdb77a97e1",
+        spotify: "https://open.spotify.com/track/2SlmTRmuDJbFW7Hjzn6fCK",
+      },
     ],
   },
 
