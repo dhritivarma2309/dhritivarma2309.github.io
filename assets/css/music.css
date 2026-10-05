@@ -626,3 +626,9 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
 @media (max-width: 760px) {
   .section-head--turntable .icon.turntable { width: 180px; margin-bottom: 16px; }
 }
+/* record player sized to match the turntable illustration (same height) */
+.hero-art { max-width: 332px; }
+@media (max-width: 760px) { .hero-art { max-width: 250px; } }
+/* same illustration-to-heading spacing as Add To Queue */
+.section-head--turntable .icon.turntable { margin-bottom: 44px; }
+@media (max-width: 760px) { .section-head--turntable .icon.turntable { margin-bottom: 40px; } }
