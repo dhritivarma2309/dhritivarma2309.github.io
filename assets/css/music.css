@@ -552,7 +552,7 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
   align-items: center;
   gap: 14px;
   margin: 2px 0 18px;
-  padding-bottom: 16px;
+  padding: 10px 0 16px;   /* same top padding as a Heavy Rotation row, so the two line up */
   border-bottom: 1.5px dashed var(--rule);
 }
 .round-btn--sm { width: 30px; height: 30px; }
