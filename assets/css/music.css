@@ -590,3 +590,5 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
 /* keep the tape on the white frame only, never over real album art */
 .polaroid:has(img)::before { top: -13px; height: 15px; }
 
+/* Playlists song covers: no tape strip on the photo frame */
+.slide .polaroid::before { display: none; }
