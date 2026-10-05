@@ -618,3 +618,4 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
 .hero:has(.lede:empty) { gap: 0; }
 .group-title { margin-top: 36px; }
 @media (max-width: 760px) { .group-title { margin-top: 32px; } }
+#articles .section-head .icon { top: 8px; }
