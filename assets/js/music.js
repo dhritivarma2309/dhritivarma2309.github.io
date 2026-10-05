@@ -133,7 +133,6 @@
         return '<button class="dot" role="tab" aria-label="Song ' + (i + 1) + '"></button>';
       }).join('');
       $$('.dot', dots).forEach(function (d, i) { d.addEventListener('click', function () { go(i); }); });
-      $('[data-bind="slide-total"]', card).textContent = items.length;
       go(0);
       void track.offsetWidth; track.style.transition = '';
     }
@@ -144,7 +143,6 @@
       track.style.transform = 'translateX(' + (-100 * idx) + '%)';
       $$('.dot', dots).forEach(function (d, i) { d.setAttribute('aria-current', i === idx ? 'true' : 'false'); });
       $$('.slide', track).forEach(function (s, i) { s.setAttribute('aria-hidden', i === idx ? 'false' : 'true'); s.inert = i !== idx; });
-      $('[data-bind="slide-index"]', card).textContent = idx + 1;
       if (openCard === card) closePlayer(card);
     }
 
