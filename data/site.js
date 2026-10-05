@@ -2,5 +2,5 @@
 window.SITE = {
   name: "Dhriti Varma",
   github: "https://github.com/dhritivarma2309/dhritivarma2309.github.io",
-  linkedin: "https://www.linkedin.com/",  // e.g. "https://www.linkedin.com/in/<handle>/"
+  linkedin: "https://www.linkedin.com/in/dhriti-varma-445b728b",
 };
