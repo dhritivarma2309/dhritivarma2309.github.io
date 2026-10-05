@@ -18,7 +18,7 @@ window.MUSIC = {
   // 02 · Discover New: themed recommendations.
   // Each theme has a name, a one-line blurb and 5 songs. Add or remove themes freely.
   discover: {
-    intro: "Five songs I'd hand you, picked around a theme",
+    intro: "Mini mixtapes I'd make for a friend",
     themes: [
       {
         name: "[Theme 1, e.g. Indie Gems]",
