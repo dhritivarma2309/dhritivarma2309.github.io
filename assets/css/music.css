@@ -587,3 +587,5 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
 @keyframes sway { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-8deg); } }
 @keyframes tune { 0%, 100% { transform: translateX(0); } 45% { transform: translateX(9px); } 60% { transform: translateX(7px); } }
 @keyframes wave { 0% { opacity: 0; transform: translateX(-3px); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateX(3px); } }
+/* keep the tape on the white frame only, never over real album art */
+.polaroid:has(img)::before { top: -13px; height: 15px; }

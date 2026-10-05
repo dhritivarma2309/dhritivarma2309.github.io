@@ -16,38 +16,68 @@ window.MUSIC = {
     "[One line in your voice on what music is to you, e.g. what you listen to and why you rate albums.]",
 
   // 02 · Discover New: themed recommendations.
-  // Each theme has a name, a one-line blurb and 5 songs. Add or remove themes freely.
+  // Each theme has a name and 5 songs. Add or remove themes freely.
   discover: {
     intro: "Mini mixtapes I'd make for a friend",
     themes: [
       {
-        name: "[Theme 1, e.g. Indie Gems]",
+        name: "Favorites from Coke Studio Pakistan",
         songs: [
-        { title: "[Song title 1]", artist: "[Artist]", cover: "", spotify: "" },
-        { title: "[Song title 2]", artist: "[Artist]", cover: "", spotify: "" },
-        { title: "[Song title 3]", artist: "[Artist]", cover: "", spotify: "" },
-        { title: "[Song title 4]", artist: "[Artist]", cover: "", spotify: "" },
-        { title: "[Song title 5]", artist: "[Artist]", cover: "", spotify: "" },
+          {
+            title: "Tu Jhoom", artist: "Naseebo Lal, Abida Parveen",
+            cover: "https://i.scdn.co/image/ab67616d00001e029e0b1e09ab34a9251d2e8667",
+            spotify: "https://open.spotify.com/track/7t1nus1PrCP2ABTndYfMks",
+          },
+          {
+            title: "Pasoori", artist: "Ali Sethi, Shae Gill",
+            cover: "https://i.scdn.co/image/ab67616d00001e023f3d35703bdcd917dad51c4f",
+            spotify: "https://open.spotify.com/track/7lvDsmTRXFE3dK4OjvRiWB",
+          },
+          {
+            title: "Par Chanaa De", artist: "Shilpa Rao, Noori",
+            cover: "https://i.scdn.co/image/ab67616d00001e0275efc3c8640ac29607f11494",
+            spotify: "https://open.spotify.com/track/38O8NJUVsAiJYYv8YN8AAz",
+          },
+          {
+            title: "Jhol", artist: "Maanu, Annural Khalid",
+            cover: "https://i.scdn.co/image/ab67616d00001e02da7d1408f8e776063963572f",
+            spotify: "https://open.spotify.com/track/4XTgFBxBHN6var1BzAgE1m",
+          },
+          {
+            title: "Ranjish Hi Sahi", artist: "Ali Sethi",
+            cover: "https://i.scdn.co/image/ab67616d00001e020a8f94c8bcc814f0fb389bdf",
+            spotify: "https://open.spotify.com/track/4t2sMBajRuSKudtieXPgPp",
+          },
         ],
       },
       {
-        name: "[Theme 2, e.g. Holiday Songs]",
+        name: "Favorite Suits Soundtrack",
         songs: [
-        { title: "[Song title 1]", artist: "[Artist]", cover: "", spotify: "" },
-        { title: "[Song title 2]", artist: "[Artist]", cover: "", spotify: "" },
-        { title: "[Song title 3]", artist: "[Artist]", cover: "", spotify: "" },
-        { title: "[Song title 4]", artist: "[Artist]", cover: "", spotify: "" },
-        { title: "[Song title 5]", artist: "[Artist]", cover: "", spotify: "" },
-        ],
-      },
-      {
-        name: "[Theme 3, e.g. Late-Night Drives]",
-        songs: [
-        { title: "[Song title 1]", artist: "[Artist]", cover: "", spotify: "" },
-        { title: "[Song title 2]", artist: "[Artist]", cover: "", spotify: "" },
-        { title: "[Song title 3]", artist: "[Artist]", cover: "", spotify: "" },
-        { title: "[Song title 4]", artist: "[Artist]", cover: "", spotify: "" },
-        { title: "[Song title 5]", artist: "[Artist]", cover: "", spotify: "" },
+          {
+            title: "Short Change Hero", artist: "The Heavy",
+            cover: "https://i.scdn.co/image/ab67616d00001e02463986d828c59a03f2ab0a3f",
+            spotify: "https://open.spotify.com/track/7JOizhmt3HlBgQyJEa0AgK",
+          },
+          {
+            title: "Phantoms and Friends", artist: "Old Man Canyon",
+            cover: "https://i.scdn.co/image/ab67616d00001e02772410ccaa78a193b7490c98",
+            spotify: "https://open.spotify.com/track/5AyC8MfFvsuT8knryzcVYU",
+          },
+          {
+            title: "The Angel and the Fool", artist: "Broken Bells",
+            cover: "https://i.scdn.co/image/ab67616d00001e02198d560b5547761babc7607d",
+            spotify: "https://open.spotify.com/track/6Npas0IWUiZEsSt0J5VHRC",
+          },
+          {
+            title: "Wish I Knew You", artist: "The Revivalists",
+            cover: "https://i.scdn.co/image/ab67616d00001e0279b304ea995d0fc2c12d6a66",
+            spotify: "https://open.spotify.com/track/7jpP6QKGSJDpSFkAy3nKxG",
+          },
+          {
+            title: "Stompa", artist: "Serena Ryder",
+            cover: "https://i.scdn.co/image/ab67616d00001e02d4a988c472c0bffc143f7f84",
+            spotify: "https://open.spotify.com/track/0JQaQfhlQbY4RljVwnAval",
+          },
         ],
       },
     ],
