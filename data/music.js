@@ -12,8 +12,7 @@
    ========================================================================== */
 
 window.MUSIC = {
-  intro:
-    "[One line in your voice on what music is to you, e.g. what you listen to and why you rate albums.]",
+  intro: "", // optional line under the record player at the top; leave empty to hide
 
   // 02 · Discover New: themed recommendations.
   // Each theme has a name and 5 songs. Add or remove themes freely.
