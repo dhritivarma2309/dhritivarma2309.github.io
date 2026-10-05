@@ -210,8 +210,17 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
 }
 .rotation-list li.is-active { background: rgba(244, 216, 120, .35); }
 .rotation-list .thumb { width: 44px; height: 44px; border-radius: 4px; overflow: hidden; }
-.thumb-link { display: block; border-radius: 4px; }
-.thumb-link:hover .thumb { box-shadow: 0 0 0 2px var(--ink); }
+/* whole row opens the song on Spotify (stretched link); the play button sits above it */
+.rotation-list li { position: relative; }
+.row-link { color: inherit; text-decoration: none; }
+.row-link::after { content: ""; position: absolute; inset: 0; border-radius: 4px; }
+.rotation-list li:hover { background: rgba(31, 42, 68, .05); }
+.rotation-list li:hover .row-link { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+.rotation-list li:hover .thumb { box-shadow: 0 0 0 2px var(--ink); }
+.rotation-list li:has(.row-link:focus-visible) { outline: 2px dashed var(--red); outline-offset: 2px; }
+.row-link:focus-visible { outline: none; }
+.track-play { position: relative; z-index: 1; }
+.rotation-list li.is-active, .rotation-list li.is-active:hover { background: rgba(244, 216, 120, .35); }
 .track-text { display: flex; flex-direction: column; min-width: 0; }
 .track-text .t { line-height: 1.25; }
 .track-text .a { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

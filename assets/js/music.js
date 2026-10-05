@@ -174,9 +174,9 @@
       var title = esc(t.title);
       return '<li>' +
         '<span class="num">' + (i + 1) + '</span>' +
-        (sp ? '<a class="thumb-link" href="' + sp.open + '" target="_blank" rel="noopener" title="Open in Spotify" aria-label="Open ' + title + ' in Spotify">' + art + '</a>' : art) +
+        art +
         '<span class="track-text"><span class="t' + (isPlaceholder(t.title) ? ' placeholder' : '') + '">' +
-          (sp ? '<a class="title-link" href="' + sp.open + '" target="_blank" rel="noopener" title="Open in Spotify">' + title + '</a>' : title) +
+          (sp ? '<a class="row-link" href="' + sp.open + '" target="_blank" rel="noopener" title="Listen on Spotify">' + title + '<span class="sr-only"> (opens Spotify)</span></a>' : title) +
         '</span><span class="a">' + esc(t.artist) + '</span></span>' +
         '<span class="note">' + (t.note ? '<svg width="22" height="12" viewBox="0 0 22 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M21 6H3M7 1L2 6l5 5"/></svg>' + esc(t.note) : '') + '</span>' +
         '<span class="len">' + esc(t.length) + '</span>' +
