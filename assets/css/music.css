@@ -75,7 +75,7 @@ main { position: relative; }
   gap: 12px;
   margin-bottom: 18px;
 }
-.card-head .kicker { font-size: 26px; }
+.card-head .kicker { font-size: 30px; margin: 0; }
 .card-head .icon { flex: none; width: 36px; height: 36px; }
 .card-head .spacer { flex: 1; }
 
@@ -499,7 +499,7 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
   .section { margin-top: 88px; }
   .hero { grid-template-columns: minmax(0, 1fr); padding-top: 24px; }
   .hero-art { justify-self: center; max-width: 360px; margin-top: 30px; }
-  .start-here { margin-top: 70px; }
+  .group-title { margin-top: 72px; }
   .section-head, .section-head--turntable { padding-left: 0; }
   .section-head .icon { display: none; }
   .section-head--turntable .icon.turntable { display: block; position: static; width: 120px; margin-bottom: 14px; }
@@ -530,4 +530,11 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
 .repeat .loop { transform-box: view-box; transform-origin: 40px 32px; animation: loop-turn 3.2s cubic-bezier(.6,0,.3,1) infinite; }
 .repeat .disc { transform-box: view-box; transform-origin: 40px 32px; animation: spin 1.8s linear infinite; }
 @keyframes loop-turn { 0%, 55% { transform: rotate(0deg); } 100% { transform: rotate(180deg); } }
-#rotation .card-head .kicker { font-size: 30px; }
+
+/* ---------- "Something New" group heading (Discover New + Heavy Rotation) ---------- */
+.group-title { font-size: clamp(56px, 7vw, 76px); margin: 110px 0 40px; text-wrap: balance; }
+.counter { white-space: nowrap; }
+@media (max-width: 520px) {
+  .card-head .kicker { font-size: 25px; }
+  .counter { font-size: 22px; letter-spacing: 1px; }
+}
