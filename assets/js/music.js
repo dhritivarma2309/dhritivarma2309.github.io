@@ -103,6 +103,13 @@
     var themes = Array.isArray(D) ? [{ name: 'Discover New', blurb: '', songs: D }] : (D.themes || []);
     var t = 0, idx = 0, items = [];
     var nameEl = $('[data-theme-name]', card), blurbEl = $('[data-theme-blurb]', card), label = $('.theme-label', card);
+    var themeDots = $('[data-slot="theme-dots"]', card);
+    themeDots.innerHTML = themes.length > 1 ? themes.map(function (th, i) {
+      return '<button class="tdot" role="tab" aria-label="Theme ' + (i + 1) + ': ' + esc(th.name) + '"></button>';
+    }).join('') : '';
+    $$('.tdot', themeDots).forEach(function (d, i) {
+      d.addEventListener('click', function () { if (i !== t) renderTheme(i, i > t ? 1 : -1); });
+    });
 
     function renderTheme(n, dir) {
       t = (n + themes.length) % themes.length;
@@ -112,6 +119,7 @@
 
       nameEl.textContent = th.name; nameEl.classList.toggle('placeholder', isPlaceholder(th.name));
       blurbEl.textContent = th.blurb || ''; blurbEl.classList.toggle('placeholder', isPlaceholder(th.blurb));
+      $$('.tdot', themeDots).forEach(function (d, i) { d.setAttribute('aria-current', i === t ? 'true' : 'false'); });
       if (dir) { label.classList.remove('flip-l', 'flip-r'); void label.offsetWidth; label.classList.add(dir < 0 ? 'flip-l' : 'flip-r'); }
 
       track.style.transition = 'none';
