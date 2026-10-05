@@ -96,6 +96,8 @@
   // ---------- 02 · Discover carousel ----------
 
   (function discover() {
+    var PLAY_ICON = '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M4 2.5v9l7.5-4.5z" fill="currentColor"/></svg>';
+    var STOP_ICON = '<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="1.5" y="1.5" width="9" height="9" rx="1.5" fill="currentColor"/></svg>';
     var card = $('#discover');
     var track = $('[data-slot="discover"]', card);
     var dots = $('[data-slot="dots"]', card);
@@ -125,7 +127,9 @@
             (s.hypothesis ? '<p class="hypothesis">' + esc(s.hypothesis) + '</p>' : '') +
             '<h3' + (isPlaceholder(s.title) ? ' class="placeholder"' : '') + '>' + (sp ? '<a class="title-link" href="' + sp.open + '" target="_blank" rel="noopener" title="Open in Spotify">' + title + '</a>' : title) + '</h3>' +
             '<p class="by">' + esc(s.artist) + '</p>' +
-            '<div class="actions hide-when-playing">' + listenButton(sp) + '</div>' +
+            '<div class="actions">' +
+              '<button class="track-play track-play--lg" data-listen' + (sp ? '' : ' disabled') + ' aria-label="Play ' + title + '">' + PLAY_ICON + '</button>' +
+            '</div>' +
           '</div>' +
         '</article>';
       }).join('');
@@ -167,9 +171,20 @@
     });
 
     track.addEventListener('click', function (e) {
-      if (!e.target.closest('[data-listen]')) return;
+      var btn = e.target.closest('[data-listen]');
+      if (!btn) return;
+      if (openCard === card) { closePlayer(card); return; }
       var s = items[idx];
       openPlayer(card, spotify(s.spotify), { caption: 'Now playing: ' + esc(s.title) + ' · ' + esc(s.artist) + '. Full track if you\'re signed in to Spotify, a preview otherwise.' });
+    });
+
+    // play button shows ■ while this card's player is open, ▶ otherwise
+    card._onClose = function () {
+      $$('[data-listen]', track).forEach(function (b) { b.innerHTML = PLAY_ICON; b.classList.remove('is-on'); });
+    };
+    track.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-listen]');
+      if (b && openCard === card) { b.innerHTML = STOP_ICON; b.classList.add('is-on'); }
     });
 
     renderTheme(0);
