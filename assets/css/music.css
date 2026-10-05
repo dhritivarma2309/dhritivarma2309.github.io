@@ -515,3 +515,13 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
 .lede:empty { display: none; }
 .section-head--turntable { display: flex; flex-direction: column; justify-content: center; }
 @media (max-width: 760px) { .section-head--turntable { min-height: 0; } }
+
+/* ---------- Heavy Rotation doodle: records as barbell plates ---------- */
+.card-head .icon.barbell { width: 104px; height: 54px; overflow: visible; margin: -8px 4px -6px -4px; }
+.barbell .groove { stroke-dasharray: 14 6; animation: groove 2.2s linear infinite; }
+.barbell .groove.g2 { stroke-dasharray: 8 5; animation-duration: 1.6s; }
+.barbell .lift { animation: lift 2.8s ease-in-out infinite; }
+.barbell .effort { opacity: 0; animation: effort 2.8s ease-in-out infinite; }
+@keyframes lift { 0%, 100% { transform: translateY(0); } 45%, 60% { transform: translateY(-5px); } }
+@keyframes effort { 0%, 30%, 80%, 100% { opacity: 0; } 45%, 65% { opacity: 1; } }
+#rotation .card-head .kicker { font-size: 30px; }
