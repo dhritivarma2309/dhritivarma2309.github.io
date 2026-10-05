@@ -565,6 +565,7 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
 }
 .theme-name.placeholder { font-style: normal; color: var(--ink-soft); }
 .theme-blurb { font-size: 14px; color: var(--ink-soft); line-height: 1.35; }
+.theme-blurb:empty { display: none; }
 .theme-label.flip-r { animation: theme-in-r .35s ease; }
 .theme-label.flip-l { animation: theme-in-l .35s ease; }
 @keyframes theme-in-r { from { opacity: 0; transform: translateX(14px); } }

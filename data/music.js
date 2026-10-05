@@ -22,7 +22,6 @@ window.MUSIC = {
     themes: [
       {
         name: "[Theme 1, e.g. Indie Gems]",
-        blurb: "[One line on this theme, e.g. songs that deserve way more plays]",
         songs: [
         { title: "[Song title 1]", artist: "[Artist]", cover: "", spotify: "" },
         { title: "[Song title 2]", artist: "[Artist]", cover: "", spotify: "" },
@@ -33,7 +32,6 @@ window.MUSIC = {
       },
       {
         name: "[Theme 2, e.g. Holiday Songs]",
-        blurb: "[One line on this theme]",
         songs: [
         { title: "[Song title 1]", artist: "[Artist]", cover: "", spotify: "" },
         { title: "[Song title 2]", artist: "[Artist]", cover: "", spotify: "" },
@@ -44,7 +42,6 @@ window.MUSIC = {
       },
       {
         name: "[Theme 3, e.g. Late-Night Drives]",
-        blurb: "[One line on this theme]",
         songs: [
         { title: "[Song title 1]", artist: "[Artist]", cover: "", spotify: "" },
         { title: "[Song title 2]", artist: "[Artist]", cover: "", spotify: "" },
