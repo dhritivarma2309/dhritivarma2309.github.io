@@ -550,7 +550,7 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
   align-items: center;
   gap: 14px;
   margin: 2px 0 18px;
-  padding: 10px 0 8px;    /* same height as a Heavy Rotation row, so the text and the dashed line both line up */
+  padding: 10px 0 24px;   /* same height as a Heavy Rotation row, so the text and the dashed line both line up */
   border-bottom: 1.5px dashed var(--rule);
 }
 .round-btn--sm { width: 30px; height: 30px; }
@@ -590,10 +590,3 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
 /* keep the tape on the white frame only, never over real album art */
 .polaroid:has(img)::before { top: -13px; height: 15px; }
 
-/* theme dots: small, ink-coloured, so they read as separate from the red song dots */
-.theme-dots { display: flex; gap: 0; margin-top: 2px; }
-.theme-dots:empty { display: none; }
-.tdot { width: 20px; height: 18px; border: 0; padding: 0; background: none; cursor: pointer; display: grid; place-items: center; }
-.tdot::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #c9ccd3; transition: background .2s ease, transform .2s ease; }
-.tdot:hover::before { background: var(--ink-faint); }
-.tdot[aria-current="true"]::before { background: var(--ink); transform: scale(1.15); }
