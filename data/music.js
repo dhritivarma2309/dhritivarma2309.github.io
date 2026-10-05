@@ -145,20 +145,6 @@ window.MUSIC = {
     },
   ],
 
-  // Lab results: "What I Listened To" chart. Values are relative (hours, plays, %)
-  listening: {
-    intro:
-      "[A pencil-sketched chart of your year in music, by genre, artist or hours. Bar heights here are only illustrative; real data later.]",
-    unit: "hours",
-    bars: [
-      { label: "[Genre]", value: 62 },
-      { label: "[Genre]", value: 88, surprise: true },
-      { label: "[Genre]", value: 44 },
-      { label: "[Genre]", value: 28 },
-      { label: "[Genre]", value: 18 },
-    ],
-  },
-
   // 05 · Liner Notes: articles
   articlesIntro: "[One line in your voice describing this section.]",
   articles: [
