@@ -26,10 +26,9 @@ window.MUSIC = {
 
   // 03 · On rotation: the five songs I can't get enough of right now (#1 = most played)
   onRotation: {
-    intro: "Five songs I can't get enough of right now.",
     tracks: [
       {
-        title: "Born Under Punches", artist: "Talking Heads", length: "5:49", note: "on repeat",
+        title: "Born Under Punches", artist: "Talking Heads", length: "5:49",
         cover: "https://i.scdn.co/image/ab67616d00001e02be729cf3617a0be917fafc71",
         spotify: "https://open.spotify.com/track/378M7erMwhXqPxk5hhkfyv",
       },
