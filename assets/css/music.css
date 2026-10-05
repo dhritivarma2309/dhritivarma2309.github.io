@@ -573,3 +573,15 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
   .theme-name { font-size: 23px; }
   .theme-bar { gap: 8px; }
 }
+
+/* ---------- Playlists doodle: a radio that's playing ---------- */
+.card-head .icon.radio { width: 62px; height: 50px; overflow: visible; margin: -6px 2px -4px -2px; }
+.radio .cone { transform-box: view-box; transform-origin: 22px 39px; animation: beat .6s ease-in-out infinite; }
+.radio .antenna { transform-box: view-box; transform-origin: 26px 20px; animation: sway 2.4s ease-in-out infinite; }
+.radio .needle { animation: tune 5s ease-in-out infinite; }
+.radio .waves path { opacity: 0; animation: wave 1.2s ease-out infinite; }
+.radio .waves path:nth-child(2) { animation-delay: .3s; }
+@keyframes beat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.25); } }
+@keyframes sway { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-8deg); } }
+@keyframes tune { 0%, 100% { transform: translateX(0); } 45% { transform: translateX(9px); } 60% { transform: translateX(7px); } }
+@keyframes wave { 0% { opacity: 0; transform: translateX(-3px); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateX(3px); } }
