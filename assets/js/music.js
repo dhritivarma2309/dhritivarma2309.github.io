@@ -112,8 +112,6 @@
 
       nameEl.textContent = th.name; nameEl.classList.toggle('placeholder', isPlaceholder(th.name));
       blurbEl.textContent = th.blurb || ''; blurbEl.classList.toggle('placeholder', isPlaceholder(th.blurb));
-      $('[data-bind="theme-index"]', card).textContent = t + 1;
-      $('[data-bind="theme-total"]', card).textContent = themes.length;
       if (dir) { label.classList.remove('flip-l', 'flip-r'); void label.offsetWidth; label.classList.add(dir < 0 ? 'flip-l' : 'flip-r'); }
 
       track.style.transition = 'none';
