@@ -63,9 +63,9 @@ main { position: relative; }
 
 .pair {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);  /* both cards the same width */
   gap: 32px;
-  align-items: start;
+  align-items: stretch;                                   /* and the same height */
 }
 
 .card { padding: 26px 28px 28px; }
