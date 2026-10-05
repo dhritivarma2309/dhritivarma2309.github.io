@@ -146,7 +146,7 @@ window.MUSIC = {
   ],
 
   // 05 · Liner Notes: articles
-  articlesIntro: "[One line in your voice describing this section.]",
+  articlesIntro: "",
   articles: [
     { title: "[Article Title]", minutes: "x", href: "", image: "" },
     { title: "[Article Title]", minutes: "x", href: "", image: "" },
