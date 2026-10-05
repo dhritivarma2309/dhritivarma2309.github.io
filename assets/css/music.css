@@ -168,9 +168,7 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 22px;
-  padding-top: 18px;
-  border-top: 1.5px dashed var(--rule);
+  margin-top: 18px;
 }
 .round-btn {
   width: 36px; height: 36px;

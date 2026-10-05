@@ -125,7 +125,7 @@
             (s.hypothesis ? '<p class="hypothesis">' + esc(s.hypothesis) + '</p>' : '') +
             '<h3' + (isPlaceholder(s.title) ? ' class="placeholder"' : '') + '>' + (sp ? '<a class="title-link" href="' + sp.open + '" target="_blank" rel="noopener" title="Open in Spotify">' + title + '</a>' : title) + '</h3>' +
             '<p class="by">' + esc(s.artist) + '</p>' +
-            '<div class="actions hide-when-playing">' + listenButton(sp) + openButton(sp) + '</div>' +
+            '<div class="actions hide-when-playing">' + listenButton(sp) + '</div>' +
           '</div>' +
         '</article>';
       }).join('');
