@@ -619,3 +619,10 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
 .group-title { margin-top: 36px; }
 @media (max-width: 760px) { .group-title { margin-top: 32px; } }
 #articles .section-head .icon { top: 8px; }
+
+/* My Album Ratings: turntable on top, heading + line underneath (same pattern as Add To Queue) */
+.section-head--turntable { padding-left: 0; min-height: 0; display: block; padding-top: 0; }
+.section-head--turntable .icon.turntable { position: static; display: block; width: 240px; height: auto; margin: 0 0 22px; }
+@media (max-width: 760px) {
+  .section-head--turntable .icon.turntable { width: 180px; margin-bottom: 16px; }
+}
