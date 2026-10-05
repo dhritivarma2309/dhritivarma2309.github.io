@@ -173,7 +173,7 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
   border-top: 1.5px dashed var(--rule);
 }
 .round-btn {
-  width: 44px; height: 44px;
+  width: 36px; height: 36px;
   border-radius: 50%;
   border: 1.5px solid var(--ink);
   background: #fff;
@@ -182,18 +182,25 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
   transition: transform .15s ease, box-shadow .15s ease;
 }
 .round-btn:hover { box-shadow: 2px 2px 0 var(--ink); transform: translate(-1px, -1px); }
-.dots { display: flex; gap: 8px; }
+.dots { display: flex; gap: 2px; }
+/* small visible dot, comfortable 24px tap target */
 .dot {
-  width: 30px; height: 30px;
-  border-radius: 50%;
+  width: 24px; height: 24px;
   border: 0;
-  background: #c9ccd3;
+  background: none;
   cursor: pointer;
   padding: 0;
-  transition: background .2s ease, transform .2s ease;
+  display: grid; place-items: center;
 }
-.dot:hover { transform: scale(1.08); }
-.dot[aria-current="true"] { background: var(--red); }
+.dot::before {
+  content: "";
+  width: 9px; height: 9px;
+  border-radius: 5px;
+  background: #c9ccd3;
+  transition: width .2s ease, background .2s ease;
+}
+.dot:hover::before { background: var(--ink-faint); }
+.dot[aria-current="true"]::before { width: 20px; background: var(--red); }
 
 /* On rotation list */
 .rotation-list { list-style: none; margin: 0; padding: 0; }
@@ -518,7 +525,6 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
   .rotation-list .thumb { width: 40px; height: 40px; }
   .track-play { width: 36px; height: 36px; }
   .rotation-list .note { display: none; }
-  .dot { width: 22px; height: 22px; }
   .chart-card { padding: 22px 16px 16px; }
 }
 .lede:empty { display: none; }
@@ -549,18 +555,15 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
   padding-bottom: 16px;
   border-bottom: 1.5px dashed var(--rule);
 }
-.round-btn--sm { width: 36px; height: 36px; }
+.round-btn--sm { width: 30px; height: 30px; }
 .theme-label { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0; }
 .theme-count { font: 500 11px/1 var(--mono); letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink-faint); }
 .theme-name {
   font-family: var(--hand);
   font-weight: 700;
-  font-size: 27px;
-  line-height: 1.1;
+  font-size: 26px;
+  line-height: 1.15;
   color: var(--ink);
-  background: var(--tape);
-  padding: 2px 14px 4px;
-  transform: rotate(-1.5deg);
   max-width: 100%;
 }
 .theme-name.placeholder { font-style: normal; color: var(--ink-soft); }
