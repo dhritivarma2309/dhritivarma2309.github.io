@@ -698,3 +698,8 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
 #albums { margin-top: 36px; }
 .group-title { margin-top: 120px; }
 @media (max-width: 760px) { #albums { margin-top: 32px; } .group-title { margin-top: 96px; } }
+/* record player now sits above Add To Queue; the page opens with My Album Ratings */
+#albums { margin-top: 0; }
+.queue-art { margin-top: 120px; }
+.queue-art + .group-title { margin-top: 36px; }
+@media (max-width: 760px) { .queue-art { margin-top: 96px; } .queue-art + .group-title { margin-top: 32px; } }
