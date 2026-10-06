@@ -151,6 +151,12 @@ window.MUSIC = {
       cover: "https://i.scdn.co/image/ab67616d0000b2737af33100829e8ad29c790cf0",
       spotify: "https://open.spotify.com/album/0ut7Kp2wU9k3nNCFk3f71W",
     },
+    {
+      title: "Remain in Light", artist: "Talking Heads", year: "1980",
+      rating: "masterpiece", favoriteSong: "Once in a Lifetime", rsRank: "39",
+      cover: "https://i.scdn.co/image/ab67616d0000b273e49a405217bda217816f7bf5",
+      spotify: "https://open.spotify.com/album/1JvXxLsm0PxlGH4LXzqMGq",
+    },
   ],
 
   // 05 · Liner Notes: articles
