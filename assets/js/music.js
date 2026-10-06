@@ -245,13 +245,16 @@
 
   (function albums() {
     var slot = $('[data-slot="albums"]');
+    // order cards by Rolling Stone rank (#1 first); unranked albums go last
+    var rk = function (a) { var n = parseInt(a.rsRank, 10); return isNaN(n) ? Infinity : n; };
+    (M.albums || []).sort(function (a, b) { return rk(a) - rk(b); });
     var scale = M.ratingScale || 5;
     var ring = '<svg viewBox="0 0 100 50" preserveAspectRatio="none" fill="none" stroke="#c0352b" stroke-width="2.2" stroke-linecap="round"><path d="M60 3C30 1 3 9 3 26s28 22 52 21 42-8 42-23S72 2 44 4"/></svg>';
 
     slot.innerHTML = (M.albums || []).map(function (a, i) {
       var sp = spotify(a.spotify);
       return '<article class="paper specimen tape" data-card>' +
-        '<div class="specimen-meta"><span>Rolling Stone 500</span>' +
+        '<div class="specimen-meta"><span>Rolling Stone Rank</span>' +
           (a.rsRank ? (M.rsList ? '<a href="' + esc(M.rsList) + '" target="_blank" rel="noopener" title="Rolling Stone\'s 500 Greatest Albums of All Time" aria-label="Number ' + esc(a.rsRank) + ' on Rolling Stone\'s 500 Greatest Albums of All Time">#' + esc(a.rsRank) + '</a>' : '<span>#' + esc(a.rsRank) + '</span>') : '<span>Unranked</span>') +
         '</div>' +
         '<div class="specimen-media">' +
