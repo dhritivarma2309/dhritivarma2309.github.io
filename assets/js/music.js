@@ -266,7 +266,12 @@
           '<span class="rating" aria-label="Rated ' + esc(a.rating) + ' out of ' + scale + '">' + ring + esc(a.rating) + '/' + scale + '</span>' +
           '<p class="by">' + esc(a.artist) + '</p>' +
         '</div>' +
-        '<p class="best"><span>Favorite song</span><strong>' + esc(a.favoriteSong || a.bestSong) + '</strong></p>' +
+        '<div class="best">' +
+          '<p><span>Favorite song</span><strong>' + esc(a.favoriteSong || a.bestSong) + '</strong></p>' +
+          (a.rsRank ? '<p class="rs"><span>Rolling Stone</span>' +
+            (M.rsList ? '<a href="' + esc(M.rsList) + '" target="_blank" rel="noopener" title="Rolling Stone\'s 500 Greatest Albums of All Time" aria-label="Number ' + esc(a.rsRank) + ' on Rolling Stone\'s 500 Greatest Albums of All Time">#' + esc(a.rsRank) + '</a>' : '<strong>#' + esc(a.rsRank) + '</strong>') +
+          '</p>' : '') +
+        '</div>' +
         '<div class="specimen-actions">' + listenButton(sp).replace('btn btn--solid', 'btn') + '</div>' +
       '</article>';
     }).join('');
@@ -365,7 +370,9 @@
     }
 
     var colors = ['var(--sky)', 'var(--lilac)', 'var(--sage)'];
-    $('[data-slot="articles"]').innerHTML = (M.articles || []).map(function (a, i) {
+    var artSlot = $('[data-slot="articles"]');
+    if (!artSlot) return;
+    artSlot.innerHTML = (M.articles || []).map(function (a, i) {
       var live = !!a.href;
       var tag = live ? 'a href="' + esc(a.href) + '"' : 'div aria-disabled="true"';
       return '<' + tag + ' class="paper article-card tape">' +
