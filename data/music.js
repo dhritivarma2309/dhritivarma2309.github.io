@@ -115,7 +115,7 @@ window.MUSIC = {
   },
 
   // 04 · Album ratings
-  albumsIntro: "Just an enthusiastic listener with a scorecard listening to Rolling Stone's 500 Greatest Albums of All Time", // optional line under the heading; leave empty to hide
+  albumsIntro: "Just an enthusiastic listener with a scorecard, listening to Rolling Stone's 500 Greatest Albums of All Time", // optional line under the heading; leave empty to hide
   ratingScale: 10, // ratings are out of 10
   // rsRank: the album's place on Rolling Stone's 500 Greatest Albums of All Time (2020 list)
   rsList: "https://www.rollingstone.com/music/music-lists/best-albums-of-all-time-1062063/",
