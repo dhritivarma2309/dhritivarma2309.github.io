@@ -673,3 +673,23 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
 @media (prefers-reduced-motion: reduce) { .liner .ink { stroke-dashoffset: 0; } .liner .lp-slide { transform: translateY(-46px); } .liner .doodle-note { opacity: 1; } }
 #albums .section-head--turntable .lede { max-width: none; }
 .specimen { padding-top: 24px; }
+
+/* ---------- Emoji ratings + rating key ---------- */
+.rating .emoji { position: relative; font-size: 22px; line-height: 1; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
+.rating { padding: 6px 12px; }
+.rubric { margin-top: 44px; padding: 20px 24px 22px; }
+.rubric-title { font-family: var(--hand); font-size: 24px; color: var(--red); margin: 0 0 14px; line-height: 1; }
+.rubric ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px 24px; }
+.rubric li { display: flex; gap: 12px; align-items: flex-start; }
+.rubric li + li { border-left: 1.5px dashed var(--rule); padding-left: 24px; }
+.rubric .emoji { font-size: 24px; line-height: 1.1; flex: none; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
+.rubric strong { display: block; font-size: 15px; }
+.rubric li span:not(.emoji) { display: block; font-size: 14px; color: var(--ink-soft); line-height: 1.45; margin-top: 2px; }
+@media (max-width: 900px) {
+  .rubric ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .rubric li:nth-child(3) { border-left: 0; padding-left: 0; }
+}
+@media (max-width: 480px) {
+  .rubric ul { grid-template-columns: 1fr; }
+  .rubric li + li { border-left: 0; padding-left: 0; border-top: 1.5px dashed var(--rule); padding-top: 14px; }
+}

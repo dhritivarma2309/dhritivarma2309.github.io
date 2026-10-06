@@ -116,32 +116,38 @@ window.MUSIC = {
 
   // 04 · Album ratings
   albumsIntro: "Just an enthusiastic listener with a scorecard, listening to Rolling Stone's 500 Greatest Albums of All Time", // optional line under the heading; leave empty to hide
-  ratingScale: 10, // ratings are out of 10
+  // How I rate: each album's rating is one of these keys ("masterpiece", "respect", "gems", "notforme")
+  rubric: [
+    { key: "masterpiece", emoji: "💖", label: "Masterpiece", note: "Loved it, start to finish." },
+    { key: "respect", emoji: "🙌", label: "Deep respect", note: "I see the greatness." },
+    { key: "gems", emoji: "✨", label: "A few gems", note: "Some songs I'll keep." },
+    { key: "notforme", emoji: "🤷‍♀️", label: "Not for me", note: "I understand that others love it. I just don't." },
+  ],
   // rsRank: the album's place on Rolling Stone's 500 Greatest Albums of All Time (2020 list)
   rsList: "https://www.rollingstone.com/music/music-lists/best-albums-of-all-time-1062063/",
   // Tip: to use your own cover image, drop it in assets/img/covers/ and set cover: "../assets/img/covers/<file>.jpg"
   albums: [
     {
       title: "Random Access Memories", artist: "Daft Punk", year: "2013",
-      rating: "9", favoriteSong: "Giorgio by Moroder", rsRank: "295",
+      rating: "masterpiece", favoriteSong: "Giorgio by Moroder", rsRank: "295",
       cover: "https://i.scdn.co/image/ab67616d0000b2739b9b36b0e22870b9f542d937",
       spotify: "https://open.spotify.com/album/4m2880jivSbbyEGAKfITCa",
     },
     {
       title: "Graceland", artist: "Paul Simon", year: "1986",
-      rating: "8", favoriteSong: "You Can Call Me Al", rsRank: "46",
+      rating: "masterpiece", favoriteSong: "You Can Call Me Al", rsRank: "46",
       cover: "https://i.scdn.co/image/ab67616d0000b273dd83eef605c1ce2f27722ea1",
       spotify: "https://open.spotify.com/album/4WoQ94qzwQj28n3nlSOVLB",
     },
     {
       title: "The Velvet Underground & Nico", artist: "The Velvet Underground", year: "1967",
-      rating: "9", favoriteSong: "Venus in Furs", rsRank: "23",
+      rating: "masterpiece", favoriteSong: "Venus in Furs", rsRank: "23",
       cover: "https://i.scdn.co/image/ab67616d0000b273449911a105dba137b650d3e7",
       spotify: "https://open.spotify.com/album/2QkDDVLuh025znjaxvTfAY",
     },
     {
       title: "Transformer", artist: "Lou Reed", year: "1972",
-      rating: "7", favoriteSong: "Vicious", rsRank: "109",
+      rating: "gems", favoriteSong: "Vicious", rsRank: "109",
       cover: "https://i.scdn.co/image/ab67616d0000b2737af33100829e8ad29c790cf0",
       spotify: "https://open.spotify.com/album/0ut7Kp2wU9k3nNCFk3f71W",
     },

@@ -248,7 +248,7 @@
     // order cards by Rolling Stone rank (#1 first); unranked albums go last
     var rk = function (a) { var n = parseInt(a.rsRank, 10); return isNaN(n) ? Infinity : n; };
     (M.albums || []).sort(function (a, b) { return rk(a) - rk(b); });
-    var scale = M.ratingScale || 5;
+    var tiers = {}; (M.rubric || []).forEach(function (t) { tiers[t.key] = t; });
     var ring = '<svg viewBox="0 0 100 50" preserveAspectRatio="none" fill="none" stroke="#c0352b" stroke-width="2.2" stroke-linecap="round"><path d="M60 3C30 1 3 9 3 26s28 22 52 21 42-8 42-23S72 2 44 4"/></svg>';
 
     slot.innerHTML = (M.albums || []).map(function (a, i) {
@@ -267,13 +267,21 @@
           '<h3' + (isPlaceholder(a.title) ? ' class="placeholder"' : '') + '>' +
             (sp ? '<a class="title-link" href="' + sp.open + '" target="_blank" rel="noopener" title="Open in Spotify">' + esc(a.title) + '</a>' : esc(a.title)) +
           '</h3>' +
-          '<span class="rating" aria-label="Rated ' + esc(a.rating) + ' out of ' + scale + '">' + ring + esc(a.rating) + '/' + scale + '</span>' +
+          (tiers[a.rating] ? '<span class="rating" role="img" title="' + esc(tiers[a.rating].label) + '" aria-label="My rating: ' + esc(tiers[a.rating].label) + '">' + ring + '<span class="emoji">' + tiers[a.rating].emoji + '</span></span>' : '') +
           '<p class="by">' + esc(a.artist) + '</p>' +
         '</div>' +
         '<p class="best"><span>Favorite song</span><strong>' + esc(a.favoriteSong || a.bestSong) + '</strong></p>' +
         '<div class="specimen-actions">' + listenButton(sp).replace('btn btn--solid', 'btn') + '</div>' +
       '</article>';
     }).join('');
+
+    // Rating key under the cards
+    var key = $('[data-slot="rubric"]');
+    if (key && M.rubric) {
+      key.innerHTML = '<p class="rubric-title">How I rate</p><ul>' + M.rubric.map(function (t) {
+        return '<li><span class="emoji" aria-hidden="true">' + t.emoji + '</span><div><strong>' + esc(t.label) + '</strong><span>' + esc(t.note) + '</span></div></li>';
+      }).join('') + '</ul>';
+    }
 
     // One full-width Spotify player strip under the cards ("the deck")
     var deck = $('#album-deck');
