@@ -693,3 +693,8 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
   .rubric ul { grid-template-columns: 1fr; }
   .rubric li + li { border-left: 0; padding-left: 0; border-top: 1.5px dashed var(--rule); padding-top: 14px; }
 }
+
+/* Order: hero → My Album Ratings → Add To Queue */
+#albums { margin-top: 36px; }
+.group-title { margin-top: 120px; }
+@media (max-width: 760px) { #albums { margin-top: 32px; } .group-title { margin-top: 96px; } }

@@ -97,6 +97,53 @@
       </div>
     </section>
 
+    <!-- 04 · Album ratings -->
+    <section class="section" id="albums" aria-labelledby="albums-title">
+      <svg class="doodle doodle--red hide-md" style="left:-80px; top:340px; width:42px" aria-hidden="true"><use href="#i-star"/></svg>
+      <div class="section-head section-head--turntable">
+        <svg class="icon turntable" viewBox="0 0 160 130" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="A turntable playing a record">
+                    <!-- plinth -->
+          <path d="M8 3 H152 C156 3 158 5 158 9 L157 120 C157 124 155 126 151 126 H9 C5 126 3 124 3 120 L2 9 C2 5 4 3 8 3 Z" fill="#fff"/>
+          <!-- platter -->
+          <circle cx="60" cy="60" r="51" stroke-width="1.6"/>
+          <!-- record (spins) -->
+          <g class="record">
+            <circle cx="60" cy="60" r="46" fill="#1f2a44" stroke="none"/>
+            <g stroke="#fff" stroke-opacity=".16" stroke-width="1"><circle cx="60" cy="60" r="41"/><circle cx="60" cy="60" r="36"/><circle cx="60" cy="60" r="30"/><circle cx="60" cy="60" r="24"/></g>
+            <path d="M33 33 A38 38 0 0 1 60 22" stroke="#fff" stroke-opacity=".45" stroke-width="3"/>
+            <path d="M87 87 A38 38 0 0 1 60 98" stroke="#fff" stroke-opacity=".25" stroke-width="3"/>
+            <circle cx="60" cy="60" r="15" fill="#c0352b" stroke="none"/>
+            <circle cx="60" cy="60" r="9" stroke="#fcfcf9" stroke-opacity=".6" stroke-width="1"/>
+            <path d="M52 55 h9 M52 59 h6" stroke="#fcfcf9" stroke-width="1.4"/>
+            <circle cx="60" cy="60" r="15" stroke="#1f2a44" stroke-width="1"/>
+            <circle cx="60" cy="60" r="2" fill="#fcfcf9" stroke="none"/>
+          </g>
+          <!-- tonearm (swings in) -->
+          <g class="arm">
+            <circle cx="134" cy="22" r="9" fill="#fff"/>
+            <circle cx="134" cy="22" r="3.5" fill="currentColor" stroke="none"/>
+            <path d="M134 22 L129 76 Q127 86 117 88 L98 87"/>
+            <path d="M99 82 L87 81 L86 91 L98 92 Z" fill="#fff"/>
+          </g>
+          <!-- controls -->
+          <circle cx="138" cy="106" r="8" fill="#fff"/><path d="M138 101v5"/>
+          <rect x="28" y="113" width="14" height="6" rx="2"/><rect x="47" y="113" width="14" height="6" rx="2"/>
+          <circle class="power" cx="16" cy="116" r="3" stroke="none"/>
+          <!-- notes drifting off the record -->
+          <g class="notes" stroke-width="1.6">
+            <g><path d="M104 30v-10l7-2v9"/><ellipse cx="102" cy="30" rx="2.6" ry="2"/><ellipse cx="109" cy="27" rx="2.6" ry="2"/></g>
+            <g><path d="M92 18v-10c3 1 5 3 5 6"/><ellipse cx="90" cy="18" rx="2.6" ry="2"/></g>
+            <g><path d="M114 44v-9l6-2v8"/><ellipse cx="112" cy="44" rx="2.4" ry="1.9"/><ellipse cx="118" cy="41" rx="2.4" ry="1.9"/></g>
+          </g>
+        </svg>
+        <h2 class="display" id="albums-title">My Album Ratings</h2>
+        <p class="lede" data-bind="albumsIntro"></p>
+      </div>
+      <div class="albums" data-slot="albums"></div>
+      <div class="album-deck" id="album-deck" data-card aria-live="polite"><div class="player" data-player></div></div>
+      <div class="paper rubric" data-slot="rubric" aria-label="How I rate albums"></div>
+    </section>
+
     <!-- 02 + 03 -->
     <!-- Add to Queue: Playlists + Heavy Rotation -->
     <h2 class="display group-title" id="add-to-queue">Add To Queue</h2>
@@ -182,52 +229,6 @@
       </section>
     </div>
 
-    <!-- 04 · Album ratings -->
-    <section class="section" id="albums" aria-labelledby="albums-title">
-      <svg class="doodle doodle--red hide-md" style="left:-80px; top:340px; width:42px" aria-hidden="true"><use href="#i-star"/></svg>
-      <div class="section-head section-head--turntable">
-        <svg class="icon turntable" viewBox="0 0 160 130" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="A turntable playing a record">
-                    <!-- plinth -->
-          <path d="M8 3 H152 C156 3 158 5 158 9 L157 120 C157 124 155 126 151 126 H9 C5 126 3 124 3 120 L2 9 C2 5 4 3 8 3 Z" fill="#fff"/>
-          <!-- platter -->
-          <circle cx="60" cy="60" r="51" stroke-width="1.6"/>
-          <!-- record (spins) -->
-          <g class="record">
-            <circle cx="60" cy="60" r="46" fill="#1f2a44" stroke="none"/>
-            <g stroke="#fff" stroke-opacity=".16" stroke-width="1"><circle cx="60" cy="60" r="41"/><circle cx="60" cy="60" r="36"/><circle cx="60" cy="60" r="30"/><circle cx="60" cy="60" r="24"/></g>
-            <path d="M33 33 A38 38 0 0 1 60 22" stroke="#fff" stroke-opacity=".45" stroke-width="3"/>
-            <path d="M87 87 A38 38 0 0 1 60 98" stroke="#fff" stroke-opacity=".25" stroke-width="3"/>
-            <circle cx="60" cy="60" r="15" fill="#c0352b" stroke="none"/>
-            <circle cx="60" cy="60" r="9" stroke="#fcfcf9" stroke-opacity=".6" stroke-width="1"/>
-            <path d="M52 55 h9 M52 59 h6" stroke="#fcfcf9" stroke-width="1.4"/>
-            <circle cx="60" cy="60" r="15" stroke="#1f2a44" stroke-width="1"/>
-            <circle cx="60" cy="60" r="2" fill="#fcfcf9" stroke="none"/>
-          </g>
-          <!-- tonearm (swings in) -->
-          <g class="arm">
-            <circle cx="134" cy="22" r="9" fill="#fff"/>
-            <circle cx="134" cy="22" r="3.5" fill="currentColor" stroke="none"/>
-            <path d="M134 22 L129 76 Q127 86 117 88 L98 87"/>
-            <path d="M99 82 L87 81 L86 91 L98 92 Z" fill="#fff"/>
-          </g>
-          <!-- controls -->
-          <circle cx="138" cy="106" r="8" fill="#fff"/><path d="M138 101v5"/>
-          <rect x="28" y="113" width="14" height="6" rx="2"/><rect x="47" y="113" width="14" height="6" rx="2"/>
-          <circle class="power" cx="16" cy="116" r="3" stroke="none"/>
-          <!-- notes drifting off the record -->
-          <g class="notes" stroke-width="1.6">
-            <g><path d="M104 30v-10l7-2v9"/><ellipse cx="102" cy="30" rx="2.6" ry="2"/><ellipse cx="109" cy="27" rx="2.6" ry="2"/></g>
-            <g><path d="M92 18v-10c3 1 5 3 5 6"/><ellipse cx="90" cy="18" rx="2.6" ry="2"/></g>
-            <g><path d="M114 44v-9l6-2v8"/><ellipse cx="112" cy="44" rx="2.4" ry="1.9"/><ellipse cx="118" cy="41" rx="2.4" ry="1.9"/></g>
-          </g>
-        </svg>
-        <h2 class="display" id="albums-title">My Album Ratings</h2>
-        <p class="lede" data-bind="albumsIntro"></p>
-      </div>
-      <div class="albums" data-slot="albums"></div>
-      <div class="album-deck" id="album-deck" data-card aria-live="polite"><div class="player" data-player></div></div>
-      <div class="paper rubric" data-slot="rubric" aria-label="How I rate albums"></div>
-    </section>
   </main>
 
   <footer class="wrap site-footer">
