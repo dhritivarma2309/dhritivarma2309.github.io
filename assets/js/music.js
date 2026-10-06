@@ -250,9 +250,10 @@
 
     slot.innerHTML = (M.albums || []).map(function (a, i) {
       var sp = spotify(a.spotify);
-      var n = String(i + 1).padStart(3, '0');
       return '<article class="paper specimen tape" data-card>' +
-        '<div class="specimen-meta"><span>' + n + '</span><span>' + esc(a.year) + '</span></div>' +
+        '<div class="specimen-meta"><span>Rolling Stone 500</span>' +
+          (a.rsRank ? (M.rsList ? '<a href="' + esc(M.rsList) + '" target="_blank" rel="noopener" title="Rolling Stone\'s 500 Greatest Albums of All Time" aria-label="Number ' + esc(a.rsRank) + ' on Rolling Stone\'s 500 Greatest Albums of All Time">#' + esc(a.rsRank) + '</a>' : '<span>#' + esc(a.rsRank) + '</span>') : '<span>Unranked</span>') +
+        '</div>' +
         '<div class="specimen-media">' +
           '<div class="polaroid">' +
             (sp ? '<a class="cover-link" href="' + sp.open + '" target="_blank" rel="noopener" title="Open in Spotify" aria-label="Open ' + esc(a.title) + ' in Spotify">' + cover(a.cover, i, a.title + ' cover') + '</a>'
@@ -266,12 +267,7 @@
           '<span class="rating" aria-label="Rated ' + esc(a.rating) + ' out of ' + scale + '">' + ring + esc(a.rating) + '/' + scale + '</span>' +
           '<p class="by">' + esc(a.artist) + '</p>' +
         '</div>' +
-        '<div class="best">' +
-          '<p><span>Favorite song</span><strong>' + esc(a.favoriteSong || a.bestSong) + '</strong></p>' +
-          (a.rsRank ? '<p class="rs"><span>Rolling Stone</span>' +
-            (M.rsList ? '<a href="' + esc(M.rsList) + '" target="_blank" rel="noopener" title="Rolling Stone\'s 500 Greatest Albums of All Time" aria-label="Number ' + esc(a.rsRank) + ' on Rolling Stone\'s 500 Greatest Albums of All Time">#' + esc(a.rsRank) + '</a>' : '<strong>#' + esc(a.rsRank) + '</strong>') +
-          '</p>' : '') +
-        '</div>' +
+        '<p class="best"><span>Favorite song</span><strong>' + esc(a.favoriteSong || a.bestSong) + '</strong></p>' +
         '<div class="specimen-actions">' + listenButton(sp).replace('btn btn--solid', 'btn') + '</div>' +
       '</article>';
     }).join('');
