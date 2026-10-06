@@ -278,7 +278,7 @@
     // Rating key under the cards
     var key = $('[data-slot="rubric"]');
     if (key && M.rubric) {
-      key.innerHTML = '<p class="rubric-title">How I rate</p><ul>' + M.rubric.map(function (t) {
+      key.innerHTML = '<p class="rubric-title">Rating rubric</p><ul>' + M.rubric.map(function (t) {
         return '<li><span class="emoji" aria-hidden="true">' + t.emoji + '</span><div><strong>' + esc(t.label) + '</strong><span>' + esc(t.note) + '</span></div></li>';
       }).join('') + '</ul>';
     }
