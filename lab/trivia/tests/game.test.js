@@ -1,4 +1,4 @@
-// Tests for the Trivia Night rules. Run from the repo root:  node --test lab/trivia/tests/game.test.js
+// Tests for the Trivia Night rules. Run from the repo root:  node --test lab/trivia/tests/*.test.js
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const G = require('../js/game.js');

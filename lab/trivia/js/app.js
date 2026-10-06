@@ -12,7 +12,8 @@
   'use strict';
 
   var G = window.TriviaGame;
-  var BOARDS = window.TRIVIA_BOARDS || [];
+  var Boards = window.TriviaBoards;
+  var PICK = 'trivia-night:pick';
   var STORE = 'trivia-night:v1';
   var KEYS = ['1', '2', '3', '4'];
 
@@ -22,7 +23,7 @@
 
   // ---- Local screen state (not part of the game rules) ----
   var state = null;           // the game, from game.js
-  var setup = { boardId: BOARDS[0] && BOARDS[0].id, teams: [{ name: '', bot: false }, { name: '', bot: false }] };
+  var setup = { boardId: null, teams: [{ name: '', bot: false }, { name: '', bot: false }] };
   var ui = { error: '', peek: false, fixing: false, flash: null };
   var botPlan = {};           // teamId -> time it will buzz, for the open question
 
@@ -101,10 +102,11 @@
       render();
     },
     'start': function () {
-      var board = BOARDS.filter(function (b) { return b.id === setup.boardId; })[0] || BOARDS[0];
+      var board = Boards.get(setup.boardId);
       try {
         ui.error = '';
-        set(G.createGame(board, setup.teams));
+        if (!board || !Boards.check(board).ready) throw new Error('Pick a board that has all 30 questions filled in.');
+        set(G.createGame(Boards.toGame(board), setup.teams));
       } catch (e) {
         ui.error = e.message;
         render();
@@ -218,14 +220,19 @@
         (setup.teams.length > 1 ? '<button class="tn-icon-btn" type="button" data-act="remove-team" data-i="' + i + '" aria-label="Remove team ' + (i + 1) + '">×</button>' : '') +
       '</div>';
     }).join('');
-    var boards = BOARDS.map(function (b) {
-      return '<option value="' + esc(b.id) + '"' + (b.id === setup.boardId ? ' selected' : '') + '>' + esc(b.title) + '</option>';
+    var all = Boards.all();
+    var ready = all.filter(function (b) { return Boards.check(b).ready; });
+    if (!ready.some(function (b) { return b.id === setup.boardId; })) setup.boardId = ready[0] ? ready[0].id : null;
+    var boards = all.map(function (b) {
+      var c = Boards.check(b);
+      var label = (b.title || 'Untitled board') + (c.ready ? '' : ' (draft: ' + c.filled + ' of ' + c.total + ')');
+      return '<option value="' + esc(b.id) + '"' + (b.id === setup.boardId ? ' selected' : '') + (c.ready ? '' : ' disabled') + '>' + esc(label) + '</option>';
     }).join('');
     return '<section class="tn-setup paper tape">' +
       '<h1 class="display tn-setup-title">Set up the game</h1>' +
       '<p class="tn-setup-lede">Everyone plays on this screen. Teams buzz with their button, or by pressing their number key.</p>' +
       '<form novalidate>' +
-        '<label class="tn-label" for="board">Board</label>' +
+        '<div class="tn-label-row"><label class="tn-label" for="board">Board</label><a class="tn-link-btn" href="build/">Build or edit boards</a></div>' +
         '<select id="board" name="board" class="tn-input">' + boards + '</select>' +
         '<fieldset class="tn-fieldset"><legend class="tn-label">Teams (up to ' + G.MAX_TEAMS + ')</legend>' + rows +
         (setup.teams.length < G.MAX_TEAMS ? '<button class="tn-link-btn" type="button" data-act="add-team">+ Add a team</button>' : '') +
@@ -379,6 +386,11 @@
   }
 
   load();
+  // Arriving from the builder's "Play this board" button.
+  try {
+    var picked = localStorage.getItem(PICK);
+    if (picked) { localStorage.removeItem(PICK); setup.boardId = picked; if (state && state.phase === 'final') state = null; save(); }
+  } catch (e) { /* ignore */ }
   if (state && state.phase === 'question') planBots();
   render();
 })();

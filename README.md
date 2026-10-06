@@ -13,7 +13,7 @@ I'm a product manager, and I think PMs today should build as well as spec. So I 
 | Music | ✅ Live | Discover carousel, what's on rotation, album ratings, a sketched listening chart, articles |
 | Music → *10 Best Bob Dylan Songs* | ✅ Template | Ranked listicle with a listen-along Spotify playlist |
 | Lab | 🚧 Coming soon | AI prototypes and agents |
-| Lab → *Trivia Night* | 🚧 In progress | Jeopardy-style quiz game for friends. Step 1 (single-device game) done |
+| Lab → *Trivia Night* | 🚧 In progress | Jeopardy-style quiz game for friends. Single-device game and board builder done |
 | Tennis | 🚧 Coming soon | |
 | Home | 🚧 Coming soon | |
 
