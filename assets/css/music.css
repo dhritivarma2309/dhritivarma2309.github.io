@@ -703,3 +703,4 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
 .queue-art { margin-top: 120px; }
 .queue-art + .group-title { margin-top: 36px; }
 @media (max-width: 760px) { .queue-art { margin-top: 96px; } .queue-art + .group-title { margin-top: 32px; } }
+#add-to-queue { margin-bottom: 40px; }
