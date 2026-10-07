@@ -704,3 +704,8 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
 .queue-art + .group-title { margin-top: 36px; }
 @media (max-width: 760px) { .queue-art { margin-top: 96px; } .queue-art + .group-title { margin-top: 32px; } }
 #add-to-queue { margin-bottom: 40px; }
+
+/* "Why I started" note: same card style as the rating rubric */
+.rubric.story { margin-top: 24px; }
+.story-p { margin: 0 0 12px; font-size: 15px; line-height: 1.65; color: var(--ink-soft); max-width: 860px; }
+.story-p:last-child { margin-bottom: 0; }

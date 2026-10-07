@@ -283,6 +283,15 @@
       }).join('') + '</ul>';
     }
 
+    // Note card under the rubric
+    var story = $('[data-slot="story"]'), st = M.albumsStory;
+    if (story) {
+      if (st && st.paragraphs && st.paragraphs.length) {
+        story.innerHTML = '<p class="rubric-title">' + esc(st.title || '') + '</p>' +
+          st.paragraphs.map(function (t) { return '<p class="story-p">' + esc(t) + '</p>'; }).join('');
+      } else story.remove();
+    }
+
     // One full-width Spotify player strip under the cards ("the deck")
     var deck = $('#album-deck');
     var current = null;

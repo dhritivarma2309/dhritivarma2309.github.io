@@ -116,6 +116,15 @@ window.MUSIC = {
 
   // 04 · Album ratings
   albumsIntro: "Just an enthusiastic listener with a scorecard, listening to Rolling Stone's 500 Greatest Albums of All Time", // optional line under the heading; leave empty to hide
+  // The note card under the rating rubric. One string per paragraph.
+  albumsStory: {
+    title: "Why I started",
+    paragraphs: [
+      "A while ago I noticed I'd fallen into a listening rut. I was often playing the same artists on repeat, and my Spotify recommendations kept serving me more of what I already liked.",
+      "Wanting to hear something completely new, I started working my way through Rolling Stone's 500 Greatest Albums of All Time. I know the list isn't perfect, but it has been a great way for me to discover music I'd have struggled to find on my own.",
+      "One beautiful outcome has been learning to listen to albums with intention: appreciating each album as a whole, the way that the artist meant it, start to finish. I have started to notice how the songs set each other up, how some underrated tracks make most sense in context. Many surprising moments have come from albums I thought I already knew. Hearing them start to finish, with fresh ears, I've found a much deeper relationship with music that had been there all along.",
+    ],
+  },
   // How I rate: each album's rating is one of these keys ("masterpiece", "respect", "gems", "notforme")
   rubric: [
     { key: "masterpiece", emoji: "💖", label: "Masterpiece", note: "Loved it, start to finish." },
