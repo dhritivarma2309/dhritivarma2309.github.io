@@ -323,7 +323,6 @@
       render(isNaN(limit) ? ALL : ALL.slice(0, limit));
       var more = $('[data-slot="see-all"]');
       if (more) {
-        more.querySelector('[data-count]').textContent = ALL.length;
         more.hidden = !ALL.length;
       }
     } else {
