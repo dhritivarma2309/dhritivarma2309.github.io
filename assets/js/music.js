@@ -288,7 +288,12 @@
     if (story) {
       if (st && st.paragraphs && st.paragraphs.length) {
         story.innerHTML = '<p class="rubric-title">' + esc(st.title || '') + '</p>' +
-          st.paragraphs.map(function (t) { return '<p class="story-p">' + esc(t) + '</p>'; }).join('');
+          (function () {
+            // two balanced columns: the last paragraph on the right, everything before it on the left
+            var ps = st.paragraphs.map(function (t) { return '<p class="story-p">' + esc(t) + '</p>'; });
+            if (ps.length < 2) return '<div class="story-cols one">' + ps.join('') + '</div>';
+            return '<div class="story-cols"><div>' + ps.slice(0, -1).join('') + '</div><div>' + ps[ps.length - 1] + '</div></div>';
+          })();
       } else story.remove();
     }
 
