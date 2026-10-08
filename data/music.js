@@ -122,7 +122,7 @@ window.MUSIC = {
     paragraphs: [
       "A while ago I noticed I'd fallen into a listening rut. I was often playing the same artists on repeat, and my Spotify recommendations kept serving me more of what I already liked.",
       "Wanting to hear something completely new, I started working my way through Rolling Stone's 500 Greatest Albums of All Time. I know the list isn't perfect, but it has been a great way for me to discover music I'd have struggled to find on my own.",
-      "One beautiful outcome has been learning to listen to albums with intention: appreciating each album as a whole, the way that the artist meant it, start to finish. I have started to notice how the songs set each other up, how some underrated tracks make most sense in context. Many surprising moments have come from albums I thought I already knew. Hearing them all the way through, with fresh ears, I've found a much deeper relationship with music that had been there all along.",
+      "One beautiful outcome of this exercise has been learning to listen to albums with intention: appreciating each album as a whole, the way the artist meant for us to listen. I have started to notice how songs set each other up, and how some underrated tracks make most sense in context of the entire album. Many surprising moments have come from albums I thought I already knew. Hearing them all the way through, with fresh ears, I've found a much deeper relationship with music that I had been listening to all along.",
     ],
   },
   // How I rate: each album's rating is one of these keys ("masterpiece", "respect", "gems", "notforme")
