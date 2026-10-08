@@ -99,6 +99,7 @@
     var PLAY_ICON = '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M4 2.5v9l7.5-4.5z" fill="currentColor"/></svg>';
     var STOP_ICON = '<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="1.5" y="1.5" width="9" height="9" rx="1.5" fill="currentColor"/></svg>';
     var card = $('#discover');
+    if (!card) return;
     var track = $('[data-slot="discover"]', card);
     var dots = $('[data-slot="dots"]', card);
     var D = M.discover || {};
@@ -194,6 +195,7 @@
 
   (function rotation() {
     var card = $('#rotation');
+    if (!card) return;
     var R = M.onRotation || { tracks: [] };
     var list = $('[data-slot="rotation"]', card);
     var playIcon = '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M4 2.5v9l7.5-4.5z" fill="currentColor"/></svg>';
@@ -245,13 +247,14 @@
 
   (function albums() {
     var slot = $('[data-slot="albums"]');
-    // order cards by Rolling Stone rank (#1 first); unranked albums go last
+    if (!slot) return;
+    // order by Rolling Stone rank (#1 first); unranked albums go last
     var rk = function (a) { var n = parseInt(a.rsRank, 10); return isNaN(n) ? Infinity : n; };
-    (M.albums || []).sort(function (a, b) { return rk(a) - rk(b); });
+    var ALL = (M.albums || []).slice().sort(function (a, b) { return rk(a) - rk(b); });
     var tiers = {}; (M.rubric || []).forEach(function (t) { tiers[t.key] = t; });
     var ring = '<svg viewBox="0 0 100 50" preserveAspectRatio="none" fill="none" stroke="#c0352b" stroke-width="2.2" stroke-linecap="round"><path d="M60 3C30 1 3 9 3 26s28 22 52 21 42-8 42-23S72 2 44 4"/></svg>';
 
-    slot.innerHTML = (M.albums || []).map(function (a, i) {
+    function cardHTML(a, i) {
       var sp = spotify(a.spotify);
       return '<article class="paper specimen tape" data-card>' +
         '<div class="specimen-meta"><span>Rolling Stone Rank</span>' +
@@ -273,7 +276,124 @@
         '<p class="best"><span>Favorite song</span><strong>' + esc(a.favoriteSong || a.bestSong) + '</strong></p>' +
         '<div class="specimen-actions">' + listenButton(sp).replace('btn btn--solid', 'btn') + '</div>' +
       '</article>';
-    }).join('');
+    }
+
+    // One full-width Spotify player strip under the cards ("the deck")
+    var deck = $('#album-deck');
+    var shown = [], current = null;
+
+    function setActive(i) {
+      $$('.specimen', slot).forEach(function (c, j) {
+        var on = j === i;
+        c.classList.toggle('is-active', on);
+        $('[data-listen]', c).innerHTML = on
+          ? '<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" rx="1.5" fill="currentColor"/></svg>Hide player'
+          : '<span class="play"></span>Listen';
+      });
+    }
+    if (deck) deck._onClose = function () { current = null; setActive(-1); };
+
+    function render(list) {
+      if (deck && current !== null) closePlayer(deck);
+      if (deck) slot.after(deck);
+      shown = list;
+      slot.innerHTML = list.map(cardHTML).join('');
+      $$('.specimen', slot).forEach(function (card, i) {
+        $('[data-listen]', card).addEventListener('click', function () {
+          if (current === i) { closePlayer(deck); return; }
+          var a = shown[i];
+          // phones (one card per row): open right under the tapped card; otherwise under the whole grid
+          if (window.matchMedia('(max-width: 520px)').matches) card.after(deck); else slot.after(deck);
+          openPlayer(deck, spotify(a.spotify), {
+            height: 152,
+            caption: 'Now playing: ' + esc(a.title) + ' · ' + esc(a.artist) + '. Full tracks if you\'re signed in to Spotify, previews otherwise.',
+          });
+          current = i;
+          setActive(i);
+          var r = deck.getBoundingClientRect();
+          if (r.bottom > window.innerHeight || r.top < 0) deck.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+      });
+    }
+
+    // Music page shows the first few (data-limit); the "See all" page adds filters + search
+    var limit = parseInt(slot.getAttribute('data-limit'), 10);
+    var filters = $('[data-slot="album-filters"]');
+    if (!filters) {
+      render(isNaN(limit) ? ALL : ALL.slice(0, limit));
+      var more = $('[data-slot="see-all"]');
+      if (more) {
+        more.querySelector('[data-count]').textContent = ALL.length;
+        more.hidden = !ALL.length;
+      }
+    } else {
+      setupFilters(filters);
+    }
+
+    function setupFilters(box) {
+      var RANGES = [[1, 100], [101, 200], [201, 300], [301, 400], [401, 500]];
+      var params = new URLSearchParams(location.search);
+      var state = { q: params.get('q') || '', rating: params.get('rating') || '', rs: params.get('rs') || '' };
+
+      function count(fn) { return ALL.filter(fn).length; }
+      function chip(group, value, label, n) {
+        return '<button type="button" class="chip" data-group="' + group + '" data-value="' + value + '" aria-pressed="false">' + label +
+          (n != null ? ' <span class="n">' + n + '</span>' : '') + '</button>';
+      }
+      box.innerHTML =
+        '<label class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>' +
+          '<span class="sr-only">Search by artist or album</span><input type="search" data-q placeholder="Search by artist or album" autocomplete="off"></label>' +
+        '<div class="filter-row"><span class="filter-label">My rating</span><div class="chips" role="group" aria-label="Filter by my rating">' +
+          chip('rating', '', 'All') +
+          (M.rubric || []).map(function (t) { return chip('rating', t.key, '<span class="emoji" aria-hidden="true">' + t.emoji + '</span>' + esc(t.label), count(function (a) { return a.rating === t.key; })); }).join('') +
+        '</div></div>' +
+        '<div class="filter-row"><span class="filter-label">Rolling Stone rank</span><div class="chips" role="group" aria-label="Filter by Rolling Stone rank">' +
+          chip('rs', '', 'All') +
+          RANGES.map(function (r) { return chip('rs', r[0] + '-' + r[1], '#' + r[0] + '–' + r[1], count(function (a) { var n = rk(a); return n >= r[0] && n <= r[1]; })); }).join('') +
+        '</div></div>' +
+        '<div class="filter-foot"><p class="result-count" aria-live="polite" data-result></p><button type="button" class="link-btn" data-clear>Clear filters</button></div>';
+
+      var input = $('[data-q]', box);
+      input.value = state.q;
+
+      function apply() {
+        var q = state.q.trim().toLowerCase();
+        var range = state.rs ? state.rs.split('-').map(Number) : null;
+        var list = ALL.filter(function (a) {
+          if (state.rating && a.rating !== state.rating) return false;
+          if (range) { var n = rk(a); if (!(n >= range[0] && n <= range[1])) return false; }
+          if (q && (a.title + ' ' + a.artist).toLowerCase().indexOf(q) === -1) return false;
+          return true;
+        });
+        $$('.chip', box).forEach(function (c) {
+          c.setAttribute('aria-pressed', String(state[c.getAttribute('data-group')] === c.getAttribute('data-value')));
+        });
+        var active = state.q || state.rating || state.rs;
+        $('[data-clear]', box).hidden = !active;
+        $('[data-result]', box).textContent = list.length === ALL.length
+          ? 'All ' + ALL.length + ' albums'
+          : 'Showing ' + list.length + ' of ' + ALL.length + ' albums';
+        render(list);
+        var empty = $('[data-slot="albums-empty"]');
+        if (empty) empty.hidden = list.length > 0;
+        // keep the filters in the address bar so a filtered view can be shared
+        var p = new URLSearchParams();
+        if (state.q) p.set('q', state.q);
+        if (state.rating) p.set('rating', state.rating);
+        if (state.rs) p.set('rs', state.rs);
+        var qs = p.toString();
+        try { history.replaceState(null, '', location.pathname + (qs ? '?' + qs : '')); } catch (e) {}
+      }
+
+      box.addEventListener('click', function (e) {
+        var c = e.target.closest('.chip');
+        if (c) { state[c.getAttribute('data-group')] = c.getAttribute('data-value'); apply(); return; }
+        if (e.target.closest('[data-clear]')) { state = { q: '', rating: '', rs: '' }; input.value = ''; apply(); }
+      });
+      input.addEventListener('input', function () { state.q = input.value; apply(); });
+      $$('[data-clear-filters]').forEach(function (b) { b.addEventListener('click', function () { state = { q: '', rating: '', rs: '' }; input.value = ''; apply(); input.focus(); }); });
+      apply();
+    }
 
     // Rating key under the cards
     var key = $('[data-slot="rubric"]');
@@ -296,39 +416,6 @@
           })();
       } else story.remove();
     }
-
-    // One full-width Spotify player strip under the cards ("the deck")
-    var deck = $('#album-deck');
-    var current = null;
-    var cards = $$('.specimen', slot);
-
-    function setActive(i) {
-      cards.forEach(function (c, j) {
-        var on = j === i;
-        c.classList.toggle('is-active', on);
-        $('[data-listen]', c).innerHTML = on
-          ? '<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" rx="1.5" fill="currentColor"/></svg>Hide player'
-          : '<span class="play"></span>Listen';
-      });
-    }
-    deck._onClose = function () { current = null; setActive(-1); };
-
-    cards.forEach(function (card, i) {
-      $('[data-listen]', card).addEventListener('click', function () {
-        if (current === i) { closePlayer(deck); return; }
-        var a = M.albums[i];
-        // phones (one card per row): open right under the tapped card; otherwise under the whole row
-        if (window.matchMedia('(max-width: 520px)').matches) card.after(deck); else slot.after(deck);
-        openPlayer(deck, spotify(a.spotify), {
-          height: 152,
-          caption: 'Now playing: ' + esc(a.title) + ' · ' + esc(a.artist) + '. Full tracks if you\'re signed in to Spotify, previews otherwise.',
-        });
-        current = i;
-        setActive(i);
-        var r = deck.getBoundingClientRect();
-        if (r.bottom > window.innerHeight || r.top < 0) deck.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      });
-    });
   })();
 
   // ---------- Lab results: pencil-sketch bar chart ----------
