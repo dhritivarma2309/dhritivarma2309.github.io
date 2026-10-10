@@ -166,6 +166,12 @@ window.MUSIC = {
       cover: "https://i.scdn.co/image/ab67616d0000b273e49a405217bda217816f7bf5",
       spotify: "https://open.spotify.com/album/1JvXxLsm0PxlGH4LXzqMGq",
     },
+    {
+      title: "AM", artist: "Arctic Monkeys", year: "2013",
+      rating: "respect", favoriteSong: "Do I Wanna Know?", rsRank: "346",
+      cover: "https://i.scdn.co/image/ab67616d0000b2734f669de38690faf2cf88c245",
+      spotify: "https://open.spotify.com/album/5bU1XKYxHhEwukllT20xtk",
+    },
   ],
 
   // 05 · Liner Notes: articles
