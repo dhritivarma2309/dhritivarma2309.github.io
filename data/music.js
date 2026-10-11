@@ -180,7 +180,7 @@ window.MUSIC = {
     },
     {
       title: "Rumours", artist: "Fleetwood Mac", year: "1977",
-      rating: "respect", favoriteSong: "", rsRank: "7",
+      rating: "respect", favoriteSong: "The Chain", rsRank: "7",
       cover: "https://i.scdn.co/image/ab67616d0000b27357df7ce0eac715cf70e519a7",
       spotify: "https://open.spotify.com/album/1bt6q2SruMsBtcerNVtpZB",
     },
