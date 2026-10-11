@@ -172,6 +172,12 @@ window.MUSIC = {
       cover: "https://i.scdn.co/image/ab67616d0000b2734f669de38690faf2cf88c245",
       spotify: "https://open.spotify.com/album/5bU1XKYxHhEwukllT20xtk",
     },
+    {
+      title: "Let It Bleed", artist: "The Rolling Stones", year: "1969",
+      rating: "gems", favoriteSong: "Gimme Shelter", rsRank: "41",
+      cover: "https://i.scdn.co/image/ab67616d0000b2732af30c881bb23cfb82a8cf99",
+      spotify: "https://open.spotify.com/album/4l4u9e9jSbotSXNjYfOugy",
+    },
   ],
 
   // 05 · Liner Notes: articles
