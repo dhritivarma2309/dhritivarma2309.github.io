@@ -184,6 +184,12 @@ window.MUSIC = {
       cover: "https://i.scdn.co/image/ab67616d0000b27357df7ce0eac715cf70e519a7",
       spotify: "https://open.spotify.com/album/1bt6q2SruMsBtcerNVtpZB",
     },
+    {
+      title: "Thriller", artist: "Michael Jackson", year: "1982",
+      rating: "masterpiece", favoriteSong: "Wanna Be Startin' Somethin'", rsRank: "12",
+      cover: "https://i.scdn.co/image/ab67616d0000b27332a7d87248d1b75463483df5",
+      spotify: "https://open.spotify.com/album/2ANVost0y2y52ema1E9xAZ",
+    },
   ],
 
   // 05 · Liner Notes: articles
