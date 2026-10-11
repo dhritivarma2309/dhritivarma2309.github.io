@@ -178,6 +178,12 @@ window.MUSIC = {
       cover: "https://i.scdn.co/image/ab67616d0000b2732af30c881bb23cfb82a8cf99",
       spotify: "https://open.spotify.com/album/4l4u9e9jSbotSXNjYfOugy",
     },
+    {
+      title: "Rumours", artist: "Fleetwood Mac", year: "1977",
+      rating: "respect", favoriteSong: "", rsRank: "7",
+      cover: "https://i.scdn.co/image/ab67616d0000b27357df7ce0eac715cf70e519a7",
+      spotify: "https://open.spotify.com/album/1bt6q2SruMsBtcerNVtpZB",
+    },
   ],
 
   // 05 · Liner Notes: articles

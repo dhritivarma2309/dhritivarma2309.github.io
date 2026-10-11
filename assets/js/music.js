@@ -273,7 +273,9 @@
           (tiers[a.rating] ? '<span class="rating" role="img" title="' + esc(tiers[a.rating].label) + '" aria-label="My rating: ' + esc(tiers[a.rating].label) + '">' + ring + '<span class="emoji">' + tiers[a.rating].emoji + '</span></span>' : '') +
           '<p class="by">' + esc(a.artist) + '</p>' +
         '</div>' +
-        '<p class="best"><span>Favorite song</span><strong>' + esc(a.favoriteSong || a.bestSong) + '</strong></p>' +
+        ((a.favoriteSong || a.bestSong)
+          ? '<p class="best"><span>Favorite song</span><strong>' + esc(a.favoriteSong || a.bestSong) + '</strong></p>'
+          : '<p class="best" aria-hidden="true" style="visibility:hidden"><span>Favorite song</span><strong>&nbsp;</strong></p>') +
         '<div class="specimen-actions">' + listenButton(sp).replace('btn btn--solid', 'btn') + '</div>' +
       '</article>';
     }
