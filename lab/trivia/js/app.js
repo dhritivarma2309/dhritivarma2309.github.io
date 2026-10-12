@@ -308,14 +308,6 @@
     'fix': function () { ui.fixing = !ui.fixing; render(); },
     'end': function () { if (sure('end')) set(G.endGame(state)); },
     'toggle-next': function () { ui.nextOpen = !ui.nextOpen; ui.error = ''; render(); },
-    // Fresh game. Live: back to the lobby in the same room, so teams can change.
-    'new-game': function () {
-      if (LIVE) ctx.room(room.code, 'buzzes').remove();
-      state = null;
-      ui = freshUi();
-      save();
-      render();
-    },
     // Same room and teams, a different board. Scores carry over unless unticked.
     'next-board': function () {
       try {
@@ -333,12 +325,6 @@
         ui.error = e.message;
         render();
       }
-    },
-    'rematch': function () {
-      if (LIVE) ctx.room(room.code, 'buzzes').remove();
-      var teams = state.teams.map(function (t) { return { id: LIVE ? t.id : undefined, name: t.name, bot: t.bot }; });
-      ui = freshUi();
-      set(G.createGame(state.board, teams));
     }
   };
 
@@ -416,14 +402,17 @@
     var html, top = '';
     if (LIVE && net.status !== 'ready') html = renderConnecting();
     else if (LIVE && !room) html = renderSetup();
-    else if (LIVE && !state) { html = renderLobby(); top = sureBtn('close-room', 'Close room', 'Tap again to close'); }
+    else if (LIVE && !state) { html = renderLobby(); top = closeBtn(); }
     else if (!state) html = renderSetup();
-    else if (state.phase === 'final') { html = renderFinal(); if (LIVE) top = sureBtn('close-room', 'Close room', 'Tap again to close'); }
-    else { html = renderGame(); top = sureBtn('end', 'End Game', 'Tap again to end'); }
+    else if (state.phase === 'final') { html = renderFinal(); if (LIVE) top = closeBtn(); }
+    else { html = renderGame(); top = sureBtn('end', 'End Board', 'Tap again to end') + (LIVE ? closeBtn() : ''); }
     topActions.innerHTML = (LIVE && room ? '<span class="tn-room-chip">Room Code <b>' + room.code + '</b></span>' : '') + top;
     app.innerHTML = (LIVE && room && !net.online ? '<p class="tn-offline" role="status">Reconnecting… Changes will sync when you\'re back online.</p>' : '') + html;
     if (focusId) { var f = document.getElementById(focusId); if (f && f !== document.activeElement) f.focus(); }
   }
+
+  // Close Room: ends the session for everyone and takes the host back to "Host a live game".
+  function closeBtn() { return sureBtn('close-room', 'Close Room', 'Tap again to close'); }
 
   function renderConnecting() {
     var body = net.status === 'error'
@@ -661,8 +650,7 @@
       '<h1 class="display tn-final-title">' + headline + '</h1>' +
       '<ol class="tn-final-list">' + rows + '</ol>' +
       '<div class="tn-final-actions">' +
-        '<button class="btn' + (ui.nextOpen ? '' : ' btn--solid') + '" type="button" data-act="toggle-next" aria-expanded="' + !!ui.nextOpen + '">Start next board</button>' +
-        '<button class="btn" type="button" data-act="new-game">Start next game</button>' +
+        '<button class="btn' + (ui.nextOpen ? '' : ' btn--solid') + '" type="button" data-act="toggle-next" aria-expanded="' + !!ui.nextOpen + '">Start a New Board</button>' +
       '</div>' +
       (ui.nextOpen
         ? '<div class="tn-next-board">' + boardPicker() +
