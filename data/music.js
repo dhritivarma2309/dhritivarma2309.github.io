@@ -115,7 +115,7 @@ window.MUSIC = {
   },
 
   // 04 · Album ratings
-  albumsIntro: "Just an enthusiastic listener with a scorecard. Listening to Rolling Stone's 500 Greatest Albums of All Time", // optional line under the heading; leave empty to hide
+  albumsIntro: "Just an enthusiastic listener with a scorecard. Currently listening to Rolling Stone's 500 Greatest Albums of All Time", // optional line under the heading; leave empty to hide
   // The note card under the rating rubric. One string per paragraph.
   albumsStory: {
     title: "Why I started",
