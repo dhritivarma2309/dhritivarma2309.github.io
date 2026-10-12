@@ -10,7 +10,7 @@
      image      a screenshot, e.g. "../assets/img/lab/my-project.jpg"
                 (leave "" for a pastel placeholder)
      buttons    the card's buttons, left to right. Each one is
-                  { label: "Try Now", href: "trivia/", newTab: true }
+                  { label: "View Code", href: "https://github.com/...", newTab: true }
                 All are outlined; add solid: true to make one a dark button.
                 newTab: true opens the link in a new tab. No href = greyed out.
                 When a card has buttons, "Read the case study →" is left off
@@ -37,7 +37,6 @@ window.LAB = {
       image: "../assets/img/lab/trivia-night.jpg",
       buttons: [
         { label: "How It Works", href: "projects/trivia-night/" },
-        { label: "Try Now", href: "trivia/", newTab: true },
         { label: "View Code", href: "https://github.com/dhritivarma2309/dhritivarma2309.github.io/tree/main/lab/trivia", newTab: true },
       ],
       caseStudy: "projects/trivia-night/",
