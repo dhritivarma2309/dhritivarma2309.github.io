@@ -116,8 +116,8 @@
     copy: function (el) {
       if (!signedIn()) { signIn(); return; }
       if (status === 'saving') saveNow();
-      var src = el.getAttribute('data-id') ? B.get(el.getAttribute('data-id')) : board;
-      var b = src && B.duplicate(src);
+      if (!board || board.builtIn) return;  // only your own boards can be duplicated
+      var b = B.duplicate(board);
       if (b) edit(b.id);
     },
     'delete': function () {
@@ -215,14 +215,14 @@
       '</div>';
     } else {
       yours = '<div class="bb-cards">' +
-        '<button class="bb-card bb-card--new" type="button" data-act="new"><span class="bb-plus" aria-hidden="true">+</span><span class="bb-card-title">New board</span><span class="bb-card-meta">Start from blank</span></button>' +
+        '<button class="bb-card bb-card--new" type="button" data-act="new"><span class="bb-plus" aria-hidden="true">+</span><span class="bb-card-title">New board</span></button>' +
         mine.map(card).join('') +
       '</div>' +
       (st.moved ? '<p class="tn-hint">Moved ' + st.moved + (st.moved === 1 ? ' board' : ' boards') + ' from this browser into your library.</p>' : '');
     }
 
     return '<div class="bb-home">' +
-      '<div class="bb-home-head"><h1 class="display bb-home-title">Your boards</h1>' + accountBar() + '</div>' +
+      '<div class="bb-home-head"><h1 class="bb-section bb-section--first">Your boards</h1>' + accountBar() + '</div>' +
       (err ? '<p class="tn-error" role="alert">' + esc(err) + '</p>' : '') +
       yours +
       (site.length ? '<h2 class="bb-section">From the site</h2><div class="bb-cards">' + site.map(siteCard).join('') + '</div>' : '') +
@@ -244,7 +244,6 @@
       '<span class="bb-card-meta">' + b.categories.map(function (c) { return esc(c.name); }).join(' · ') + '</span>' +
       '<span class="bb-card-actions">' +
         '<button class="tn-link-btn tn-inline" type="button" data-act="open" data-id="' + esc(b.id) + '">Preview</button>' +
-        (signedIn() ? '<button class="tn-link-btn tn-inline" type="button" data-act="copy" data-id="' + esc(b.id) + '">Copy to edit</button>' : '') +
       '</span>' +
     '</div>';
   }
@@ -271,7 +270,7 @@
         cells + '</div>';
     }).join('');
     var banner = board.builtIn
-      ? '<p class="bb-banner">This sample comes with the site, so it can\'t be changed. ' + (signedIn() ? 'Copy it to make your own version.' : 'Sign in to copy it and make your own version.') + '</p>'
+      ? '<p class="bb-banner">This sample comes with the site, so it can\'t be changed. Start a new board to make your own.</p>'
       : '';
     return '<div class="bb-edit">' +
       '<div class="bb-edit-top"><a class="bb-back" href="./" data-act="home">← All boards</a>' + accountBar() + '</div>' +
@@ -291,7 +290,7 @@
     var ready = B.check(board).ready;
     slot.innerHTML =
       '<button class="btn btn--solid btn--sm" type="button" data-act="play"' + (ready ? '' : ' disabled title="Fill in every question and answer first"') + '>Play this board</button>' +
-      (signedIn() ? '<button class="btn btn--sm" type="button" data-act="copy">' + (board.builtIn ? 'Copy to edit' : 'Duplicate') + '</button>' : '') +
+      (editable() ? '<button class="btn btn--sm" type="button" data-act="copy">Duplicate</button>' : '') +
       (editable() ? '<button class="btn btn--sm' + (confirming ? ' is-armed' : '') + '" type="button" data-act="delete">' + (confirming ? 'Tap again to delete' : 'Delete') + '</button>' : '');
   }
 
