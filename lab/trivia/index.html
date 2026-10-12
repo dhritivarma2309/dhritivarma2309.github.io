@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Trivia Night · Dhriti Varma</title>
-  <meta name="description" content="A Jeopardy-style quiz game for hosting trivia nights with friends, built by Dhriti Varma with AI.">
+  <meta name="description" content="A Jeopardy-style quiz game for hosting trivia nights with friends over a video call, built by Dhriti Varma with AI.">
   <link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,18 +17,32 @@
     <div class="tn-brand">
       <a class="tn-back" href="../">← Lab</a>
       <span class="tn-logo">Trivia Night</span>
-      <span class="tn-board-name" data-slot="board-name"></span>
     </div>
-    <div class="tn-top-actions" data-slot="top-actions"></div>
   </header>
 
-  <main class="wrap" id="app">
-    <noscript><p>Trivia Night needs JavaScript turned on.</p></noscript>
-  </main>
+  <main class="wrap tn-hub">
+    <p class="tn-hub-lede">A Jeopardy-style quiz for game nights over a video call. The host runs the board; everyone buzzes from their own phone.</p>
 
-  <script src="boards/sample.js"></script>
-  <script src="js/boards.js"></script>
-  <script src="js/game.js"></script>
-  <script src="js/app.js"></script>
+    <div class="tn-hub-grid">
+      <a class="tn-hub-card is-main" href="play/">
+        <span class="tn-hub-kicker">Playing?</span>
+        <span class="tn-hub-title">Join a game</span>
+        <span class="tn-hub-text">Type the 4-letter room code from your host.</span>
+      </a>
+      <a class="tn-hub-card is-main" href="host/">
+        <span class="tn-hub-kicker">Hosting?</span>
+        <span class="tn-hub-title">Host a live game</span>
+        <span class="tn-hub-text">Create a room and share the link. Teams buzz from their phones.</span>
+      </a>
+      <a class="tn-hub-card" href="solo/">
+        <span class="tn-hub-title">Play on one screen</span>
+        <span class="tn-hub-text">Everyone around one laptop, buzzing with number keys.</span>
+      </a>
+      <a class="tn-hub-card" href="build/">
+        <span class="tn-hub-title">Build a board</span>
+        <span class="tn-hub-text">Write your own 6 categories × 5 questions.</span>
+      </a>
+    </div>
+  </main>
 </body>
 </html>

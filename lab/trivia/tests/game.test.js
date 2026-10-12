@@ -133,3 +133,23 @@ test('the host can type any whole-number score', () => {
   assert.equal(G.setScore(s, 't1', 'abc'), s, 'non-numbers are ignored');
   assert.equal(G.setScore(s, 'nobody', 10), s);
 });
+
+test('a buzz that arrives late but was pressed earlier takes its rightful place in line', () => {
+  let s = G.pick(start(), 0, 0, 0);
+  s = G.buzz(s, 't1', 500);
+  s = G.buzz(s, 't3', 900);
+  s = G.buzz(s, 't2', 700); // pressed at 700, arrived after Charlie's
+  assert.deepEqual(G.buzzOrder(s).map(o => o.team), ['t1', 't2', 't3']);
+});
+
+test('a late buzz never jumps ahead of a team that is already answering', () => {
+  let s = G.pick(start(), 0, 0, 0);
+  s = G.buzz(s, 't1', 500);
+  s = G.buzz(s, 't2', 400); // earlier time, but Alpha is already answering
+  assert.deepEqual(G.buzzOrder(s).map(o => o.team), ['t1', 't2']);
+});
+
+test('the live game can choose its own team ids', () => {
+  const s = G.createGame(board, [{ name: 'Bears', id: 't3' }]);
+  assert.equal(s.teams[0].id, 't3');
+});

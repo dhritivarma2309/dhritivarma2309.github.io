@@ -35,7 +35,8 @@
 
   /* ---- Start a game ---------------------------------------------------- */
 
-  // teams: [{ name, bot? }]  (bot = simulated test team that buzzes by itself)
+  // teams: [{ name, bot?, id? }]  (bot = simulated test team that buzzes by itself;
+  // id lets the live game keep the team ids its players already use)
   function createGame(board, teams) {
     var seen = {};
     var list = [];
@@ -45,7 +46,7 @@
       var k = name.toLowerCase();
       if (seen[k]) throw new Error('Two teams can\'t share the name "' + name + '".');
       seen[k] = true;
-      list.push({ id: 't' + (list.length + 1), name: name, score: 0, bot: !!t.bot });
+      list.push({ id: t.id || 't' + (list.length + 1), name: name, score: 0, bot: !!t.bot });
     });
     if (list.length < 1) throw new Error('Add at least one team.');
     if (list.length > MAX_TEAMS) throw new Error('A game can have up to ' + MAX_TEAMS + ' teams.');
@@ -129,7 +130,11 @@
   function buzz(s, teamId, now) {
     if (!canBuzz(s, teamId, now)) return s;
     var n = copy(s);
-    n.q.buzzes.push({ team: teamId, at: now });
+    // Keep the line in time order. (In a live game, buzzes can reach the host a
+    // few milliseconds out of order; their server times decide who was first.)
+    var i = n.q.buzzes.length;
+    while (i > 0 && n.q.buzzes[i - 1].at > now && !n.q.wrong[n.q.buzzes[i - 1].team] && n.q.buzzes[i - 1].team !== answering(n)) i--;
+    n.q.buzzes.splice(i, 0, { team: teamId, at: now });
     return n;
   }
 

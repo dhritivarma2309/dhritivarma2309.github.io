@@ -80,7 +80,7 @@
     play: function () {
       if (status === 'saving') saveNow();
       store(PICK, board.id);
-      location.href = '../';
+      location.href = '../host/';
     }
   };
 

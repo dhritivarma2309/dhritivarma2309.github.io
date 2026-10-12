@@ -1,0 +1,66 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "rooms": {
+      "$code": {
+        ".validate": "$code.matches(/^[A-Z]{4}$/)",
+        ".write": "auth != null && root.child('rooms').child($code).child('host').val() === auth.uid",
+
+        "host": {
+          ".read": "auth != null",
+          ".write": "auth != null && !data.exists() && newData.val() === auth.uid"
+        },
+        "createdAt": {
+          ".read": "auth != null"
+        },
+        "public": {
+          ".read": "auth != null"
+        },
+        "private": {
+          ".read": "auth != null && root.child('rooms').child($code).child('host').val() === auth.uid"
+        },
+
+        "teams": {
+          ".read": "auth != null",
+          "$slot": {
+            ".write": "auth != null && !data.exists() && newData.exists() && root.child('rooms').child($code).child('public/phase').val() === 'lobby'",
+            ".validate": "$slot.matches(/^t[1-4]$/) && newData.hasChildren(['name', 'slug', 'by', 'at']) && newData.child('name').isString() && newData.child('name').val().length >= 1 && newData.child('name').val().length <= 24 && newData.child('by').val() === auth.uid && newData.child('at').val() === now && newData.parent().parent().child('names').child(newData.child('slug').val()).val() === $slot"
+          }
+        },
+
+        "names": {
+          ".read": "auth != null",
+          "$slug": {
+            ".write": "auth != null && !data.exists() && newData.exists() && root.child('rooms').child($code).child('public/phase').val() === 'lobby'",
+            ".validate": "$slug.matches(/^[a-z0-9-]{1,30}$/) && newData.isString() && newData.parent().parent().child('teams').child(newData.val()).child('slug').val() === $slug"
+          }
+        },
+
+        "players": {
+          ".read": "auth != null",
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid && (!newData.exists() || !data.exists() || root.child('rooms').child($code).child('public/phase').val() === 'lobby')",
+            ".validate": "!newData.exists() || (newData.hasChildren(['team']) && newData.child('team').isString() && root.child('rooms').child($code).child('teams').child(newData.child('team').val()).exists())"
+          }
+        },
+
+        "buzzes": {
+          ".read": "auth != null",
+          "$qkey": {
+            "$slot": {
+              ".write": "auth != null && !data.exists() && newData.exists() && root.child('rooms').child($code).child('players').child(auth.uid).child('team').val() === $slot && root.child('rooms').child($code).child('public/phase').val() === 'question' && root.child('rooms').child($code).child('public/q/key').val() === $qkey && now < root.child('rooms').child($code).child('public/q/deadline').val()",
+              ".validate": "newData.hasChildren(['at', 'by']) && newData.child('at').val() === now && newData.child('by').val() === auth.uid"
+            }
+          }
+        },
+
+        "pick": {
+          ".read": "auth != null",
+          ".write": "auth != null && newData.exists() && root.child('rooms').child($code).child('public/phase').val() === 'board' && root.child('rooms').child($code).child('players').child(auth.uid).child('team').val() === root.child('rooms').child($code).child('public/picker').val()",
+          ".validate": "newData.hasChildren(['c', 'r', 'team', 'at']) && newData.child('c').isNumber() && newData.child('r').isNumber() && newData.child('team').val() === root.child('rooms').child($code).child('public/picker').val() && newData.child('at').val() === now"
+        }
+      }
+    }
+  }
+}
