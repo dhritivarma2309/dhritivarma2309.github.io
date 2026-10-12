@@ -356,14 +356,9 @@
    Player screen (play/): phone first
    ========================================================================== */
 
-.tn-player { padding: 0 16px; }
-.tn-p-top {
-  max-width: 560px; margin: 0 auto; padding: 16px 0 12px;
-  display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap;
-}
-.tn-p-top .tn-logo { font-size: 32px; }
+.tn-player { padding: 0; }
 .tn-p-me { font-size: 14px; color: var(--ink-soft); }
-.tn-p-main { max-width: 560px; margin: 0 auto; padding-bottom: 48px; display: flex; flex-direction: column; gap: 14px; }
+.tn-p-main { max-width: 592px; margin: 0 auto; padding: 0 16px 48px; display: flex; flex-direction: column; gap: 14px; }
 
 .tn-p-card { background: var(--card); border: 1.5px solid var(--ink); border-radius: 14px; padding: 22px 20px; }
 .tn-p-card.paper { border: 1px solid #e6e8ee; border-radius: 2px; margin-top: 14px; }
@@ -493,3 +488,5 @@ button.bb-card:hover { transform: translateY(-2px); box-shadow: 3px 4px 0 var(--
 @media (max-width: 359px) { .tn-hub-text { white-space: normal; } }
 .tn-hub-text { font-size: 15px; }
 @media (max-width: 400px) { .tn-hub-text { font-size: 14px; } .tn-hub-card { padding: 20px 18px 22px; } }
+.tn-logo-link { text-decoration: none; color: var(--ink); }
+.tn-logo-link:hover { color: var(--red); }
