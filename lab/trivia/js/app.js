@@ -307,7 +307,10 @@
     'peek': function () { ui.peek = !ui.peek; render(); },
     'fix': function () { ui.fixing = !ui.fixing; render(); },
     'end': function () { if (sure('end')) set(G.endGame(state)); },
+    'toggle-next': function () { ui.nextOpen = !ui.nextOpen; ui.error = ''; render(); },
+    // Fresh game. Live: back to the lobby in the same room, so teams can change.
     'new-game': function () {
+      if (LIVE) ctx.room(room.code, 'buzzes').remove();
       state = null;
       ui = freshUi();
       save();
@@ -415,7 +418,7 @@
     else if (LIVE && !room) html = renderSetup();
     else if (LIVE && !state) { html = renderLobby(); top = sureBtn('close-room', 'Close room', 'Tap again to close'); }
     else if (!state) html = renderSetup();
-    else if (state.phase === 'final') html = renderFinal();
+    else if (state.phase === 'final') { html = renderFinal(); if (LIVE) top = sureBtn('close-room', 'Close room', 'Tap again to close'); }
     else { html = renderGame(); top = sureBtn('end', 'End Game', 'Tap again to end'); }
     topActions.innerHTML = (LIVE && room ? '<span class="tn-room-chip">Room Code <b>' + room.code + '</b></span>' : '') + top;
     app.innerHTML = (LIVE && room && !net.online ? '<p class="tn-offline" role="status">Reconnecting… Changes will sync when you\'re back online.</p>' : '') + html;
@@ -657,17 +660,17 @@
       '<p class="kicker">' + (state.round > 1 ? 'Scores after board ' + state.round : 'Final scores') + '</p>' +
       '<h1 class="display tn-final-title">' + headline + '</h1>' +
       '<ol class="tn-final-list">' + rows + '</ol>' +
-      '<div class="tn-next-board">' +
-        '<h2 class="tn-card-title">Play another board</h2>' +
-        '<p class="tn-hint">Same ' + (LIVE ? 'room and ' : '') + 'teams' + (LIVE ? '; nobody has to rejoin' : '') + '.</p>' +
-        boardPicker() +
-        '<label class="tn-check tn-keep"><input type="checkbox" name="keep-scores"' + (ui.keepScores === false ? '' : ' checked') + '> Carry these scores over</label>' +
-        (ui.error ? '<p class="tn-error" role="alert">' + esc(ui.error) + '</p>' : '') +
-        '<button class="btn btn--solid" type="button" data-act="next-board">Start next board</button>' +
+      '<div class="tn-final-actions">' +
+        '<button class="btn' + (ui.nextOpen ? '' : ' btn--solid') + '" type="button" data-act="toggle-next" aria-expanded="' + !!ui.nextOpen + '">Start next board</button>' +
+        '<button class="btn" type="button" data-act="new-game">Start next game</button>' +
       '</div>' +
-      '<div class="tn-final-actions"><button class="btn" type="button" data-act="rematch">Replay this board</button>' +
-      (LIVE ? sureBtn('close-room', 'Close the room', 'Tap again to close', 'tn-btn-lg')
-            : '<button class="btn" type="button" data-act="new-game">New game</button>') + '</div>' +
+      (ui.nextOpen
+        ? '<div class="tn-next-board">' + boardPicker() +
+            '<label class="tn-check tn-keep"><input type="checkbox" name="keep-scores"' + (ui.keepScores === false ? '' : ' checked') + '> Carry these scores over</label>' +
+            (ui.error ? '<p class="tn-error" role="alert">' + esc(ui.error) + '</p>' : '') +
+            '<button class="btn btn--solid" type="button" data-act="next-board">Start board</button>' +
+          '</div>'
+        : '') +
     '</section>';
   }
 

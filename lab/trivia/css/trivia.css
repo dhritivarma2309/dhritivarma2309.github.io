@@ -215,9 +215,7 @@
 .tn-final-num { font-family: var(--mono); font-size: 22px; }
 .tn-final-num.is-neg { color: var(--red); }
 .tn-final-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-.tn-next-board { text-align: left; border: 1.5px dashed var(--rule); border-radius: 12px; padding: 18px 20px 20px; margin: 0 0 18px; }
-.tn-next-board .tn-card-title { margin: 0 0 2px; }
-.tn-next-board .tn-hint { margin-top: 0; }
+.tn-next-board { text-align: left; border: 1.5px dashed var(--rule); border-radius: 12px; padding: 18px 20px 20px; margin: 16px 0 0; }
 .tn-next-board .tn-keep { margin: 12px 0 14px; white-space: normal; }
 .tn-lobby-board { margin-top: 22px; }
 
