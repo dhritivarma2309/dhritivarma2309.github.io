@@ -143,9 +143,8 @@
 .persona {
   align-self: flex-start;
   font: 500 11px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase;
-  color: var(--red); border: 1.2px solid currentColor; border-radius: 999px; padding: 5px 9px;
+  color: var(--ink); border: 1.2px solid currentColor; border-radius: 999px; padding: 5px 9px;
 }
-.persona--players { color: var(--ink); }
 .part h3 { font-size: 20px; line-height: 1.2; font-weight: 700; margin: 12px 0 0; }
 .part p { margin: 8px 0 0; font-size: 15px; line-height: 1.55; color: var(--ink-soft); }
 .part-media { margin-top: auto; padding-top: 16px; }
@@ -176,8 +175,6 @@
   .parts { grid-template-columns: 1fr; }
 }
 
-/* The product: one-liner */
-.case-oneliner { margin: 0 0 10px; font-size: 22px; line-height: 1.45; font-weight: 600; color: var(--ink); }
 
 /* ---------- System diagram (boxes + margin notes; arrows drawn by sysmap.js) ---------- */
 .sysmap {
@@ -236,7 +233,7 @@
 /* Pen + hint above the diagram */
 .sys-head .case-h { margin-bottom: 10px; }
 .sys-hint { display: flex; align-items: center; gap: 10px; margin: 0 0 18px; }
-.sys-hint p { margin: 0; font-family: var(--hand); font-size: 24px; color: var(--red); }
+.sys-hint p { margin: 0; font-size: 18px; line-height: 1.7; color: var(--ink-soft); }
 .sys-pen { flex: none; }
 @media (prefers-reduced-motion: no-preference) {
   .sys-pen g { transform-box: view-box; transform-origin: 32px 20px; animation: pen-write 2.4s ease-in-out infinite; }
@@ -274,7 +271,6 @@
   .sys-board { padding: 14px 10px 14px; }
   .sys-box::after { top: -10px; right: -8px; }
   .sys-hint { gap: 6px; }
-  .sys-hint p { font-size: 21px; }
   .sys-pen { width: 48px; height: 30px; }
   .sys-box { font-size: 18px; min-height: 64px; padding: 8px 4px; }
   .sys-board { gap: 30px 30px; }
