@@ -31,7 +31,7 @@ window.LAB = {
       cta: "How It Works",
       video: "",          // add the ~60s MP4 here once it's recorded
       tryUrl: "",
-      caseStudy: "",      // add "projects/trivia-night/" once the case study is written
+      caseStudy: "projects/trivia-night/",
     },
     { title: "[Project Name]", type: "Prototype", image: "", tryUrl: "", caseStudy: "" },
     { title: "[Project Name]", type: "Side project", image: "", tryUrl: "", caseStudy: "" },

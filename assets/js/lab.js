@@ -37,34 +37,4 @@
       '<div class="project-foot">' + tryBtn + read + '</div>' +
     '</article>';
   }).join('');
-
-  // "How It Works": play the project's video in a lightbox on this page.
-  var box = null;
-  function closeVideo() {
-    if (!box) return;
-    box.querySelector('video').pause();
-    box.remove(); box = null;
-    document.removeEventListener('keydown', onKey);
-    if (lastBtn) lastBtn.focus();
-  }
-  function onKey(e) { if (e.key === 'Escape') closeVideo(); }
-  var lastBtn = null;
-  slot.addEventListener('click', function (e) {
-    var btn = e.target.closest('[data-video]');
-    if (!btn) return;
-    e.preventDefault();
-    lastBtn = btn;
-    box = document.createElement('div');
-    box.className = 'video-box';
-    box.setAttribute('role', 'dialog');
-    box.setAttribute('aria-modal', 'true');
-    box.setAttribute('aria-label', btn.getAttribute('data-title') + ': how it works');
-    box.innerHTML = '<div class="video-frame paper">' +
-      '<button class="video-close" type="button" aria-label="Close video">×</button>' +
-      '<video src="' + esc(btn.getAttribute('data-video')) + '" controls autoplay muted playsinline></video></div>';
-    box.addEventListener('click', function (ev) { if (ev.target === box || ev.target.closest('.video-close')) closeVideo(); });
-    document.addEventListener('keydown', onKey);
-    document.body.appendChild(box);
-    box.querySelector('.video-close').focus();
-  });
 })();

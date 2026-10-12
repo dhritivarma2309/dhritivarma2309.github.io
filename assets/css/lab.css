@@ -81,8 +81,9 @@
 /* ---------- Case study page ---------- */
 .case-lede { font-size: 20px; line-height: 1.55; color: var(--ink-soft); margin: -14px 0 0; max-width: 620px; }
 .case-actions { display: flex; gap: 12px; flex-wrap: wrap; margin: 26px 0 0; }
-.case-actions a[aria-disabled="true"] { opacity: .45; cursor: not-allowed; }
-.case-actions a[aria-disabled="true"]:hover { transform: none; box-shadow: none; }
+.case-actions a[aria-disabled="true"], .case-actions button[aria-disabled="true"] { opacity: .45; cursor: not-allowed; }
+.case-actions a[aria-disabled="true"]:hover, .case-actions button[aria-disabled="true"]:hover { transform: none; box-shadow: none; }
+.case-actions .btn { display: inline-flex; align-items: center; gap: 7px; }
 
 .case-shot { margin: 52px 0 0; padding: 12px; }
 .case-shot img { width: 100%; height: auto; border-radius: 2px; }
