@@ -220,3 +220,7 @@ button { font: inherit; color: inherit; }
 .site-footer .inner { align-items: baseline; flex-wrap: wrap; }
 .site-footer .credits a { font-weight: 400; color: inherit; }
 .credits a { color: inherit; }
+
+/* "← Home" / "← Music": a small back link at the top of a page */
+.back-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 20px; font-weight: 600; font-size: 15px; text-decoration: none; color: var(--ink); }
+.back-link:hover { color: var(--red); }
