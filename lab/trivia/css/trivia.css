@@ -302,7 +302,7 @@
 
 .tn-hub { padding-bottom: 64px; }
 .tn-hub-lede { font-size: 19px; color: var(--ink-soft); max-width: 620px; margin: 8px 0 28px; }
-.tn-hub-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; max-width: 880px; }
+.tn-hub-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; max-width: 1080px; }
 .tn-hub-card {
   display: flex; flex-direction: column; gap: 6px; text-decoration: none;
   background: var(--card); border: 1.5px solid var(--ink); border-radius: 14px; padding: 22px 22px 24px;
@@ -316,7 +316,7 @@
 .tn-hub-title { font-family: var(--hand-bold); font-size: 36px; line-height: 1; }
 .tn-hub-text { color: var(--ink-soft); }
 .tn-hub-card.is-main .tn-hub-text { color: var(--mist); }
-@media (max-width: 640px) { .tn-hub-grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 860px) { .tn-hub-grid { grid-template-columns: minmax(0, 1fr); max-width: 560px; } }
 
 /* ==========================================================================
    Live host: lobby, room chip, teams card
