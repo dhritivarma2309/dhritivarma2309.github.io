@@ -316,7 +316,8 @@
 .tn-hub-title { font-family: var(--hand-bold); font-size: 36px; line-height: 1; }
 .tn-hub-text { color: var(--ink-soft); }
 .tn-hub-card.is-main .tn-hub-text { color: var(--mist); }
-@media (max-width: 860px) { .tn-hub-grid { grid-template-columns: minmax(0, 1fr); max-width: 560px; } }
+@media (max-width: 1040px) { .tn-hub-grid { grid-template-columns: minmax(0, 1fr); max-width: 560px; } }
+.tn-hub-text { white-space: nowrap; }
 
 /* ==========================================================================
    Live host: lobby, room chip, teams card
@@ -489,3 +490,4 @@ button.bb-card:hover { transform: translateY(-2px); box-shadow: 3px 4px 0 var(--
 .bb-back { font-weight: 600; font-size: 14.5px; text-decoration: none; color: var(--ink-soft); }
 .bb-back:hover { color: var(--red); }
 .bb-home-head { align-items: baseline; }
+@media (max-width: 359px) { .tn-hub-text { white-space: normal; } }
