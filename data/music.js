@@ -79,6 +79,36 @@ window.MUSIC = {
           },
         ],
       },
+      {
+        name: "Famous Covers",
+        songs: [
+          {
+            title: "Hallelujah", artist: "Jeff Buckley",
+            cover: "https://i.scdn.co/image/ab67616d00001e02afc2d1d2c8703a10aeded0af",
+            spotify: "https://open.spotify.com/track/3pRaLNL3b8x5uBOcsgvdqM",
+          },
+          {
+            title: "You Can't Hurry Love", artist: "Phil Collins",
+            cover: "https://i.scdn.co/image/ab67616d00001e02031a70a145ed2b35c1d1c87a",
+            spotify: "https://open.spotify.com/track/4YUlGNZfYA6EUE5KDsGqpC",
+          },
+          {
+            title: "The Man Who Sold The World", artist: "Nirvana",
+            cover: "https://i.scdn.co/image/ab67616d00001e02f411d2833d932f4d84d616ef",
+            spotify: "https://open.spotify.com/track/48psxWnIVYCPUZJKiuDiEf",
+          },
+          {
+            title: "Girls Just Want to Have Fun", artist: "Cyndi Lauper",
+            cover: "https://i.scdn.co/image/ab67616d00001e02ce023ce7dfdd5199bcdfd5a1",
+            spotify: "https://open.spotify.com/track/4y1LsJpmMti1PfRQV9AWWe",
+          },
+          {
+            title: "Knockin' On Heaven's Door", artist: "Guns N' Roses",
+            cover: "https://i.scdn.co/image/ab67616d00001e0297454cdb9f00c4612f3174e4",
+            spotify: "https://open.spotify.com/track/3SOR72keyMrnQbBR1y1tSu",
+          },
+        ],
+      },
     ],
   },
 
