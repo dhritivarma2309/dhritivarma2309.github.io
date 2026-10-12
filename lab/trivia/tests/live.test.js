@@ -61,3 +61,13 @@ test('phones get each buzz time to the millisecond, and buzzers stay open', () =
   assert.deepEqual(pub.q.order.map(o => [o.team, o.at, o.gap]), [['t2', 2347, 0], ['t1', 2659, 312]]);
   assert.ok(pub.q.deadline >= 1000 + 6 * 3600 * 1000, 'no timer: the database keeps accepting buzzes');
 });
+
+test('rooms end 12 hours after they were created', () => {
+  const t0 = Date.UTC(2026, 9, 12, 18);
+  const h = 3600 * 1000;
+  assert.equal(L.isExpired(t0, t0 + 11 * h), false);
+  assert.equal(L.isExpired(t0, t0 + 12 * h), false);
+  assert.equal(L.isExpired(t0, t0 + 12 * h + 1), true);
+  assert.equal(L.isExpired(undefined, t0), true);
+  assert.equal(L.isExpired(null, t0), true);
+});

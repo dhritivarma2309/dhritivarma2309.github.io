@@ -158,6 +158,8 @@
     try {
       var host = (await ctx.room(code, 'host').get()).val();
       if (host !== ctx.uid) { save(); return; }
+      var created = (await ctx.room(code, 'createdAt').get()).val();
+      if (Live.isExpired(created, ctx.serverNow())) { await ctx.room(code).remove(); save(); return; }  // over 12 hours old
       var priv = (await ctx.room(code, 'private').get()).val() || {};
       if (!priv.board) return;
       room = { code: code, board: priv.board };

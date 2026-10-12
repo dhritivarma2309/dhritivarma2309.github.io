@@ -30,6 +30,13 @@
     for (var i = 0; i < 4; i++) s += LETTERS[Math.floor(rand() * LETTERS.length)];
     return s;
   }
+  // Rooms end 12 hours after they're created, so a forgotten test room can't
+  // linger: the host's browser deletes it on its next visit, and players are
+  // told it has ended. A room with no creation time counts as ended too.
+  var ROOM_HOURS = 12;
+  function isExpired(createdAt, now) {
+    return typeof createdAt !== 'number' || now - createdAt > ROOM_HOURS * 3600 * 1000;
+  }
   function cleanCode(s) { return String(s || '').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4); }
 
   // "Quizzly Bears!" -> "quizzly-bears" (used to keep team names unique)
@@ -203,7 +210,7 @@
   }
 
   var api = {
-    newCode: newCode, cleanCode: cleanCode, slug: slug, project: project,
+    newCode: newCode, cleanCode: cleanCode, isExpired: isExpired, ROOM_HOURS: ROOM_HOURS, slug: slug, project: project,
     isSetUp: isSetUp, connect: connect, signIn: signIn, signOut: signOut,
     createRoom: createRoom, inviteUrl: inviteUrl
   };

@@ -59,6 +59,11 @@
       ctx = ctx || await Live.connect();
       var host = (await ctx.room(code, 'host').get()).val();
       if (!host) { view = 'join'; msg = 'There\'s no room with the code ' + code + '. Check it with your host.'; render(); return; }
+      var created = (await ctx.room(code, 'createdAt').get()).val();
+      if (Live.isExpired(created, ctx.serverNow())) {
+        if (store().code === code) store({});
+        view = 'join'; msg = 'Room ' + code + ' has ended. Ask your host for a new code.'; render(); return;
+      }
       var saved = store();
       myTeam = saved.code === code ? saved.team || null : null;
       watch();
