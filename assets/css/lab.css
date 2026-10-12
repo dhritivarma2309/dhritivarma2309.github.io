@@ -105,7 +105,7 @@
 .facts dt { font-family: var(--hand); font-size: 21px; color: var(--red); line-height: 1; }
 .facts dd { margin: 8px 0 0; font-size: 15px; line-height: 1.45; font-weight: 600; }
 .facts dd.placeholder { font-weight: 400; }
-.facts.facts--one { grid-template-columns: auto; width: fit-content; margin-left: auto; margin-right: auto; text-align: center; }
+.facts.facts--one { grid-template-columns: 1fr; }
 .facts.facts--one > div { border: 0; }
 
 .case-section { margin-top: 60px; }
