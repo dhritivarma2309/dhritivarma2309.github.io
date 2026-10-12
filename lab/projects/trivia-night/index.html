@@ -15,7 +15,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Caveat+Brush&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../../../assets/css/site.css?v=202610121035">
   <link rel="stylesheet" href="../../../assets/css/article.css?v=202610121035">
-  <link rel="stylesheet" href="../../../assets/css/lab.css?v=202610121350">
+  <link rel="stylesheet" href="../../../assets/css/lab.css?v=202610121400">
 </head>
 <body>
   <!--
@@ -100,23 +100,25 @@
       </section>
 
       <section class="case-section">
-        <h2 class="case-h">System diagram</h2>
+        <div class="sys-head">
+          <h2 class="case-h">System diagram</h2>
+          <div class="sys-hint">
+            <svg class="sys-pen" width="64" height="40" viewBox="0 0 64 40" aria-hidden="true">
+              <g transform="rotate(-28 32 20)">
+                <rect x="10" y="15" width="34" height="10" rx="2" fill="var(--ink)"/>
+                <rect x="40" y="15" width="8" height="10" fill="var(--red)"/>
+                <path d="M10 15 L1 20 L10 25 Z" fill="#e9dcc4" stroke="var(--ink)" stroke-width="1.2" stroke-linejoin="round"/>
+                <path d="M1 20 L4 18.4 L4 21.6 Z" fill="var(--ink)"/>
+                <path d="M18 15 v-3 h14" fill="none" stroke="#c9ccd4" stroke-width="2" stroke-linecap="round"/>
+              </g>
+              <path class="sys-pen-scribble" d="M4 36 q6 -6 12 0 t12 0 t12 0" fill="none" stroke="var(--red)" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+            <p>Click a box to read my margin notes</p>
+            <button type="button" class="sys-all" data-sys-all>Open all</button>
+          </div>
+        </div>
         <!-- Boxes sit in the middle; clicking a box opens its note (data-for = the box's data-node).
              Arrows and the open/close behaviour live in assets/js/sysmap.js. On phones open notes stack under the sketch. -->
-        <div class="sys-hint">
-          <svg class="sys-pen" width="64" height="40" viewBox="0 0 64 40" aria-hidden="true">
-            <g transform="rotate(-28 32 20)">
-              <rect x="10" y="15" width="34" height="10" rx="2" fill="var(--ink)"/>
-              <rect x="40" y="15" width="8" height="10" fill="var(--red)"/>
-              <path d="M10 15 L1 20 L10 25 Z" fill="#e9dcc4" stroke="var(--ink)" stroke-width="1.2" stroke-linejoin="round"/>
-              <path d="M1 20 L4 18.4 L4 21.6 Z" fill="var(--ink)"/>
-              <path d="M18 15 v-3 h14" fill="none" stroke="#c9ccd4" stroke-width="2" stroke-linecap="round"/>
-            </g>
-            <path class="sys-pen-scribble" d="M4 36 q6 -6 12 0 t12 0 t12 0" fill="none" stroke="var(--red)" stroke-width="1.6" stroke-linecap="round"/>
-          </svg>
-          <p>Click a box to read my margin notes</p>
-          <button type="button" class="sys-all" data-sys-all>Open all</button>
-        </div>
         <div class="sysmap" data-sysmap>
           <div class="sys-notes sys-notes--left">
             <div class="sys-note" data-for="gh" id="note-gh">
