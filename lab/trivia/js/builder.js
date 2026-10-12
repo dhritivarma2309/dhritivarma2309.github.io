@@ -81,17 +81,7 @@
       if (status === 'saving') saveNow();
       store(PICK, board.id);
       location.href = '../';
-    },
-    'export': function () {
-      var data = JSON.stringify(B.normalize(board), null, 2);
-      var a = document.createElement('a');
-      a.href = URL.createObjectURL(new Blob([data], { type: 'application/json' }));
-      a.download = (board.title || 'board').replace(/[^\w-]+/g, '-').toLowerCase() + '.trivia.json';
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
-    },
-    'import': function () { root.querySelector('#import-file').click(); }
+    }
   };
 
   root.addEventListener('click', function (e) {
@@ -120,36 +110,13 @@
     drawProgress();
   });
 
-  root.addEventListener('change', function (e) {
-    if (e.target.id !== 'import-file') return;
-    var file = e.target.files && e.target.files[0];
-    e.target.value = '';
-    if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function () {
-      var msg = root.querySelector('[data-slot="import-msg"]');
-      try {
-        var b = B.normalize(JSON.parse(reader.result));
-        if (B.get(b.id)) b.id = B.blank().id;  // never overwrite a board you already have
-        var saved = B.save(b);
-        if (saved) open(saved.id);
-      } catch (err) {
-        if (msg) msg.textContent = 'That file isn\'t a Trivia Night board. Export one from here to see the format.';
-      }
-    };
-    reader.readAsText(file);
-  });
-
   // ---- Drawing ----
   function render() {
     root.innerHTML =
       '<div class="bb-layout">' +
         '<aside class="bb-side"><div data-slot="list"></div>' +
-          '<div class="bb-side-actions"><button class="btn btn--solid btn--sm" type="button" data-act="new">+ New board</button>' +
-          '<button class="tn-link-btn" type="button" data-act="import">Import a board file</button>' +
-          '<input type="file" id="import-file" accept=".json,application/json" hidden>' +
-          '<p class="tn-hint" data-slot="import-msg"></p></div>' +
-          '<p class="tn-hint bb-note">Boards are saved in this browser for now. Export a board to back it up or move it to another device.</p>' +
+          '<div class="bb-side-actions"><button class="btn btn--solid btn--sm" type="button" data-act="new">+ New board</button></div>' +
+          '<p class="tn-hint bb-note">Boards are saved in this browser for now. They move to your online library in a later update.</p>' +
         '</aside>' +
         '<section class="bb-main">' + renderEditor() + '</section>' +
       '</div>';
@@ -215,7 +182,6 @@
     slot.innerHTML =
       '<button class="btn btn--solid btn--sm" type="button" data-act="play"' + (ready ? '' : ' disabled title="Fill in every question and answer first"') + '>Play this board</button>' +
       '<button class="btn btn--sm" type="button" data-act="copy">' + (board.builtIn ? 'Make a copy to edit' : 'Duplicate') + '</button>' +
-      '<button class="btn btn--sm" type="button" data-act="export">Export</button>' +
       (board.builtIn ? '' : '<button class="btn btn--sm' + (confirming ? ' is-armed' : '') + '" type="button" data-act="delete">' + (confirming ? 'Tap again to delete' : 'Delete') + '</button>');
   }
 

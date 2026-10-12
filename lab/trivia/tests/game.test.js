@@ -124,3 +124,12 @@ test('the host can override the picker and fix scores', () => {
   s = G.adjustScore(s, 't2', -100);
   assert.equal(score(s, 't2'), -100);
 });
+
+test('the host can type any whole-number score', () => {
+  let s = G.setScore(start(), 't1', 750);
+  assert.equal(score(s, 't1'), 750);
+  s = G.setScore(s, 't1', -1250);
+  assert.equal(score(s, 't1'), -1250);
+  assert.equal(G.setScore(s, 't1', 'abc'), s, 'non-numbers are ignored');
+  assert.equal(G.setScore(s, 'nobody', 10), s);
+});

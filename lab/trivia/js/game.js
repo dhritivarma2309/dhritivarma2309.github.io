@@ -216,6 +216,15 @@
     return n;
   }
 
+  // Host types a score directly (whole numbers only).
+  function setScore(s, teamId, value) {
+    var v = Math.round(Number(value));
+    if (!findTeam(s, teamId) || !isFinite(v)) return s;
+    var n = copy(s);
+    findTeam(n, teamId).score = v;
+    return n;
+  }
+
   function endGame(s) {
     var n = copy(s);
     n.q = null;
@@ -230,7 +239,7 @@
     timeLeft: timeLeft, canBuzz: canBuzz, buzzOrder: buzzOrder, standings: standings,
     findTeam: findTeam,
     pick: pick, buzz: buzz, judge: judge, tick: tick, reveal: reveal, skip: skip,
-    next: next, setPicker: setPicker, adjustScore: adjustScore, endGame: endGame
+    next: next, setPicker: setPicker, adjustScore: adjustScore, setScore: setScore, endGame: endGame
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

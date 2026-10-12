@@ -10,8 +10,7 @@
    Where boards live (for now):
    - Built-in boards ship with the site (boards/*.js) and can't be edited.
    - Boards you make are saved in this browser. Step 4 moves them to an
-     online library so they follow you to any device. Until then, use
-     Export / Import to back a board up or move it.
+     online library so they follow you to any device.
    ========================================================================== */
 
 (function (root) {
@@ -38,7 +37,7 @@
     return 'b' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
   }
 
-  // Bring any board-shaped object (e.g. an imported file) into the exact
+  // Bring any board-shaped object (e.g. one read back from storage) into the exact
   // 6 x 5 shape, trimming over-long text. Missing pieces become blanks.
   function normalize(input) {
     var b = blank();

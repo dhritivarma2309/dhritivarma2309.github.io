@@ -126,9 +126,6 @@
     'next': function () { set(G.next(state)); },
     'peek': function () { ui.peek = !ui.peek; render(); },
     'fix': function () { ui.fixing = !ui.fixing; render(); },
-    'adjust': function (el) {
-      set(G.adjustScore(state, el.getAttribute('data-team'), +el.getAttribute('data-delta')));
-    },
     'end': function () {
       if (sure('end')) set(G.endGame(state));
     },
@@ -161,6 +158,13 @@
     var t = e.target;
     if (t.hasAttribute('data-team-bot')) { setup.teams[+t.getAttribute('data-team-bot')].bot = t.checked; save(); }
     if (t.name === 'board') { setup.boardId = t.value; save(); }
+    if (t.hasAttribute('data-score')) {
+      // Typed score: keep it if it's a whole number, otherwise put the old one back.
+      var id = t.getAttribute('data-score');
+      var raw = t.value.replace(/[\s,]/g, '').replace('−', '-');
+      if (/^-?\d+$/.test(raw)) { state = G.setScore(state, id, +raw); save(); t.value = team(id).score; }
+      else t.value = team(id).score;
+    }
     if (t.name === 'picker') set(G.setPicker(state, t.value === 'host' ? null : t.value));
   });
   app.addEventListener('submit', function (e) { e.preventDefault(); actions.start(); });
@@ -250,9 +254,9 @@
       return '<div class="tn-score' + (picking ? ' is-picking' : '') + '">' +
         '<div class="tn-score-name"><span class="tn-key tn-key--sm" aria-hidden="true">' + KEYS[i] + '</span>' + esc(t.name) +
           (t.bot ? '<span class="tn-tag">sim</span>' : '') + '</div>' +
-        '<div class="tn-score-num' + (t.score < 0 ? ' is-neg' : '') + (t.score === top && t.score > 0 ? ' is-lead' : '') + '">' + fmt(t.score) + '</div>' +
-        (ui.fixing ? '<div class="tn-fix"><button type="button" class="tn-mini" data-act="adjust" data-team="' + t.id + '" data-delta="-100" aria-label="Take 100 from ' + esc(t.name) + '">−100</button>' +
-          '<button type="button" class="tn-mini" data-act="adjust" data-team="' + t.id + '" data-delta="100" aria-label="Give 100 to ' + esc(t.name) + '">+100</button></div>' : '') +
+        (ui.fixing ? '' : '<div class="tn-score-num' + (t.score < 0 ? ' is-neg' : '') + (t.score === top && t.score > 0 ? ' is-lead' : '') + '">' + fmt(t.score) + '</div>') +
+        (ui.fixing ? '<label class="sr-only" for="score-' + t.id + '">Score for ' + esc(t.name) + '</label>' +
+          '<input id="score-' + t.id + '" class="tn-score-input" type="text" inputmode="numeric" autocomplete="off" data-score="' + t.id + '" value="' + t.score + '">' : '') +
       '</div>';
     }).join('') +
     '<button class="tn-link-btn tn-fix-toggle" type="button" data-act="fix" aria-pressed="' + ui.fixing + '">' + (ui.fixing ? 'Done fixing' : 'Fix scores') + '</button>' +

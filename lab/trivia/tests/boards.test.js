@@ -44,7 +44,7 @@ test('a complete board is ready', () => {
   assert.equal(B.check(filled('Night')).ready, true);
 });
 
-test('imported files are forced into the 6 x 5 shape', () => {
+test('any stored board is forced into the 6 x 5 shape', () => {
   const b = B.normalize({ title: 'X'.repeat(200), categories: [{ name: 'Only one', questions: [{ q: 'Hi', a: 'There' }] }], extra: 'ignored' });
   assert.equal(b.title.length, 60);
   assert.equal(b.categories.length, 6);

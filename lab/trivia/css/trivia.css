@@ -92,11 +92,12 @@
 .tn-score-num { font-family: var(--mono); font-size: 22px; }
 .tn-score-num.is-neg { color: var(--red); }
 .tn-score-num.is-lead::after { content: " ★"; color: var(--red); font-size: 16px; }
-.tn-fix { display: flex; gap: 6px; width: 100%; }
-.tn-mini {
-  flex: 1; height: 34px; border-radius: 6px; cursor: pointer;
-  border: 1.5px solid var(--ink); background: var(--paper); font-family: var(--mono); font-size: 13px;
+.tn-score-input {
+  width: 96px; height: 38px; padding: 0 8px; text-align: right;
+  font-family: var(--mono); font-size: 18px; color: var(--ink);
+  border: 1.5px solid var(--red); border-radius: 6px; background: var(--paper);
 }
+.tn-score-input:focus { outline: 2px solid var(--red); outline-offset: 1px; }
 .tn-fix-toggle { align-self: center; }
 
 /* ---------- Layout: stage + side panel ---------- */
