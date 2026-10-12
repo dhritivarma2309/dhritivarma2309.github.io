@@ -6,7 +6,8 @@ const assert = require('node:assert/strict');
 const mem = {};
 globalThis.localStorage = {
   getItem: k => (k in mem ? mem[k] : null),
-  setItem: (k, v) => { mem[k] = String(v); }
+  setItem: (k, v) => { mem[k] = String(v); },
+  removeItem: k => { delete mem[k]; }
 };
 globalThis.TRIVIA_BOARDS = [];
 const B = require('../js/boards.js');
@@ -53,24 +54,65 @@ test('any stored board is forced into the 6 x 5 shape', () => {
   assert.equal(B.normalize(null).categories.length, 6);
 });
 
-test('save, list newest first, duplicate and delete', async () => {
+// A stand-in for the Firebase library, kept in memory.
+function memoryStore() {
+  const data = {};
+  let notify = () => {};
+  return {
+    data,
+    list(fn) { notify = fn; fn(JSON.parse(JSON.stringify(data))); },
+    put(b) { data[b.id] = JSON.parse(JSON.stringify(b)); notify(JSON.parse(JSON.stringify(data))); return Promise.resolve(); },
+    del(id) { delete data[id]; notify(JSON.parse(JSON.stringify(data))); return Promise.resolve(); }
+  };
+}
+
+test('nothing can be saved until you sign in', () => {
+  B.useStore(null, null);
+  assert.equal(B.canSave(), false);
+  assert.equal(B.save(filled('Nope')), null);
+});
+
+test('save, list newest first, duplicate and delete (in your online library)', async () => {
+  const store = memoryStore();
+  B.useStore(store, { uid: 'dhriti', name: 'Dhriti' });
   const one = B.save(filled('First'));
   await new Promise(r => setTimeout(r, 5));
   const two = B.save(filled('Second'));
-  assert.deepEqual(B.all().map(b => b.title), ['Second', 'First']);
+  assert.deepEqual(B.all().filter(b => !b.builtIn).map(b => b.title), ['Second', 'First']);
+  assert.equal(store.data[two.id].title, 'Second', 'written through to the library');
+  assert.ok(!('saved' in store.data[two.id]), 'only board fields are stored');
   const copy = B.duplicate(two);
   assert.notEqual(copy.id, two.id);
   assert.equal(copy.title, 'Second (copy)');
-  B.remove(one.id);
+  await B.remove(one.id);
   assert.equal(B.get(one.id), null);
-  assert.equal(B.all().length, 2);
+  assert.equal(store.data[one.id], undefined);
 });
 
 test('saving the same board again updates it instead of adding a new one', () => {
+  const store = memoryStore();
+  B.useStore(store, { uid: 'dhriti' });
   const b = B.save(filled('Edit me'));
-  const before = B.all().length;
   b.title = 'Edited';
   B.save(b);
-  assert.equal(B.all().length, before);
+  assert.equal(Object.keys(store.data).length, 1);
   assert.equal(B.get(b.id).title, 'Edited');
+});
+
+test('boards saved in this browser move into the library on first sign-in, once', () => {
+  mem['trivia-night:boards'] = JSON.stringify([filled('Old browser board')]);
+  const store = memoryStore();
+  B.useStore(store, { uid: 'dhriti' });
+  assert.equal(B.status().moved, 1);
+  assert.deepEqual(Object.values(store.data).map(b => b.title), ['Old browser board']);
+  assert.equal(mem['trivia-night:boards'], undefined, 'removed from the browser after moving');
+});
+
+test('signing out empties the list (built-in boards stay)', () => {
+  globalThis.TRIVIA_BOARDS.push({ id: 'sample', title: 'Sample', categories: [] });
+  B.useStore(memoryStore(), { uid: 'dhriti' });
+  B.save(filled('Mine'));
+  B.useStore(null, null);
+  assert.deepEqual(B.all().map(b => b.title), ['Sample']);
+  assert.equal(B.status().user, null);
 });

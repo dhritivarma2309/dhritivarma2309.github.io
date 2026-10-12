@@ -140,17 +140,49 @@
       if (!user) user = (await auth.signInAnonymously()).user;
       var offset = 0;
       db.ref('.info/serverTimeOffset').on('value', function (s) { offset = s.val() || 0; });
-      return {
+      var ctx = {
         db: db,
-        uid: user.uid,
+        auth: auth,
+        // Who's signed in now: a Google account (the host) or an anonymous player.
+        get uid() { return auth.currentUser ? auth.currentUser.uid : null; },
+        user: function () {
+          var u = auth.currentUser;
+          if (!u || u.isAnonymous) return null;
+          return { uid: u.uid, name: u.displayName || u.email || 'you', email: u.email || '' };
+        },
+        onAuth: function (fn) { return auth.onAuthStateChanged(function () { fn(ctx.user()); }); },
         serverNow: function () { return Date.now() + offset; },
         TS: fb.database.ServerValue.TIMESTAMP,
         room: function (code, path) { return db.ref('rooms/' + code + (path ? '/' + path : '')); },
         onConnection: function (fn) { db.ref('.info/connected').on('value', function (s) { fn(!!s.val()); }); }
       };
+      return ctx;
     })();
     connecting.catch(function () { connecting = null; });
     return connecting;
+  }
+
+  // Host sign-in with a Google account (a pop-up window). Players never need it.
+  async function signIn() {
+    var ctx = await connect();
+    var provider = new root.firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    try {
+      await ctx.auth.signInWithPopup(provider);
+    } catch (e) {
+      if (e && (e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request')) return null;
+      if (e && e.code === 'auth/popup-blocked') throw new Error('Your browser blocked the sign-in window. Allow pop-ups for this site and try again.');
+      if (e && e.code === 'auth/unauthorized-domain') throw new Error('Sign-in isn\'t allowed on this address yet. Add it under Firebase → Authentication → Settings → Authorized domains.');
+      throw new Error('Couldn\'t sign in. Try again.');
+    }
+    return ctx.user();
+  }
+
+  // Back to an anonymous id, so this browser can still play and host.
+  async function signOut() {
+    var ctx = await connect();
+    await ctx.auth.signOut();
+    await ctx.auth.signInAnonymously();
   }
 
   // Claim a fresh room code. Tries a few in case one is taken.
@@ -172,7 +204,8 @@
 
   var api = {
     newCode: newCode, cleanCode: cleanCode, slug: slug, project: project,
-    isSetUp: isSetUp, connect: connect, createRoom: createRoom, inviteUrl: inviteUrl
+    isSetUp: isSetUp, connect: connect, signIn: signIn, signOut: signOut,
+    createRoom: createRoom, inviteUrl: inviteUrl
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.TriviaLive = api;

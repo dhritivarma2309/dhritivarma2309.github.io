@@ -7,10 +7,10 @@
      { id, title, categories: [ { name, questions: [ { q, a } x5 ] } x6 ], updatedAt }
    Question values come from their row: 100, 200, 300, 400, 500.
 
-   Where boards live (for now):
+   Where boards live:
    - Built-in boards ship with the site (boards/*.js) and can't be edited.
-   - Boards you make are saved in this browser. Step 4 moves them to an
-     online library so they follow you to any device.
+   - Boards you make are saved to your account (sign in with Google), so
+     they follow you to any device. Only you can read or change them.
    ========================================================================== */
 
 (function (root) {
@@ -18,7 +18,6 @@
 
   var CATS = 6;
   var ROWS = 5;
-  var STORE = 'trivia-night:boards';
 
   function str(v, max) { return String(v == null ? '' : v).slice(0, max); }
 
@@ -78,17 +77,22 @@
     return { filled: filled, total: total, missing: missing, ready: missing.length === 0 };
   }
 
-  /* ---- Storage (browser). Every call is wrapped: storage can be blocked. ---- */
+  /* ---- Where boards are kept --------------------------------------------
+     Your boards live in your account (Firebase, boards/<your id>/<board id>)
+     once you sign in with Google. A copy is kept in memory so pages can
+     list and open boards instantly; every change is written through to
+     Firebase. Boards made before sign-in existed were kept in this browser;
+     they move into your library the first time you sign in.
+     ---------------------------------------------------------------------- */
 
-  function readSaved() {
-    try {
-      var list = JSON.parse(root.localStorage.getItem(STORE) || '[]');
-      return Array.isArray(list) ? list.map(normalize) : [];
-    } catch (e) { return []; }
-  }
-  function writeSaved(list) {
-    try { root.localStorage.setItem(STORE, JSON.stringify(list)); return true; } catch (e) { return false; }
-  }
+  var cache = {};             // board id -> board (your library)
+  var store = null;           // { put(board) -> Promise, del(id) -> Promise }
+  var state = { user: null, loading: false, moved: 0, error: '' };
+  var listeners = [];
+
+  function changed() { listeners.forEach(function (fn) { try { fn(); } catch (e) { /* keep going */ } }); }
+  function onChange(fn) { listeners.push(fn); }
+  function status() { return { user: state.user, loading: state.loading, moved: state.moved, error: state.error }; }
 
   function builtIn() {
     return (root.TRIVIA_BOARDS || []).map(function (b) {
@@ -99,23 +103,32 @@
     });
   }
 
-  // Saved boards (newest first), then built-in ones.
+  // Your boards (newest first), then built-in ones.
   function all() {
-    var saved = readSaved().sort(function (a, b) { return b.updatedAt - a.updatedAt; });
-    return saved.concat(builtIn());
+    var mine = Object.keys(cache).map(function (k) { return cache[k]; })
+      .sort(function (a, b) { return b.updatedAt - a.updatedAt; });
+    return mine.concat(builtIn());
   }
   function get(id) {
     return all().filter(function (b) { return b.id === id; })[0] || null;
   }
+  function canSave() { return !!store; }
+
+  // Returns the saved board right away; `.saved` is a Promise for the write.
   function save(board) {
+    if (!store) return null;
     var b = normalize(board);
     b.updatedAt = Date.now();
-    var list = readSaved().filter(function (x) { return x.id !== b.id; });
-    list.push(b);
-    return writeSaved(list) ? b : null;
+    cache[b.id] = b;
+    b.saved = store.put(stripped(b));
+    changed();
+    return b;
   }
   function remove(id) {
-    return writeSaved(readSaved().filter(function (x) { return x.id !== id; }));
+    if (!store) return Promise.resolve(false);
+    delete cache[id];
+    changed();
+    return store.del(id);
   }
   // A new editable copy (used to edit a built-in board).
   function duplicate(board, title) {
@@ -124,16 +137,88 @@
     b.title = str(title || board.title + ' (copy)', 60);
     return save(b);
   }
+  function stripped(b) {
+    return { id: b.id, title: b.title, categories: b.categories, updatedAt: b.updatedAt };
+  }
 
   // For the game: the board in the shape the rules engine expects.
   function toGame(board) {
     return { id: board.id, title: board.title, categories: board.categories };
   }
 
+  /* ---- Connecting the library to an account ---------------------------- */
+
+  // Any store with list/put/del works (the tests use one kept in memory).
+  // list(onBoards) calls onBoards({ id: board, ... }) now and on every change.
+  function useStore(s, user) {
+    if (store && store.stop) store.stop();
+    cache = {};
+    store = s;
+    state.user = user || null;
+    state.loading = !!s;
+    state.error = '';
+    if (!s) { state.loading = false; changed(); return; }
+    var first = true;
+    s.list(function (boards) {
+      var next = {};
+      Object.keys(boards || {}).forEach(function (k) {
+        var b = normalize(boards[k]);
+        b.id = k;
+        next[k] = b;
+      });
+      cache = next;
+      state.loading = false;
+      if (first) { first = false; moveBrowserBoards(); }
+      changed();
+    }, function () {
+      // Usually the database rules haven't been updated for the library yet.
+      state.loading = false;
+      state.error = 'Couldn\'t load your boards. The library may not be switched on in Firebase yet.';
+      changed();
+    });
+  }
+
+  // Firebase: boards/<uid>. Follows sign-in and sign-out.
+  function attach(ctx) {
+    ctx.onAuth(function (user) {
+      if (!user) { useStore(null, null); return; }
+      if (state.user && state.user.uid === user.uid && store) return;
+      var ref = ctx.db.ref('boards/' + user.uid);
+      var handler = function (snap) { listFn(snap.val() || {}); };
+      var listFn = function () {};
+      useStore({
+        list: function (fn, onError) { listFn = fn; ref.on('value', handler, onError); },
+        put: function (b) { return ref.child(b.id).set(b); },
+        del: function (id) { return ref.child(id).remove(); },
+        stop: function () { ref.off('value', handler); }
+      }, user);
+    });
+  }
+
+  // Boards saved in this browser before the online library: move them in once.
+  var OLD_STORE = 'trivia-night:boards';
+  function moveBrowserBoards() {
+    var old = [];
+    try { old = JSON.parse(root.localStorage.getItem(OLD_STORE) || '[]'); } catch (e) { return; }
+    if (!Array.isArray(old) || !old.length) return;
+    var moved = 0;
+    old.forEach(function (raw) {
+      var b = normalize(raw);
+      if (cache[b.id]) b.id = newId();
+      b.updatedAt = b.updatedAt || Date.now();
+      cache[b.id] = b;
+      store.put(stripped(b));
+      moved++;
+    });
+    try { root.localStorage.removeItem(OLD_STORE); } catch (e) { /* ignore */ }
+    state.moved = moved;
+  }
+
   var api = {
     CATS: CATS, ROWS: ROWS,
     blank: blank, normalize: normalize, check: check,
-    all: all, get: get, save: save, remove: remove, duplicate: duplicate, toGame: toGame
+    all: all, get: get, save: save, remove: remove, duplicate: duplicate, toGame: toGame,
+    canSave: canSave, status: status, onChange: onChange, useStore: useStore, attach: attach
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

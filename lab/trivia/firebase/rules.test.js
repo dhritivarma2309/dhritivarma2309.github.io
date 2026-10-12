@@ -20,6 +20,9 @@ test.after(() => env.cleanup());
 test.beforeEach(() => env.clearDatabase());
 
 const db = uid => (uid ? env.authenticatedContext(uid) : env.unauthenticatedContext()).database();
+// A host signed in with Google (players are anonymous).
+const google = uid => env.authenticatedContext(uid, { firebase: { sign_in_provider: 'google.com' } }).database();
+const anon = uid => env.authenticatedContext(uid, { firebase: { sign_in_provider: 'anonymous' } }).database();
 
 // A room hosted by "host", in a given phase, with a team "bears" and a player "p1" on it.
 async function seed(phase = 'lobby', extra = {}) {
@@ -116,4 +119,24 @@ test('the host can clear buzzes and picks, remove teams, and close the room', as
   await assertSucceeds(remove(ref(db('host'), room('teams/t1'))));
   await assertFails(remove(ref(db('p1'), room())));
   await assertSucceeds(remove(ref(db('host'), room())));
+});
+
+const aBoard = { title: 'Friday Night', categories: [{ name: 'Suits', questions: [{ q: 'Q', a: 'A' }] }], updatedAt: 1 };
+
+test('your board library is yours alone, and needs a Google sign-in', async () => {
+  await assertSucceeds(set(ref(google('dhriti'), 'boards/dhriti/b1'), aBoard));
+  await assertSucceeds(get(ref(google('dhriti'), 'boards/dhriti')));
+  await assertFails(get(ref(google('someone'), 'boards/dhriti')), 'other people cannot read it');
+  await assertFails(set(ref(google('someone'), 'boards/dhriti/b2'), aBoard), 'or write to it');
+  await assertFails(get(ref(anon('dhriti'), 'boards/dhriti')), 'anonymous sign-in is not enough');
+  await assertFails(set(ref(anon('dhriti'), 'boards/dhriti/b3'), aBoard));
+  await assertFails(get(ref(db(null), 'boards/dhriti')));
+});
+
+test('boards must look like boards', async () => {
+  await assertFails(set(ref(google('dhriti'), 'boards/dhriti/b1'), { title: 'No questions' }));
+  await assertFails(set(ref(google('dhriti'), 'boards/dhriti/b1'), Object.assign({}, aBoard, { title: 'X'.repeat(61) })));
+  await assertFails(set(ref(google('dhriti'), 'boards/dhriti/bad id!'), aBoard));
+  await assertSucceeds(set(ref(google('dhriti'), 'boards/dhriti/b1'), aBoard));
+  await assertSucceeds(remove(ref(google('dhriti'), 'boards/dhriti/b1')));
 });

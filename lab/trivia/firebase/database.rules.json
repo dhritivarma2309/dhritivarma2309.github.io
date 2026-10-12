@@ -2,6 +2,15 @@
   "rules": {
     ".read": false,
     ".write": false,
+    "boards": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid && auth.provider !== 'anonymous'",
+        ".write": "auth != null && auth.uid === $uid && auth.provider !== 'anonymous'",
+        "$board": {
+          ".validate": "$board.matches(/^[A-Za-z0-9_-]{1,40}$/) && newData.hasChildren(['title', 'categories', 'updatedAt']) && newData.child('title').isString() && newData.child('title').val().length <= 60 && newData.child('updatedAt').isNumber()"
+        }
+      }
+    },
     "rooms": {
       "$code": {
         ".validate": "$code.matches(/^[A-Z]{4}$/)",

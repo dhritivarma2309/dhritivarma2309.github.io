@@ -141,6 +141,7 @@
     render();
     try {
       ctx = await Live.connect();
+      Boards.attach(ctx);
       ctx.onConnection(function (on) { if (net.online !== on) { net.online = on; render(); } });
       net.status = 'ready';
       var saved = load();
@@ -286,6 +287,13 @@
       render();
     },
 
+    'sign-in': function () {
+      ui.signingIn = true; ui.error = ''; render();
+      Live.signIn().catch(function (e) { ui.error = e.message; })
+        .then(function () { ui.signingIn = false; render(); });
+    },
+    'sign-out': function () { Live.signOut(); },
+
     'pick': function (el) {
       ui.peek = false;
       set(G.pick(state, +el.getAttribute('data-c'), +el.getAttribute('data-r'), now()));
@@ -400,16 +408,23 @@
   function boardOptions() {
     var all = Boards.all();
     var ready = all.filter(function (b) { return Boards.check(b).ready; });
-    if (!ready.some(function (b) { return b.id === setup.boardId; })) setup.boardId = ready[0] ? ready[0].id : null;
-    return all.map(function (b) {
+    var loading = Boards.status().loading;
+    // While your library is still loading, keep your choice: it may be in there.
+    if (!loading && !ready.some(function (b) { return b.id === setup.boardId; })) setup.boardId = ready[0] ? ready[0].id : null;
+    return (loading ? '<option disabled>Loading your boards…</option>' : '') + all.map(function (b) {
       var c = Boards.check(b);
       var label = (b.title || 'Untitled board') + (c.ready ? '' : ' (draft: ' + c.filled + ' of ' + c.total + ')');
       return '<option value="' + esc(b.id) + '"' + (b.id === setup.boardId ? ' selected' : '') + (c.ready ? '' : ' disabled') + '>' + esc(label) + '</option>';
     }).join('');
   }
   function boardPicker() {
+    var user = Boards.status().user;
+    var acct = !Live || !Live.isSetUp() ? ''
+      : user ? '<p class="tn-hint tn-account">Your boards from <b>' + esc(user.name) + '</b>\'s library · <button class="tn-link-btn tn-inline" type="button" data-act="sign-out">Sign out</button></p>'
+        + (Boards.status().error ? '<p class="tn-error">' + esc(Boards.status().error) + '</p>' : '')
+      : '<p class="tn-hint tn-account"><button class="tn-link-btn tn-inline" type="button" data-act="sign-in"' + (ui.signingIn ? ' disabled' : '') + '>' + (ui.signingIn ? 'Signing in…' : 'Sign in with Google') + '</button> to use the boards you\'ve built.</p>';
     return '<div class="tn-label-row"><label class="tn-label" for="board">Board</label><a class="tn-link-btn" href="../build/">Build or edit boards</a></div>' +
-      '<select id="board" name="board" class="tn-input">' + boardOptions() + '</select>';
+      '<select id="board" name="board" class="tn-input">' + boardOptions() + '</select>' + acct;
   }
 
   function renderSetup() {
@@ -633,4 +648,7 @@
   if (!LIVE && state && state.phase === 'question') planBots();
   render();
   if (LIVE) startLive();
+  else if (Live && Live.isSetUp()) Live.connect().then(function (c) { Boards.attach(c); }, function () { /* one screen works without it */ });
+  // Your library loaded or changed: refresh the board list on the setup screen.
+  Boards.onChange(function () { if (!state && !(LIVE && room)) render(); });
 })();
