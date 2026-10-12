@@ -201,11 +201,14 @@ export async function draft(ask, env) {
   if (!res.ok) {
     if (res.status === 401) throw new Error('The AI key in Cloudflare isn\'t working. Check ANTHROPIC_API_KEY.');
     if (res.status === 429) throw new Error('Claude is busy right now. Wait a moment and try again.');
-    if (res.status === 400) {
-      const body = await res.json().catch(() => ({}));
-      if (/credit/i.test(JSON.stringify(body))) throw new Error('Your Anthropic account is out of credit.');
-    }
-    throw new Error('Claude didn\'t answer. Try again.');
+    const body = await res.json().catch(() => ({}));
+    const why = text(body && body.error && body.error.message, 200);
+    if (/credit balance/i.test(why)) throw new Error('Your Anthropic account is out of credit.');
+    if (/usage limit|spend limit/i.test(why)) throw new Error('You\'ve hit your Anthropic monthly spending limit.');
+    if (res.status === 404 && /model/i.test(why)) throw new Error('Claude doesn\'t recognise the model "' + (env.MODEL || 'claude-sonnet-5-5') + '". (' + why + ')');
+    if (res.status === 529 || res.status >= 500) throw new Error('Claude is overloaded right now. Try again in a minute.');
+    // Anything else: pass Claude's own reason through so it can be fixed.
+    throw new Error('Claude said no (' + res.status + (why ? ': ' + why : '') + ').');
   }
   const body = await res.json();
   const use = (body.content || []).find(c => c.type === 'tool_use' && c.name === TOOL.name);
