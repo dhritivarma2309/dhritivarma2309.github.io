@@ -233,16 +233,10 @@
 .sys-box[aria-expanded="true"]::after { content: "\2713"; font-size: 13px; background: var(--ink); }
 
 /* Pen + hint above the diagram */
-.sys-head { display: flex; align-items: center; flex-wrap: wrap; gap: 0 28px; }
-.sys-head .case-h { margin-bottom: 18px; }
-.sys-hint { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 0 0 18px; }
+.sys-head .case-h { margin-bottom: 10px; }
+.sys-hint { display: flex; align-items: center; gap: 10px; margin: 0 0 18px; }
 .sys-hint p { margin: 0; font-family: var(--hand); font-size: 24px; color: var(--red); }
 .sys-pen { flex: none; }
-.sys-all {
-  appearance: none; cursor: pointer; background: none; border: 0; padding: 2px 0; margin-left: 6px;
-  font: 600 14px/1 var(--sans, inherit); color: var(--ink); text-decoration: underline; text-underline-offset: 3px;
-}
-.sys-all:hover { color: var(--red); }
 @media (prefers-reduced-motion: no-preference) {
   .sys-pen g { transform-box: view-box; transform-origin: 32px 20px; animation: pen-write 2.4s ease-in-out infinite; }
   .sys-pen-scribble { stroke-dasharray: 44; animation: pen-ink 2.4s ease-in-out infinite; }
@@ -278,8 +272,7 @@
   .sysmap { grid-template-columns: 1fr; gap: 22px; }
   .sys-board { padding: 14px 10px 14px; }
   .sys-box::after { top: -10px; right: -8px; }
-  .sys-hint { gap: 6px; margin-top: -6px; }
-  .sys-all { margin-left: 0; }
+  .sys-hint { gap: 6px; }
   .sys-hint p { font-size: 21px; }
   .sys-pen { width: 48px; height: 30px; }
   .sys-box { font-size: 18px; min-height: 64px; padding: 8px 4px; }
