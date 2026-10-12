@@ -316,7 +316,7 @@
 .tn-hub-title { font-family: var(--hand-bold); font-size: 36px; line-height: 1; }
 .tn-hub-text { color: var(--ink-soft); }
 .tn-hub-card.is-main .tn-hub-text { color: var(--mist); }
-@media (max-width: 1040px) { .tn-hub-grid { grid-template-columns: minmax(0, 1fr); max-width: 560px; } }
+@media (max-width: 1100px) { .tn-hub-grid { grid-template-columns: minmax(0, 1fr); max-width: 560px; } }
 .tn-hub-text { white-space: nowrap; }
 
 /* ==========================================================================
@@ -491,3 +491,5 @@ button.bb-card:hover { transform: translateY(-2px); box-shadow: 3px 4px 0 var(--
 .bb-back:hover { color: var(--red); }
 .bb-home-head { align-items: baseline; }
 @media (max-width: 359px) { .tn-hub-text { white-space: normal; } }
+.tn-hub-text { font-size: 15px; }
+@media (max-width: 400px) { .tn-hub-text { font-size: 14px; } .tn-hub-card { padding: 20px 18px 22px; } }
