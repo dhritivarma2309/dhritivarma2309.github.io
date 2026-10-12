@@ -80,7 +80,7 @@ window.MUSIC = {
         ],
       },
       {
-        name: "Famous Covers",
+        name: "Covers That Beat the Original",
         songs: [
           {
             title: "Hallelujah", artist: "Jeff Buckley",
