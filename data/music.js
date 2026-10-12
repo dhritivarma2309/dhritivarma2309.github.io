@@ -20,7 +20,7 @@ window.MUSIC = {
     intro: "Mini mixtapes I'd make for a friend",
     themes: [
       {
-        name: "Coke Studio Essentials",
+        name: "Coke Studio Pakistan Essentials",
         songs: [
           {
             title: "Tu Jhoom", artist: "Naseebo Lal, Abida Parveen",
@@ -50,7 +50,7 @@ window.MUSIC = {
         ],
       },
       {
-        name: "Heard on Suits",
+        name: "My Favourite Music from Suits",
         songs: [
           {
             title: "Short Change Hero", artist: "The Heavy",
