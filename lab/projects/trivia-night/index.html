@@ -15,7 +15,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Caveat+Brush&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../../../assets/css/site.css?v=202610121035">
   <link rel="stylesheet" href="../../../assets/css/article.css?v=202610121035">
-  <link rel="stylesheet" href="../../../assets/css/lab.css?v=202610121115">
+  <link rel="stylesheet" href="../../../assets/css/lab.css?v=202610121340">
 </head>
 <body>
   <!--
@@ -65,35 +65,85 @@
       <section class="case-section">
         <h2 class="case-h">The idea</h2>
         <div class="prose">
-          <p>Many of my friends and family live far away. I wanted to host trivia nights that bring everyone together, let us compete a little and, most importantly, share a laugh or two.</p>
+          <p>Many of my friends and family live far away. I wanted to start hosting trivia nights that bring everyone together, let us compete a little and, most importantly, share a laugh or two.</p>
         </div>
       </section>
 
       <section class="case-section">
         <h2 class="case-h">The product</h2>
+        <p class="case-oneliner">A Jeopardy-style trivia game for video calls, with a buzzer in every hand.</p>
         <div class="prose">
-          <p>A Jeopardy-style game for hosting trivia over video calls with friends and family. It has three parts across two personas.</p>
+          <p>It has three core capabilities across two personas: the Quizmaster and the Participants.</p>
         </div>
-        <!-- Each column: add a short muted video in the .part-media slot and a features list under the summary later. -->
+        <!-- Each card: a short GIF-style clip goes in .part-media later (landscape 16:10, recorded on the laptop):
+             <video src="../../../assets/video/x.mp4" autoplay muted loop playsinline></video> -->
         <div class="parts">
           <article class="paper part">
-            <span class="persona">Quiz Master</span>
+            <span class="persona">Quizmaster</span>
             <h3>Build a Board</h3>
-            <p>Write six categories of five questions by hand, or give Claude a theme and edit what it drafts.</p>
+            <p>Create a board of questions, written by you or drafted by Claude from a theme.</p>
             <div class="part-media"><span>Video coming soon</span></div>
           </article>
           <article class="paper part">
-            <span class="persona">Quiz Master</span>
+            <span class="persona">Quizmaster</span>
             <h3>Host a Game</h3>
-            <p>Open a room, share the code on the call, then pick tiles, judge answers and keep score.</p>
+            <p>Start a room, share the code with participants and run the game.</p>
             <div class="part-media"><span>Video coming soon</span></div>
           </article>
           <article class="paper part">
             <span class="persona persona--players">Participants</span>
             <h3>Join a Game</h3>
-            <p>Join from a phone with the room code, pick a team, and buzz in the moment you know the answer.</p>
+            <p>Join the room, pick a team, and buzz in from your phone when you know the answer.</p>
             <div class="part-media"><span>Video coming soon</span></div>
           </article>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <h2 class="case-h">System diagram</h2>
+        <!-- Boxes sit in the middle; each note points at its box (data-for = the box's data-node).
+             The arrows are drawn by assets/js/sysmap.js. On phones the notes stack under the sketch. -->
+        <div class="sysmap" data-sysmap>
+          <div class="sys-notes sys-notes--left">
+            <div class="sys-note" data-for="gh">
+              <h3>GitHub Pages</h3>
+              <p>My website's files (HTML, CSS, JS, images) live in my GitHub repo. GitHub Pages publishes them as a public website, and when anyone opens a page, their browser downloads the files from GitHub's servers.</p>
+            </div>
+            <div class="sys-note" data-for="qm">
+              <h3>Quizmaster Browser</h3>
+              <p>The Build and Host pages run in the Quizmaster's browser, usually on a laptop. It's where boards are created, by hand or with Claude, and where the game rules run: opening questions, judging answers and updating scores, with every change sent to Firebase for all players to see.</p>
+            </div>
+            <div class="sys-note" data-for="cf">
+              <h3>Cloudflare Worker</h3>
+              <p>A small server I set up on Cloudflare, between the Quizmaster Browser and Claude. When the Quizmaster drafts questions with AI, the browser sends the request to the Cloudflare Worker, which checks they're signed in with an allowed Google account, adds the Claude API key and calls Claude. This way, the key never reaches the browser.</p>
+            </div>
+          </div>
+
+          <div class="sys-board" aria-label="Diagram: GitHub Pages serves the Quizmaster Browser and Participant Browsers; both sync through Firebase; the Quizmaster Browser calls Claude through a Cloudflare Worker.">
+            <div class="sys-box sys-box--cloud" data-node="gh" style="grid-area: gh">GitHub Pages</div>
+            <div class="sys-box sys-box--device" data-node="qm" style="grid-area: qm">Quizmaster Browser</div>
+            <div class="sys-box sys-box--cloud" data-node="fb" style="grid-area: fb">Firebase</div>
+            <div class="sys-box sys-box--device" data-node="pb" style="grid-area: pb">Participant Browser</div>
+            <div class="sys-box sys-box--cloud" data-node="cf" style="grid-area: cf">Cloudflare Worker</div>
+            <div class="sys-box sys-box--cloud" data-node="cl" style="grid-area: cl">Claude</div>
+          </div>
+
+          <div class="sys-notes sys-notes--right">
+            <div class="sys-note" data-for="fb">
+              <h3>Firebase</h3>
+              <p>Google's backend service that the Quizmaster's and participants' browsers connect to. It signs in the Quizmaster with Google, saves their trivia boards, and holds each live game (teams, questions, buzzes and scores), syncing every change to all browsers in real time.</p>
+            </div>
+            <div class="sys-note" data-for="pb">
+              <h3>Participant Browser</h3>
+              <p>The Join a Game page runs in each participant's browser, usually on a phone. Participants enter the room code, create or join a team, and buzz in when a question opens. Each change is sent by the browser to Firebase for all participants and the Quizmaster to see.</p>
+            </div>
+            <div class="sys-note" data-for="cl">
+              <h3>Claude</h3>
+              <p>AI model that can help draft the trivia questions. The Quizmaster types a theme for a category, and Claude returns five questions from easy to hard. Any question that Claude isn't sure about comes back with a flag, so the Quizmaster can verify it before the game.</p>
+            </div>
+          </div>
+
+          <svg class="sys-arrows" aria-hidden="true"></svg>
         </div>
       </section>
 
@@ -132,6 +182,7 @@
   <script src="../../../data/site.js"></script>
   <script src="../../../assets/js/site.js"></script>
   <script src="../../../assets/js/video.js"></script>
+  <script src="../../../assets/js/sysmap.js?v=202610121340"></script>
   <script>
     // Links open in a new tab; any link whose href is still empty is greyed out.
     document.querySelectorAll('.case-actions a').forEach(function (a) {
