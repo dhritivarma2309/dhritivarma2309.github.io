@@ -1,10 +1,15 @@
 /* ==========================================================================
    TRIVIA NIGHT · board builder
    --------------------------------------------------------------------------
-   Sign in with Google, then type categories, questions and answers into the
-   6 x 5 grid. Every change saves itself to your board library (online, so
-   it follows you to any device). A board can be played once all 30
-   questions have answers. Built-in boards can't be edited; make a copy.
+   Two screens:
+   - Your boards: start a new board, or open one you've made. The sample
+     that comes with the site sits underneath.
+   - Editing a board: the 6 x 5 grid. Every change saves itself to your
+     library (online, so it follows you to any device). A board can be
+     played once all 30 questions have answers.
+   Building needs a Google sign-in; signed out, you can still look at the
+   sample. The address ends in #<board id> while editing, so the browser's
+   Back button returns to Your boards.
    ========================================================================== */
 
 (function () {
@@ -12,49 +17,66 @@
 
   var B = window.TriviaBoards;
   var Live = window.TriviaLive;
-  var SEL = 'trivia-night:builder-selected';
   var PICK = 'trivia-night:pick';
   var root = document.getElementById('builder');
 
-  var board = null;        // the board being edited (a copy)
+  var board = null;        // the board being edited (a copy), or null on Your boards
   var saveTimer = null;
   var status = 'saved';    // saved | saving | failed
   var confirming = false;
   var account = { ready: false, error: '', busy: false };
+  var heard = false;       // have we heard who's signed in yet?
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
-  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+  function store(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* ignore */ } }
   function signedIn() { return !!B.status().user; }
   function editable() { return board && !board.builtIn && signedIn(); }
-
-  // Pick a board to show without you clicking one. Signed in: only your own
-  // boards (the last one you had open, else your newest); with none yet, an
-  // empty page. Signed out: the sample, read-only.
-  function autoOpen() {
-    var sel = store(SEL);
-    if (signedIn()) {
-      var mine = B.all().filter(function (b) { return !b.builtIn; });
-      var pick = mine.filter(function (b) { return b.id === sel; })[0] || mine[0];
-      if (pick) open(pick.id); else { board = null; render(); }
-      return;
-    }
-    open(sel);
+  function progress(b) {
+    var c = B.check(b);
+    return c.ready ? 'Ready to play' : c.filled + ' of ' + c.total + ' questions';
+  }
+  function ago(t) {
+    if (!t) return '';
+    var m = Math.round((Date.now() - t) / 60000);
+    if (m < 1) return 'Edited just now';
+    if (m < 60) return 'Edited ' + m + ' min ago';
+    var h = Math.round(m / 60);
+    if (h < 24) return 'Edited ' + h + (h === 1 ? ' hour' : ' hours') + ' ago';
+    return 'Edited ' + new Date(t).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }
 
-  function open(id) {
-    var found = B.get(id) || B.all()[0] || B.blank();
+  /* ---- Moving between the two screens --------------------------------- */
+
+  function edit(id) {
+    var found = B.get(id);
+    if (!found) { home(); return; }
     board = JSON.parse(JSON.stringify(found));
     delete board.saved;
     confirming = false;
-    store(SEL, board.id);
+    status = 'saved';
+    if (location.hash !== '#' + id) history.pushState(null, '', '#' + id);
+    render();
+    window.scrollTo(0, 0);
+  }
+  function home() {
+    if (status === 'saving') saveNow();
+    board = null;
+    if (location.hash) history.pushState(null, '', location.pathname + location.search);
     render();
   }
+  // Browser Back / Forward.
+  window.addEventListener('popstate', function () {
+    var id = location.hash.slice(1);
+    if (status === 'saving') saveNow();
+    if (id && B.get(id)) edit(id); else { board = null; render(); }
+  });
 
-  // ---- Saving: a short pause after the last keystroke ----
+  /* ---- Saving: a short pause after the last keystroke ------------------- */
+
   function queueSave() {
     status = 'saving';
     drawStatus();
@@ -73,35 +95,30 @@
   }
   window.addEventListener('pagehide', function () { if (status === 'saving') saveNow(); });
 
-  // ---- Signing in ----
+  /* ---- Actions ---------------------------------------------------------- */
+
   function signIn() {
-    account.busy = true; account.error = ''; drawAccount();
+    account.busy = true; account.error = ''; render();
     Live.signIn().catch(function (e) { account.error = e.message; })
-      .then(function () { account.busy = false; drawAccount(); });
+      .then(function () { account.busy = false; render(); });
   }
 
-  // ---- Actions ----
   var actions = {
-    open: function (el) { if (status === 'saving') saveNow(); open(el.getAttribute('data-id')); },
     'sign-in': signIn,
-    'sign-out': function () { if (status === 'saving') saveNow(); Live.signOut(); },
+    'sign-out': function () { if (status === 'saving') saveNow(); board = null; Live.signOut(); },
+    open: function (el) { edit(el.getAttribute('data-id')); },
+    home: home,
     'new': function () {
       if (!signedIn()) { signIn(); return; }
-      if (status === 'saving') saveNow();
       var b = B.save(B.blank('Untitled board'));
-      if (b) open(b.id);
+      if (b) edit(b.id);
     },
-    'copy-sample': function () {
-      var sample = B.all().filter(function (b) { return b.builtIn; })[0];
-      if (!sample || !signedIn()) return;
-      var b = B.duplicate(sample);
-      if (b) open(b.id);
-    },
-    copy: function () {
+    copy: function (el) {
       if (!signedIn()) { signIn(); return; }
       if (status === 'saving') saveNow();
-      var b = B.duplicate(board);
-      if (b) open(b.id);
+      var src = el.getAttribute('data-id') ? B.get(el.getAttribute('data-id')) : board;
+      var b = src && B.duplicate(src);
+      if (b) edit(b.id);
     },
     'delete': function () {
       if (!confirming) {
@@ -113,8 +130,7 @@
       clearTimeout(saveTimer);
       status = 'saved';
       B.remove(board.id);
-      store(SEL, '');
-      autoOpen();
+      home();
     },
     play: function () {
       if (status === 'saving') saveNow();
@@ -127,7 +143,7 @@
     var el = e.target.closest('[data-act]');
     if (!el || el.disabled) return;
     var fn = actions[el.getAttribute('data-act')];
-    if (fn) fn(el);
+    if (fn) { e.preventDefault(); fn(el); }
   });
 
   // Typing: change the board in place and save, without redrawing the grid.
@@ -150,67 +166,90 @@
   });
 
   // The library changed: it loaded, you signed in or out, or a save landed.
-  var lastUser;         // undefined until we first hear who's signed in
-  var reopen = false;   // pick a board once the library has loaded
+  var lastUser;
   B.onChange(function () {
     var st = B.status();
     var who = st.user ? st.user.uid : null;
-    if (who !== lastUser) { lastUser = who; reopen = true; }
-    if (reopen && !st.loading) { reopen = false; autoOpen(); return; }
-    if (reopen) { render(); return; }                 // still loading
-    if (board && !board.builtIn && !B.get(board.id) && status !== 'saving') { autoOpen(); return; }  // deleted elsewhere
-    drawList();
-    drawAccount();
+    if (who !== lastUser) {
+      lastUser = who;
+      heard = true;
+      // Signed out while editing your board: back to Your boards.
+      if (board && !board.builtIn && !who) board = null;
+    }
+    if (st.loading) { if (!board) render(); return; }
+    // Arrived with #<board id> in the address: open it once your boards load.
+    var want = location.hash.slice(1);
+    if (!board && want && B.get(want)) { edit(want); return; }
+    if (board && !board.builtIn && !B.get(board.id) && status !== 'saving') { home(); return; }  // deleted elsewhere
+    if (!board) render();
   });
 
-  // ---- Drawing ----
+  /* ---- Drawing ---------------------------------------------------------- */
+
   function render() {
-    root.innerHTML =
-      '<div class="bb-layout">' +
-        '<aside class="bb-side"><div data-slot="account"></div><div data-slot="list"></div>' +
-          '<div class="bb-side-actions"><button class="btn btn--solid btn--sm" type="button" data-act="new">+ New board</button></div>' +
-        '</aside>' +
-        '<section class="bb-main">' + (board ? renderEditor() : renderEmpty()) + '</section>' +
-      '</div>';
-    drawAccount();
-    drawList();
-    drawActions();
-    drawProgress();
-    drawStatus();
+    root.innerHTML = board ? renderEditor() : renderHome();
+    if (board) { drawActions(); drawProgress(); }
   }
 
-  function drawAccount() {
-    var slot = root.querySelector('[data-slot="account"]');
-    if (!slot) return;
+  function accountBar() {
     var st = B.status();
-    var err = account.error ? '<p class="tn-error" role="alert">' + esc(account.error) + '</p>' : '';
-    if (!account.ready) {
-      slot.innerHTML = '<div class="bb-account"><p class="tn-hint">Connecting…</p>' + err + '</div>';
+    if (!account.ready || !st.user) return '';
+    return '<p class="bb-who">' + esc(st.user.name) + ' · <button class="tn-link-btn tn-inline" type="button" data-act="sign-out">Sign out</button></p>';
+  }
+
+  // Screen 1: Your boards.
+  function renderHome() {
+    var st = B.status();
+    var mine = B.all().filter(function (b) { return !b.builtIn; });
+    var site = B.all().filter(function (b) { return b.builtIn; });
+    var err = account.error || st.error;
+
+    var yours;
+    if (!account.ready || !heard || (st.user && st.loading)) {
+      yours = '<p class="tn-hint">Loading your boards…</p>';
     } else if (!st.user) {
-      slot.innerHTML = '<div class="bb-account is-out">' +
-        '<p class="bb-account-title">Sign in to build boards</p>' +
-        '<p class="tn-hint">Your boards save to your Google account, so you can write them on one device and host from another. Only you can see them.</p>' +
-        '<button class="btn btn--solid btn--sm" type="button" data-act="sign-in"' + (account.busy ? ' disabled' : '') + '>' + (account.busy ? 'Signing in…' : 'Sign in with Google') + '</button>' + err + '</div>';
+      yours = '<div class="bb-signin paper">' +
+        '<h2 class="bb-signin-title">Sign in to build your own boards</h2>' +
+        '<p class="tn-hint">Boards save to your Google account, so you can write them on one device and host from another. Only you can see them.</p>' +
+        '<button class="btn btn--solid" type="button" data-act="sign-in"' + (account.busy ? ' disabled' : '') + '>' + (account.busy ? 'Signing in…' : 'Sign in with Google') + '</button>' +
+      '</div>';
     } else {
-      slot.innerHTML = '<div class="bb-account">' +
-        '<p class="tn-hint">Signed in as <b>' + esc(st.user.name) + '</b> · <button class="tn-link-btn tn-inline" type="button" data-act="sign-out">Sign out</button></p>' +
-        (st.moved ? '<p class="tn-hint">Moved ' + st.moved + (st.moved === 1 ? ' board' : ' boards') + ' from this browser into your library.</p>' : '') +
-        (st.error ? '<p class="tn-error" role="alert">' + esc(st.error) + '</p>' : '') +
-        err + '</div>';
+      yours = '<div class="bb-cards">' +
+        '<button class="bb-card bb-card--new" type="button" data-act="new"><span class="bb-plus" aria-hidden="true">+</span><span class="bb-card-title">New board</span><span class="bb-card-meta">Start from blank</span></button>' +
+        mine.map(card).join('') +
+      '</div>' +
+      (st.moved ? '<p class="tn-hint">Moved ' + st.moved + (st.moved === 1 ? ' board' : ' boards') + ' from this browser into your library.</p>' : '');
     }
+
+    return '<div class="bb-home">' +
+      '<div class="bb-home-head"><h1 class="display bb-home-title">Your boards</h1>' + accountBar() + '</div>' +
+      (err ? '<p class="tn-error" role="alert">' + esc(err) + '</p>' : '') +
+      yours +
+      (site.length ? '<h2 class="bb-section">From the site</h2><div class="bb-cards">' + site.map(siteCard).join('') + '</div>' : '') +
+    '</div>';
   }
 
-  // Signed in, library loading or no boards yet.
-  function renderEmpty() {
-    var st = B.status();
-    if (lastUser === undefined || st.loading) return '<div class="bb-empty"><p class="tn-hint">Loading your boards…</p></div>';
-    return '<div class="bb-empty paper tape">' +
-      '<h2 class="display bb-empty-title">Start your first board</h2>' +
-      '<p class="tn-hint">Six categories, five questions each. Everything saves to your library as you type.</p>' +
-      '<div class="bb-actions"><button class="btn btn--solid btn--sm" type="button" data-act="new">+ New board</button>' +
-      '<button class="btn btn--sm" type="button" data-act="copy-sample">Copy the sample to start</button></div></div>';
+  function card(b) {
+    var ready = B.check(b).ready;
+    return '<button class="bb-card" type="button" data-act="open" data-id="' + esc(b.id) + '">' +
+      '<span class="bb-card-title">' + esc(b.title || 'Untitled board') + '</span>' +
+      '<span class="bb-card-meta' + (ready ? ' is-ready' : '') + '">' + progress(b) + '</span>' +
+      '<span class="bb-card-when">' + ago(b.updatedAt) + '</span>' +
+    '</button>';
   }
 
+  function siteCard(b) {
+    return '<div class="bb-card bb-card--site">' +
+      '<span class="bb-card-title">' + esc(b.title) + '</span>' +
+      '<span class="bb-card-meta">' + b.categories.map(function (c) { return esc(c.name); }).join(' · ') + '</span>' +
+      '<span class="bb-card-actions">' +
+        '<button class="tn-link-btn tn-inline" type="button" data-act="open" data-id="' + esc(b.id) + '">Preview</button>' +
+        (signedIn() ? '<button class="tn-link-btn tn-inline" type="button" data-act="copy" data-id="' + esc(b.id) + '">Copy to edit</button>' : '') +
+      '</span>' +
+    '</div>';
+  }
+
+  // Screen 2: editing a board.
   function renderEditor() {
     var ro = !editable();
     var dis = ro ? ' disabled' : '';
@@ -232,39 +271,18 @@
         cells + '</div>';
     }).join('');
     var banner = board.builtIn
-      ? '<p class="bb-banner">This board comes with the site, so it can\'t be changed. ' + (signedIn() ? 'Make a copy to edit it.' : 'Sign in, then make a copy to edit it.') + '</p>'
+      ? '<p class="bb-banner">This sample comes with the site, so it can\'t be changed. ' + (signedIn() ? 'Copy it to make your own version.' : 'Sign in to copy it and make your own version.') + '</p>'
       : '';
-    return '<div class="bb-head">' +
+    return '<div class="bb-edit">' +
+      '<div class="bb-edit-top"><a class="bb-back" href="./" data-act="home">← All boards</a>' + accountBar() + '</div>' +
+      '<div class="bb-head">' +
         '<label class="sr-only" for="board-title">Board name</label>' +
         '<input id="board-title" class="bb-title" maxlength="60" placeholder="Name this board" autocomplete="off" data-field="title" value="' + esc(board.title) + '"' + dis + '>' +
         '<div class="bb-actions" data-slot="actions"></div>' +
       '</div>' + banner +
       '<div class="bb-progress" data-slot="progress"></div>' +
-      '<div class="bb-grid">' + cats + '</div>';
-  }
-
-  function drawList() {
-    var slot = root.querySelector('[data-slot="list"]');
-    if (!slot) return;
-    var boards = B.all();
-    var mine = boards.filter(function (b) { return !b.builtIn; });
-    var builtIn = boards.filter(function (b) { return b.builtIn; });
-    function item(b) {
-      var cur = !!board && b.id === board.id;
-      var c = B.check(cur ? board : b);
-      return '<li><button type="button" class="bb-item' + (cur ? ' is-current' : '') + '" data-act="open" data-id="' + esc(b.id) + '"' + (cur ? ' aria-current="true"' : '') + '>' +
-        '<span class="bb-item-name">' + esc((cur ? board.title : b.title) || 'Untitled board') + '</span>' +
-        '<span class="bb-item-meta' + (c.ready ? ' is-ready' : '') + '">' + (c.ready ? 'Ready to play' : c.filled + ' of ' + c.total + ' filled') + '</span>' +
-      '</button></li>';
-    }
-    var st = B.status();
-    var yours = !st.user ? ''
-      : st.loading ? '<p class="tn-hint">Loading your boards…</p>'
-      : mine.length ? '<ul class="bb-list">' + mine.map(item).join('') + '</ul>'
-      : '<p class="tn-hint">No boards yet. Start a new one, or copy the sample.</p>';
-    slot.innerHTML =
-      (st.user ? '<h2 class="tn-card-title">Your boards</h2>' + yours : '') +
-      (builtIn.length ? '<h3 class="bb-sub">Comes with the site</h3><ul class="bb-list">' + builtIn.map(item).join('') + '</ul>' : '');
+      '<div class="bb-grid">' + cats + '</div>' +
+    '</div>';
   }
 
   function drawActions() {
@@ -273,7 +291,7 @@
     var ready = B.check(board).ready;
     slot.innerHTML =
       '<button class="btn btn--solid btn--sm" type="button" data-act="play"' + (ready ? '' : ' disabled title="Fill in every question and answer first"') + '>Play this board</button>' +
-      (signedIn() ? '<button class="btn btn--sm" type="button" data-act="copy">' + (board.builtIn ? 'Make a copy to edit' : 'Duplicate') + '</button>' : '') +
+      (signedIn() ? '<button class="btn btn--sm" type="button" data-act="copy">' + (board.builtIn ? 'Copy to edit' : 'Duplicate') + '</button>' : '') +
       (editable() ? '<button class="btn btn--sm' + (confirming ? ' is-armed' : '') + '" type="button" data-act="delete">' + (confirming ? 'Tap again to delete' : 'Delete') + '</button>' : '');
   }
 
@@ -292,13 +310,6 @@
           c.missing.map(function (m) { return '<li>' + esc(m) + '</li>'; }).join('') + '</ul></details>');
     drawStatus();
     if (wasReady !== c.ready) drawActions();
-    var cur = root.querySelector('.bb-item.is-current');
-    if (cur) {
-      cur.querySelector('.bb-item-name').textContent = board.title || 'Untitled board';
-      var meta = cur.querySelector('.bb-item-meta');
-      meta.textContent = c.ready ? 'Ready to play' : c.filled + ' of ' + c.total + ' filled';
-      meta.classList.toggle('is-ready', c.ready);
-    }
   }
 
   function drawStatus() {
@@ -309,18 +320,16 @@
     el.className = 'bb-status is-' + status;
   }
 
-  // Start: wait to hear who's signed in before opening a board, so the
-  // sample never flashes up for someone who's signed in.
-  board = null;
+  // Start on Your boards (or the board in the address), once we know who's signed in.
   render();
   Live.connect().then(function (ctx) {
     account.ready = true;
     B.attach(ctx);
-    drawAccount();
   }, function (e) {
     account.ready = true;
+    heard = true;
     account.error = e.message;
-    lastUser = null;
-    autoOpen();
+    var want = location.hash.slice(1);
+    if (want && B.get(want)) edit(want); else render();
   });
 })();
