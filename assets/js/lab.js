@@ -30,7 +30,7 @@
       : '<span class="btn btn--solid btn--sm try" aria-disabled="true" title="Coming soon">' + (p.cta ? PLAY : '') + label + (p.cta ? '' : ' ' + ARROW) + '</span>';
     if (p.buttons && p.buttons.length) {
       var btns = p.buttons.map(function (b, j) {
-        var cls = 'btn btn--sm try' + (j === 0 ? ' btn--solid' : '');
+        var cls = 'btn btn--sm try' + (b.solid ? ' btn--solid' : '');
         if (!b.href) return '<span class="' + cls + '" aria-disabled="true" title="Coming soon">' + esc(b.label) + '</span>';
         return '<a class="' + cls + '" href="' + esc(b.href) + '"' +
           (b.newTab ? ' target="_blank" rel="noopener"' : '') + '>' + esc(b.label) + (b.newTab ? ' ' + ARROW : '') + '</a>';

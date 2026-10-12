@@ -11,7 +11,7 @@
                 (leave "" for a pastel placeholder)
      buttons    the card's buttons, left to right. Each one is
                   { label: "Try Now", href: "trivia/", newTab: true }
-                The first is the solid (dark) button, the rest are outlined.
+                All are outlined; add solid: true to make one a dark button.
                 newTab: true opens the link in a new tab. No href = greyed out.
                 When a card has buttons, "Read the case study →" is left off
                 (point a button at the case study instead).
