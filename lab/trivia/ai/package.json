@@ -1,0 +1,5 @@
+{
+  "type": "module",
+  "private": true,
+  "description": "Trivia Night AI drafting worker (Cloudflare). Tests: node --test worker.test.js"
+}

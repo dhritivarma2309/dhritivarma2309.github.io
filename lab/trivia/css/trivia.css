@@ -490,3 +490,22 @@ button.bb-card:hover { transform: translateY(-2px); box-shadow: 3px 4px 0 var(--
 @media (max-width: 400px) { .tn-hub-text { font-size: 14px; } .tn-hub-card { padding: 20px 18px 22px; } }
 .tn-logo-link { text-decoration: none; color: var(--ink); }
 .tn-logo-link:hover { color: var(--red); }
+
+/* AI drafting in the board builder */
+.bb-ai-open {
+  align-self: flex-start; cursor: pointer; border: 1.5px dashed var(--red); background: transparent; color: var(--red);
+  font: 600 13px var(--sans); border-radius: 999px; padding: 6px 12px; min-height: 32px;
+}
+.bb-ai-open:hover { background: var(--bad-bg); }
+.bb-ai-open:disabled { opacity: .5; cursor: default; }
+.bb-ai { border: 1.5px solid var(--red); background: var(--bad-bg); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+.bb-ai .tn-label { margin: 0; font-size: 13px; }
+.bb-ai-theme { width: 100%; }
+.bb-ai-btns { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.bb-ai .tn-hint, .bb-ai .tn-error, .bb-cat > .tn-error { margin: 0; font-size: 13px; }
+.bb-cell-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.bb-ai-redo { border: 0; background: none; padding: 0; cursor: pointer; font: 600 12px var(--sans); color: var(--red); text-decoration: underline; text-underline-offset: 2px; }
+.bb-ai-redo:disabled { color: var(--ink-faint); cursor: default; }
+.bb-cell.is-flagged { border-color: #e2b84a; background: #fffbea; }
+.bb-flag { margin: 2px 0 0; font-size: 12.5px; line-height: 1.4; color: var(--ink-soft); }
+.bb-flag b { color: #8a6100; }

@@ -35,6 +35,81 @@
   function store(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* ignore */ } }
   function signedIn() { return !!B.status().user; }
   function editable() { return board && !board.builtIn && signedIn(); }
+
+  /* ---- AI drafting ------------------------------------------------------
+     Asks the AI worker (ai/worker.js, on Cloudflare) for questions. It only
+     answers the site owner's signed-in Google account; the Claude key never
+     comes near this page. */
+  var ai = { open: null, busy: null, confirm: null, theme: {}, error: {}, flags: {} };
+  function aiOn() { return editable() && !!window.TRIVIA_AI_URL; }
+  function resetAi() { ai = { open: null, busy: null, confirm: null, theme: {}, error: {}, flags: {} }; }
+
+  async function askAi(payload) {
+    var ctx = await Live.connect();
+    var user = ctx.auth.currentUser;
+    if (!user || user.isAnonymous) throw new Error('Sign in to use AI drafting.');
+    var token = await user.getIdToken();
+    var res;
+    try {
+      res = await fetch(String(window.TRIVIA_AI_URL).replace(/\/+$/, '') + '/draft', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        body: JSON.stringify(payload)
+      });
+    } catch (e) { throw new Error('Couldn\'t reach the AI. Check your connection and try again.'); }
+    var body = await res.json().catch(function () { return {}; });
+    if (!res.ok) throw new Error(body.error || 'Drafting didn\'t work. Try again.');
+    return body;
+  }
+
+  async function draftCategory(c) {
+    var theme = (ai.theme[c] != null ? ai.theme[c] : board.categories[c].name).trim();
+    if (!theme) { ai.error[c] = 'Type a theme first.'; drawCat(c); return; }
+    var cat = board.categories[c];
+    var filled = cat.questions.some(function (q) { return q.q.trim() || q.a.trim(); });
+    if (filled && ai.confirm !== c) { ai.confirm = c; drawCat(c); return; }
+    ai.confirm = null; ai.error[c] = ''; ai.busy = 'cat-' + c;
+    drawAllCats();
+    try {
+      var out = await askAi({ mode: 'category', theme: theme });
+      if (!board) return;
+      cat.name = out.category || theme;
+      out.questions.forEach(function (q, r) {
+        cat.questions[r] = { q: q.q, a: q.a };
+        if (q.unsure) ai.flags[c + '-' + r] = q.note || 'Double-check this fact.';
+        else delete ai.flags[c + '-' + r];
+      });
+      ai.open = null;
+      queueSave();
+    } catch (e) {
+      ai.error[c] = e.message;
+    }
+    ai.busy = null;
+    drawAllCats();
+    drawProgress();
+  }
+
+  async function redoQuestion(c, r) {
+    var cat = board.categories[c];
+    var key = c + '-' + r;
+    ai.error[c] = ''; ai.busy = key;
+    drawAllCats();
+    try {
+      var keep = cat.questions.filter(function (q, i) { return i !== r && q.q.trim(); });
+      var out = await askAi({ mode: 'question', theme: cat.name, value: (r + 1) * 100, keep: keep });
+      if (!board) return;
+      var q = out.questions[0];
+      cat.questions[r] = { q: q.q, a: q.a };
+      if (q.unsure) ai.flags[key] = q.note || 'Double-check this fact.'; else delete ai.flags[key];
+      queueSave();
+    } catch (e) {
+      ai.error[c] = e.message;
+    }
+    ai.busy = null;
+    drawAllCats();
+    drawProgress();
+  }
+  function drawAllCats() { if (board) board.categories.forEach(function (x, c) { drawCat(c); }); }
   function progress(b) {
     var c = B.check(b);
     return c.ready ? 'Ready to play' : c.filled + ' of ' + c.total + ' questions';
@@ -56,6 +131,7 @@
     if (!found) { home(); return; }
     board = JSON.parse(JSON.stringify(found));
     delete board.saved;
+    resetAi();
     confirming = false;
     status = 'saved';
     if (location.hash !== '#' + id) history.pushState(null, '', '#' + id);
@@ -132,6 +208,11 @@
       B.remove(board.id);
       home();
     },
+    'ai-open': function (el) { ai.open = +el.getAttribute('data-c'); ai.confirm = null; drawAllCats(); var t = document.getElementById('ai-theme-' + ai.open); if (t) { t.focus(); t.select(); } },
+    'ai-close': function () { var c = ai.open; ai.open = null; ai.confirm = null; if (c != null) drawCat(c); },
+    'ai-draft': function (el) { draftCategory(+el.getAttribute('data-c')); },
+    'ai-redo': function (el) { redoQuestion(+el.getAttribute('data-c'), +el.getAttribute('data-r')); },
+    'ai-unflag': function (el) { delete ai.flags[el.getAttribute('data-key')]; drawCat(+el.getAttribute('data-key').split('-')[0]); },
     play: function () {
       if (status === 'saving') saveNow();
       store(PICK, board.id);
@@ -146,9 +227,14 @@
     if (fn) { e.preventDefault(); fn(el); }
   });
 
+  root.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && e.target.hasAttribute('data-ai-theme')) { e.preventDefault(); draftCategory(+e.target.getAttribute('data-ai-theme')); }
+  });
+
   // Typing: change the board in place and save, without redrawing the grid.
   root.addEventListener('input', function (e) {
     var t = e.target;
+    if (t.hasAttribute('data-ai-theme')) { ai.theme[+t.getAttribute('data-ai-theme')] = t.value; if (ai.confirm != null) { ai.confirm = null; } return; }
     if (!editable()) return;
     var field = t.getAttribute('data-field');
     if (!field) return;
@@ -157,6 +243,7 @@
     else if (field === 'cat') board.categories[c].name = t.value;
     else board.categories[c].questions[r][field] = t.value;
     if (field === 'q' || field === 'a') {
+      if (ai.flags[c + '-' + r]) { delete ai.flags[c + '-' + r]; var fl = t.closest('.bb-cell').querySelector('.bb-flag'); if (fl) fl.remove(); t.closest('.bb-cell').classList.remove('is-flagged'); }
       var item = board.categories[c].questions[r];
       var cell = t.closest('.bb-cell');
       if (cell) cell.classList.toggle('is-done', !!(item.q.trim() && item.a.trim()));
@@ -249,26 +336,60 @@
   }
 
   // Screen 2: editing a board.
-  function renderEditor() {
-    var ro = !editable();
-    var dis = ro ? ' disabled' : '';
-    var cats = board.categories.map(function (cat, c) {
-      var cells = cat.questions.map(function (item, r) {
-        var done = item.q.trim() && item.a.trim();
-        var id = 'q-' + c + '-' + r;
-        return '<div class="bb-cell' + (done ? ' is-done' : '') + '">' +
-          '<span class="bb-value">' + (r + 1) * 100 + '</span>' +
-          '<label class="sr-only" for="' + id + '">' + esc(cat.name || 'Category ' + (c + 1)) + ' ' + (r + 1) * 100 + ' question</label>' +
-          '<textarea id="' + id + '" class="bb-q" rows="3" maxlength="300" placeholder="Question" data-field="q" data-c="' + c + '" data-r="' + r + '"' + dis + '>' + esc(item.q) + '</textarea>' +
-          '<label class="sr-only" for="a-' + c + '-' + r + '">Answer</label>' +
-          '<input id="a-' + c + '-' + r + '" class="bb-a" maxlength="120" placeholder="Answer" autocomplete="off" data-field="a" data-c="' + c + '" data-r="' + r + '" value="' + esc(item.a) + '"' + dis + '>' +
-        '</div>';
-      }).join('');
-      return '<div class="bb-cat">' +
-        '<label class="sr-only" for="cat-' + c + '">Category ' + (c + 1) + ' name</label>' +
-        '<input id="cat-' + c + '" class="bb-cat-name" maxlength="40" placeholder="Category ' + (c + 1) + '" autocomplete="off" data-field="cat" data-c="' + c + '" value="' + esc(cat.name) + '"' + dis + '>' +
-        cells + '</div>';
+  // One category card (redrawn on its own while AI drafts into it).
+  function renderCat(c) {
+    var cat = board.categories[c];
+    var dis = editable() ? '' : ' disabled';
+    var on = aiOn();
+    var cells = cat.questions.map(function (item, r) {
+      var done = item.q.trim() && item.a.trim();
+      var id = 'q-' + c + '-' + r;
+      var key = c + '-' + r;
+      var flag = ai.flags[key];
+      var busy = ai.busy === key;
+      return '<div class="bb-cell' + (done ? ' is-done' : '') + (flag ? ' is-flagged' : '') + '">' +
+        '<span class="bb-cell-top"><span class="bb-value">' + (r + 1) * 100 + '</span>' +
+          (on && cat.name.trim() ? '<button class="bb-ai-redo" type="button" data-act="ai-redo" data-c="' + c + '" data-r="' + r + '"' + (ai.busy ? ' disabled' : '') + ' title="Ask AI for a different ' + (r + 1) * 100 + ' question">' + (busy ? 'Drafting…' : 'New question') + '</button>' : '') +
+        '</span>' +
+        '<label class="sr-only" for="' + id + '">' + esc(cat.name || 'Category ' + (c + 1)) + ' ' + (r + 1) * 100 + ' question</label>' +
+        '<textarea id="' + id + '" class="bb-q" rows="3" maxlength="300" placeholder="Question" data-field="q" data-c="' + c + '" data-r="' + r + '"' + dis + '>' + esc(item.q) + '</textarea>' +
+        '<label class="sr-only" for="a-' + c + '-' + r + '">Answer</label>' +
+        '<input id="a-' + c + '-' + r + '" class="bb-a" maxlength="120" placeholder="Answer" autocomplete="off" data-field="a" data-c="' + c + '" data-r="' + r + '" value="' + esc(item.a) + '"' + dis + '>' +
+        (flag ? '<p class="bb-flag"><b>Check this:</b> ' + esc(flag) + ' <button class="tn-link-btn tn-inline" type="button" data-act="ai-unflag" data-key="' + key + '">Looks right</button></p>' : '') +
+      '</div>';
     }).join('');
+    var aiRow = '';
+    if (on) {
+      if (ai.open === c) {
+        var filled = cat.questions.some(function (q) { return q.q.trim() || q.a.trim(); });
+        var drafting = ai.busy === 'cat-' + c;
+        aiRow = '<div class="bb-ai">' +
+          '<label class="tn-label" for="ai-theme-' + c + '">Theme for this category</label>' +
+          '<input id="ai-theme-' + c + '" class="tn-input tn-input--sm bb-ai-theme" maxlength="80" autocomplete="off" placeholder="e.g. 90s Bollywood" value="' + esc(ai.theme[c] != null ? ai.theme[c] : cat.name) + '" data-ai-theme="' + c + '">' +
+          '<div class="bb-ai-btns"><button class="btn btn--solid btn--sm' + (ai.confirm === c ? ' is-armed' : '') + '" type="button" data-act="ai-draft" data-c="' + c + '"' + (ai.busy ? ' disabled' : '') + '>' +
+            (drafting ? 'Drafting…' : ai.confirm === c ? 'Tap again to replace' : 'Draft 5 questions') + '</button>' +
+          '<button class="tn-link-btn tn-inline" type="button" data-act="ai-close"' + (drafting ? ' disabled' : '') + '>Cancel</button></div>' +
+          (filled && ai.confirm === c ? '<p class="tn-hint">This replaces the questions already in this category.</p>' : '') +
+          (ai.error[c] ? '<p class="tn-error" role="alert">' + esc(ai.error[c]) + '</p>' : '') +
+        '</div>';
+      } else {
+        aiRow = '<button class="bb-ai-open" type="button" data-act="ai-open" data-c="' + c + '"' + (ai.busy ? ' disabled' : '') + '>Draft with AI</button>' +
+          (ai.error[c] ? '<p class="tn-error" role="alert">' + esc(ai.error[c]) + '</p>' : '');
+      }
+    }
+    return '<div class="bb-cat" id="cat-card-' + c + '">' +
+      '<label class="sr-only" for="cat-' + c + '">Category ' + (c + 1) + ' name</label>' +
+      '<input id="cat-' + c + '" class="bb-cat-name" maxlength="40" placeholder="Category ' + (c + 1) + '" autocomplete="off" data-field="cat" data-c="' + c + '" value="' + esc(cat.name) + '"' + dis + '>' +
+      aiRow + cells + '</div>';
+  }
+  function drawCat(c) {
+    var el = document.getElementById('cat-card-' + c);
+    if (el) el.outerHTML = renderCat(c);
+  }
+
+  function renderEditor() {
+    var dis = editable() ? '' : ' disabled';
+    var cats = board.categories.map(function (cat, c) { return renderCat(c); }).join('');
     var banner = board.builtIn
       ? '<p class="bb-banner">This sample comes with the site, so it can\'t be changed. Start a new board to make your own.</p>'
       : '';
