@@ -28,7 +28,16 @@
       : p.tryUrl
       ? '<a class="btn btn--solid btn--sm try" href="' + esc(p.tryUrl) + '" target="_blank" rel="noopener">' + label + ' ' + ARROW + '</a>'
       : '<span class="btn btn--solid btn--sm try" aria-disabled="true" title="Coming soon">' + (p.cta ? PLAY : '') + label + (p.cta ? '' : ' ' + ARROW) + '</span>';
-    var read = cs ? '<span class="read">Read the case study →</span>' : '<span class="soon">case study coming soon</span>';
+    if (p.buttons && p.buttons.length) {
+      var btns = p.buttons.map(function (b, j) {
+        var cls = 'btn btn--sm try' + (j === 0 ? ' btn--solid' : '');
+        if (!b.href) return '<span class="' + cls + '" aria-disabled="true" title="Coming soon">' + esc(b.label) + '</span>';
+        return '<a class="' + cls + '" href="' + esc(b.href) + '"' +
+          (b.newTab ? ' target="_blank" rel="noopener"' : '') + '>' + esc(b.label) + (b.newTab ? ' ' + ARROW : '') + '</a>';
+      }).join('');
+      tryBtn = '<div class="card-btns">' + btns + '</div>';
+    }
+    var read = (p.buttons && p.buttons.length) ? '' : cs ? '<span class="read">Read the case study →</span>' : '<span class="soon">case study coming soon</span>';
     return '<article class="paper tape project' + (cs ? ' has-case' : '') + '">' +
       '<div class="shot" style="background:' + swatches[i % swatches.length] + '">' + shot + '</div>' +
       (p.type ? '<span class="type">' + esc(p.type) + '</span>' : '') +

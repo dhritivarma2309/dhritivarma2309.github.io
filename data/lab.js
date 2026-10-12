@@ -9,10 +9,17 @@
      blurb      optional one-line description under the name
      image      a screenshot, e.g. "../assets/img/lab/my-project.jpg"
                 (leave "" for a pastel placeholder)
-     cta        the button label, e.g. "Try it" (the default) or "How It Works"
-     video      an MP4 to play when the button is pressed, e.g. "../assets/video/x.mp4"
-     tryUrl     or: a page the button opens (live demo, app). Neither = button greyed out
-     caseStudy  the write-up page, e.g. "projects/my-project/". "" = shows "coming soon"
+     buttons    the card's buttons, left to right. Each one is
+                  { label: "Try Now", href: "trivia/", newTab: true }
+                The first is the solid (dark) button, the rest are outlined.
+                newTab: true opens the link in a new tab. No href = greyed out.
+                When a card has buttons, "Read the case study →" is left off
+                (point a button at the case study instead).
+     cta        (cards without buttons) the button label, default "Try it"
+     video      (cards without buttons) an MP4 the button plays in a pop-up
+     tryUrl     (cards without buttons) a page the button opens. Neither = greyed out
+     caseStudy  the write-up page, e.g. "projects/my-project/". Clicking the
+                card opens it. "" = shows "coming soon"
 
    To add a case study: copy the folder lab/projects/project-1/ to
    lab/projects/<your-project>/, write it, and point caseStudy at it.
@@ -28,9 +35,10 @@ window.LAB = {
       type: "Side project",
       blurb: "Host a Jeopardy-style trivia for friends and family over video call. Live buzzers on everyone's phone, questions drafted by you and Claude.",
       image: "../assets/img/lab/trivia-night.jpg",
-      cta: "How It Works",
-      video: "",          // add the ~60s MP4 here once it's recorded
-      tryUrl: "",
+      buttons: [
+        { label: "How It Works", href: "projects/trivia-night/" },
+        { label: "Try Now", href: "trivia/", newTab: true },
+      ],
       caseStudy: "projects/trivia-night/",
     },
     { title: "[Project Name]", type: "Prototype", image: "", tryUrl: "", caseStudy: "" },
