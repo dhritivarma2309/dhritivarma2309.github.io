@@ -149,3 +149,9 @@ test('the live game can choose its own team ids', () => {
   const s = G.createGame(board, [{ name: 'Bears', id: 't3' }]);
   assert.equal(s.teams[0].id, 't3');
 });
+
+test('a new board can start with scores carried over', () => {
+  const s = G.createGame(board, [{ name: 'Bears', id: 't2', score: 1200 }, { name: 'Owls', score: -300 }, { name: 'Cats', score: 'x' }]);
+  assert.deepEqual(s.teams.map(t => t.score), [1200, -300, 0]);
+  assert.equal(s.teams[0].id, 't2');
+});

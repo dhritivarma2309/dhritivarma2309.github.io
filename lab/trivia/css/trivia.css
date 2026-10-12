@@ -25,8 +25,6 @@
   padding-top: 22px; padding-bottom: 18px;
 }
 .tn-brand { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; min-width: 0; }
-.tn-back { font-size: 14px; font-weight: 600; text-decoration: none; color: var(--ink-soft); }
-.tn-back:hover { color: var(--red); }
 .tn-logo { font-family: var(--hand-bold); font-size: 40px; line-height: 1; }
 .tn-board-name { font-family: var(--mono); font-size: 13px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 1px; }
 .tn-top-actions { display: flex; gap: 10px; }
@@ -217,6 +215,11 @@
 .tn-final-num { font-family: var(--mono); font-size: 22px; }
 .tn-final-num.is-neg { color: var(--red); }
 .tn-final-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.tn-next-board { text-align: left; border: 1.5px dashed var(--rule); border-radius: 12px; padding: 18px 20px 20px; margin: 0 0 18px; }
+.tn-next-board .tn-card-title { margin: 0 0 2px; }
+.tn-next-board .tn-hint { margin-top: 0; }
+.tn-next-board .tn-keep { margin: 12px 0 14px; white-space: normal; }
+.tn-lobby-board { margin-top: 22px; }
 
 /* ---------- Small screens ---------- */
 

@@ -33,8 +33,9 @@
 
   /* ---- Start a game ---------------------------------------------------- */
 
-  // teams: [{ name, bot?, id? }]  (bot = simulated test team that buzzes by itself;
-  // id lets the live game keep the team ids its players already use)
+  // teams: [{ name, bot?, id?, score? }]  (bot = simulated test team that buzzes by itself;
+  // id lets the live game keep the team ids its players already use;
+  // score carries totals over when the room moves on to another board)
   function createGame(board, teams) {
     var seen = {};
     var list = [];
@@ -44,7 +45,7 @@
       var k = name.toLowerCase();
       if (seen[k]) throw new Error('Two teams can\'t share the name "' + name + '".');
       seen[k] = true;
-      list.push({ id: t.id || 't' + (list.length + 1), name: name, score: 0, bot: !!t.bot });
+      list.push({ id: t.id || 't' + (list.length + 1), name: name, score: Number.isInteger(t.score) ? t.score : 0, bot: !!t.bot });
     });
     if (list.length < 1) throw new Error('Add at least one team.');
     if (list.length > MAX_TEAMS) throw new Error('A game can have up to ' + MAX_TEAMS + ' teams.');

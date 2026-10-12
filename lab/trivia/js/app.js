@@ -313,6 +313,24 @@
       save();
       render();
     },
+    // Same room and teams, a different board. Scores carry over unless unticked.
+    'next-board': function () {
+      try {
+        ui.error = '';
+        var board = chosenBoard();
+        var keep = ui.keepScores !== false;
+        if (LIVE) { ctx.room(room.code, 'buzzes').remove(); room.board = board; }
+        var teams = state.teams.map(function (t) { return { id: LIVE ? t.id : undefined, name: t.name, bot: t.bot, score: keep ? t.score : 0 }; });
+        var round = (state.round || 1) + 1;
+        ui = freshUi();
+        var next = G.createGame(board, teams);
+        next.round = round;
+        set(next);
+      } catch (e) {
+        ui.error = e.message;
+        render();
+      }
+    },
     'rematch': function () {
       if (LIVE) ctx.room(room.code, 'buzzes').remove();
       var teams = state.teams.map(function (t) { return { id: LIVE ? t.id : undefined, name: t.name, bot: t.bot }; });
@@ -347,7 +365,15 @@
   app.addEventListener('change', function (e) {
     var t = e.target;
     if (t.hasAttribute('data-team-bot')) { setup.teams[+t.getAttribute('data-team-bot')].bot = t.checked; save(); }
-    if (t.name === 'board') { setup.boardId = t.value; save(); }
+    if (t.name === 'board') {
+      setup.boardId = t.value; save();
+      // In the lobby, switching boards updates the room straight away.
+      if (LIVE && room && !state) {
+        try { ui.error = ''; room.board = chosenBoard(); publish(); } catch (err) { ui.error = err.message; }
+        render();
+      }
+    }
+    if (t.name === 'keep-scores') { ui.keepScores = t.checked; }
     if (t.hasAttribute('data-score')) {
       // Typed score: keep it if it's a whole number, otherwise put the old one back.
       var id = t.getAttribute('data-score');
@@ -475,6 +501,8 @@
       '<div class="tn-invite"><span class="tn-invite-url">' + esc(url) + '</span>' +
         '<button class="btn btn--sm" type="button" data-act="copy-link">' + (ui.copied ? 'Copied' : 'Copy invite link') + '</button></div>' +
       '<p class="tn-hint">Paste the link in your call\'s chat. Players can also open the join page and type the code.</p>' +
+      '<div class="tn-lobby-board">' + boardPicker() +
+        (ui.error ? '<p class="tn-error" role="alert">' + esc(ui.error) + '</p>' : '') + '</div>' +
       '<h2 class="tn-card-title tn-lobby-title">Teams <span class="tn-count">' + teams.length + ' of ' + G.MAX_TEAMS + '</span></h2>' +
       '<ul class="tn-lobby-list" aria-live="polite">' + list + '</ul>' +
       '<p class="tn-hint">' + plural(waitingPlayers, 'player has', 'players have') + ' joined a team. Team names lock when you start; late arrivals can still join a team.</p>' +
@@ -626,10 +654,18 @@
         '<span class="tn-order-name">' + esc(t.name) + '</span><span class="tn-final-num' + (t.score < 0 ? ' is-neg' : '') + '">' + fmt(t.score) + '</span></li>';
     }).join('');
     return '<section class="tn-final paper tape">' +
-      '<p class="kicker">Final scores</p>' +
+      '<p class="kicker">' + (state.round > 1 ? 'Scores after board ' + state.round : 'Final scores') + '</p>' +
       '<h1 class="display tn-final-title">' + headline + '</h1>' +
       '<ol class="tn-final-list">' + rows + '</ol>' +
-      '<div class="tn-final-actions"><button class="btn btn--solid" type="button" data-act="rematch">Play again, same teams</button>' +
+      '<div class="tn-next-board">' +
+        '<h2 class="tn-card-title">Play another board</h2>' +
+        '<p class="tn-hint">Same ' + (LIVE ? 'room and ' : '') + 'teams' + (LIVE ? '; nobody has to rejoin' : '') + '.</p>' +
+        boardPicker() +
+        '<label class="tn-check tn-keep"><input type="checkbox" name="keep-scores"' + (ui.keepScores === false ? '' : ' checked') + '> Carry these scores over</label>' +
+        (ui.error ? '<p class="tn-error" role="alert">' + esc(ui.error) + '</p>' : '') +
+        '<button class="btn btn--solid" type="button" data-act="next-board">Start next board</button>' +
+      '</div>' +
+      '<div class="tn-final-actions"><button class="btn" type="button" data-act="rematch">Replay this board</button>' +
       (LIVE ? sureBtn('close-room', 'Close the room', 'Tap again to close', 'tn-btn-lg')
             : '<button class="btn" type="button" data-act="new-game">New game</button>') + '</div>' +
     '</section>';
@@ -650,5 +686,5 @@
   if (LIVE) startLive();
   else if (Live && Live.isSetUp()) Live.connect().then(function (c) { Boards.attach(c); }, function () { /* one screen works without it */ });
   // Your library loaded or changed: refresh the board list on the setup screen.
-  Boards.onChange(function () { if (!state && !(LIVE && room)) render(); });
+  Boards.onChange(function () { if (!state || state.phase === 'final') render(); });
 })();
