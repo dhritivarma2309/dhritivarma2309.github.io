@@ -135,7 +135,47 @@
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 14'%3E%3Cpath d='M1.5 7.5 L6 12 L14.5 1.5' fill='none' stroke='%23c0352b' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat;
 }
 
+/* The product: three parts */
+.parts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 8px; }
+.part { display: flex; flex-direction: column; padding: 18px 18px 16px; }
+.part:nth-child(2) { --tape-rot: 3deg; }
+.persona {
+  align-self: flex-start;
+  font: 500 11px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase;
+  color: var(--red); border: 1.2px solid currentColor; border-radius: 999px; padding: 5px 9px;
+}
+.persona--players { color: var(--ink); }
+.part h3 { font-size: 20px; line-height: 1.2; font-weight: 700; margin: 12px 0 0; }
+.part p { margin: 8px 0 0; font-size: 15px; line-height: 1.55; color: var(--ink-soft); }
+.part-media {
+  margin-top: auto; padding-top: 16px;
+}
+.part-media span {
+  display: grid; place-items: center; aspect-ratio: 9 / 16; max-height: 220px; width: 100%;
+  border: 1.5px dashed var(--rule); border-radius: 2px;
+  font-family: var(--hand); font-size: 19px; color: var(--ink-faint);
+}
+
+/* My learnings */
+.case-sub { font-family: var(--hand); font-weight: 600; font-size: 28px; color: var(--red); margin: 6px 0 10px; }
+.tools { margin: 0; display: grid; gap: 14px; }
+.tools > div { display: grid; grid-template-columns: 120px 1fr; gap: 16px; align-items: baseline; }
+.tools dt { font-weight: 700; font-size: 17px; }
+.tools dd { margin: 0; font-size: 17px; line-height: 1.6; color: var(--ink-soft); }
+.more-soon { margin: 22px 0 0; }
+
+/* New features */
+.next-list { margin: 0; padding-left: 26px; display: grid; gap: 10px; }
+.next-list li { font-size: 18px; line-height: 1.6; color: var(--ink-soft); padding-left: 6px; }
+.next-list li::marker { font-family: var(--hand-bold); color: var(--red); font-size: 22px; }
+
+@media (max-width: 760px) {
+  .parts { grid-template-columns: 1fr; }
+  .part-media span { aspect-ratio: 16 / 9; max-height: none; }
+}
+
 @media (max-width: 640px) {
+  .tools > div { grid-template-columns: 1fr; gap: 2px; }
   .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .facts > div:nth-child(3) { border-left: 0; }
   .facts > div:nth-child(n+3) { border-top: 1.5px dashed var(--rule); }
