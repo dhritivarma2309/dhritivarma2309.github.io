@@ -31,6 +31,20 @@
   function signedIn() { return !!B.status().user; }
   function editable() { return board && !board.builtIn && signedIn(); }
 
+  // Pick a board to show without you clicking one. Signed in: only your own
+  // boards (the last one you had open, else your newest); with none yet, an
+  // empty page. Signed out: the sample, read-only.
+  function autoOpen() {
+    var sel = store(SEL);
+    if (signedIn()) {
+      var mine = B.all().filter(function (b) { return !b.builtIn; });
+      var pick = mine.filter(function (b) { return b.id === sel; })[0] || mine[0];
+      if (pick) open(pick.id); else { board = null; render(); }
+      return;
+    }
+    open(sel);
+  }
+
   function open(id) {
     var found = B.get(id) || B.all()[0] || B.blank();
     board = JSON.parse(JSON.stringify(found));
@@ -77,6 +91,12 @@
       var b = B.save(B.blank('Untitled board'));
       if (b) open(b.id);
     },
+    'copy-sample': function () {
+      var sample = B.all().filter(function (b) { return b.builtIn; })[0];
+      if (!sample || !signedIn()) return;
+      var b = B.duplicate(sample);
+      if (b) open(b.id);
+    },
     copy: function () {
       if (!signedIn()) { signIn(); return; }
       if (status === 'saving') saveNow();
@@ -94,7 +114,7 @@
       status = 'saved';
       B.remove(board.id);
       store(SEL, '');
-      open(null);
+      autoOpen();
     },
     play: function () {
       if (status === 'saving') saveNow();
@@ -130,15 +150,15 @@
   });
 
   // The library changed: it loaded, you signed in or out, or a save landed.
-  var lastUser = null;
-  var reopen = false;   // open your last board once the library has loaded
+  var lastUser;         // undefined until we first hear who's signed in
+  var reopen = false;   // pick a board once the library has loaded
   B.onChange(function () {
     var st = B.status();
     var who = st.user ? st.user.uid : null;
     if (who !== lastUser) { lastUser = who; reopen = true; }
-    if (reopen && !st.loading) { reopen = false; open(store(SEL)); return; }
+    if (reopen && !st.loading) { reopen = false; autoOpen(); return; }
     if (reopen) { render(); return; }                 // still loading
-    if (board && !board.builtIn && !B.get(board.id) && status !== 'saving') { open(null); return; }  // deleted elsewhere
+    if (board && !board.builtIn && !B.get(board.id) && status !== 'saving') { autoOpen(); return; }  // deleted elsewhere
     drawList();
     drawAccount();
   });
@@ -150,7 +170,7 @@
         '<aside class="bb-side"><div data-slot="account"></div><div data-slot="list"></div>' +
           '<div class="bb-side-actions"><button class="btn btn--solid btn--sm" type="button" data-act="new">+ New board</button></div>' +
         '</aside>' +
-        '<section class="bb-main">' + renderEditor() + '</section>' +
+        '<section class="bb-main">' + (board ? renderEditor() : renderEmpty()) + '</section>' +
       '</div>';
     drawAccount();
     drawList();
@@ -178,6 +198,17 @@
         (st.error ? '<p class="tn-error" role="alert">' + esc(st.error) + '</p>' : '') +
         err + '</div>';
     }
+  }
+
+  // Signed in, library loading or no boards yet.
+  function renderEmpty() {
+    var st = B.status();
+    if (lastUser === undefined || st.loading) return '<div class="bb-empty"><p class="tn-hint">Loading your boards…</p></div>';
+    return '<div class="bb-empty paper tape">' +
+      '<h2 class="display bb-empty-title">Start your first board</h2>' +
+      '<p class="tn-hint">Six categories, five questions each. Everything saves to your library as you type.</p>' +
+      '<div class="bb-actions"><button class="btn btn--solid btn--sm" type="button" data-act="new">+ New board</button>' +
+      '<button class="btn btn--sm" type="button" data-act="copy-sample">Copy the sample to start</button></div></div>';
   }
 
   function renderEditor() {
@@ -219,9 +250,10 @@
     var mine = boards.filter(function (b) { return !b.builtIn; });
     var builtIn = boards.filter(function (b) { return b.builtIn; });
     function item(b) {
-      var c = B.check(b.id === board.id ? board : b);
-      return '<li><button type="button" class="bb-item' + (b.id === board.id ? ' is-current' : '') + '" data-act="open" data-id="' + esc(b.id) + '"' + (b.id === board.id ? ' aria-current="true"' : '') + '>' +
-        '<span class="bb-item-name">' + esc((b.id === board.id ? board.title : b.title) || 'Untitled board') + '</span>' +
+      var cur = !!board && b.id === board.id;
+      var c = B.check(cur ? board : b);
+      return '<li><button type="button" class="bb-item' + (cur ? ' is-current' : '') + '" data-act="open" data-id="' + esc(b.id) + '"' + (cur ? ' aria-current="true"' : '') + '>' +
+        '<span class="bb-item-name">' + esc((cur ? board.title : b.title) || 'Untitled board') + '</span>' +
         '<span class="bb-item-meta' + (c.ready ? ' is-ready' : '') + '">' + (c.ready ? 'Ready to play' : c.filled + ' of ' + c.total + ' filled') + '</span>' +
       '</button></li>';
     }
@@ -237,7 +269,7 @@
 
   function drawActions() {
     var slot = root.querySelector('[data-slot="actions"]');
-    if (!slot) return;
+    if (!slot || !board) return;
     var ready = B.check(board).ready;
     slot.innerHTML =
       '<button class="btn btn--solid btn--sm" type="button" data-act="play"' + (ready ? '' : ' disabled title="Fill in every question and answer first"') + '>Play this board</button>' +
@@ -247,7 +279,7 @@
 
   function drawProgress() {
     var slot = root.querySelector('[data-slot="progress"]');
-    if (!slot) return;
+    if (!slot || !board) return;
     var c = B.check(board);
     var wasReady = slot.getAttribute('data-ready') === '1';
     slot.setAttribute('data-ready', c.ready ? '1' : '0');
@@ -271,14 +303,16 @@
 
   function drawStatus() {
     var el = root.querySelector('[data-slot="status"]');
-    if (!el) return;
+    if (!el || !board) return;
     if (!editable()) { el.textContent = 'Read only'; el.className = 'bb-status'; return; }
     el.textContent = status === 'saving' ? 'Saving…' : status === 'failed' ? 'Couldn\'t save. Check your connection.' : 'Saved to your library';
     el.className = 'bb-status is-' + status;
   }
 
-  // Start: show the built-in boards right away, then connect your library.
-  open(store(SEL));
+  // Start: wait to hear who's signed in before opening a board, so the
+  // sample never flashes up for someone who's signed in.
+  board = null;
+  render();
   Live.connect().then(function (ctx) {
     account.ready = true;
     B.attach(ctx);
@@ -286,6 +320,7 @@
   }, function (e) {
     account.ready = true;
     account.error = e.message;
-    drawAccount();
+    lastUser = null;
+    autoOpen();
   });
 })();
