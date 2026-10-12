@@ -1,6 +1,7 @@
-/* System diagram: draws the hand-sketched arrows for any [data-sysmap] block.
-   Ink arrows connect the boxes; red-pen arrows point from each note to its box.
-   On narrower screens the notes stack under the sketch and only the ink arrows show. */
+/* System diagram: draws the hand-sketched arrows for any [data-sysmap] block,
+   and opens each margin note when its box is clicked.
+   Ink arrows connect the boxes; a red-pen arrow points from each open note to its box.
+   On narrower screens open notes stack under the sketch and only the ink arrows show. */
 (function () {
   var NS = 'http://www.w3.org/2000/svg';
 
@@ -54,7 +55,7 @@
     if (twoWay) svg.appendChild(head(s, c1, headCls, size));
   }
 
-  function draw(map) {
+  function draw(map, freshId) {
     var svg = map.querySelector('.sys-arrows');
     var box = map.getBoundingClientRect();
     svg.setAttribute('viewBox', '0 0 ' + box.width + ' ' + box.height);
@@ -88,9 +89,10 @@
 
     // Red-pen arrows from notes (wide screens only)
     if (window.matchMedia('(max-width: 1060px)').matches) return;
-    map.querySelectorAll('.sys-note[data-for]').forEach(function (n) {
+    map.querySelectorAll('.sys-note.is-open[data-for]').forEach(function (n) {
       var id = n.getAttribute('data-for'), target = nodes[id];
       if (!target) return;
+      var fresh = id === freshId || freshId === '*' ? ' fresh' : '';
       var title = n.querySelector('h3') || n;
       var t = rect(title), nr = rect(n);
       var leftSide = !!n.closest('.sys-notes--left');
@@ -101,12 +103,47 @@
       var c2 = side === 'top-right'
         ? { x: e.x + 10, y: e.y - Math.max(30, (e.y - s.y) * 0.5) }
         : { x: e.x - (e.x - s.x) * 0.3, y: e.y - (e.y - s.y) * 0.15 };
-      curve(svg, s, c1, c2, e, 'note-arrow', 'head-red', false);
+      curve(svg, s, c1, c2, e, 'note-arrow' + fresh, 'head-red' + fresh, false);
     });
   }
 
   function init(map) {
-    var redraw = function () { requestAnimationFrame(function () { draw(map); }); };
+    var redraw = function (freshId) { requestAnimationFrame(function () { draw(map, freshId); }); };
+    var boxes = map.querySelectorAll('.sys-box[data-node]');
+    var allBtn = map.parentNode.querySelector('[data-sys-all]');
+
+    function setOpen(id, open) {
+      var note = map.querySelector('.sys-note[data-for="' + id + '"]');
+      var box = map.querySelector('.sys-box[data-node="' + id + '"]');
+      if (note) note.classList.toggle('is-open', open);
+      if (box) box.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    function syncAll() {
+      if (!allBtn) return;
+      var allOpen = Array.prototype.every.call(boxes, function (b) { return b.getAttribute('aria-expanded') === 'true'; });
+      allBtn.textContent = allOpen ? 'Close all' : 'Open all';
+    }
+
+    boxes.forEach(function (b) {
+      b.addEventListener('click', function () {
+        var id = b.getAttribute('data-node'), open = b.getAttribute('aria-expanded') !== 'true';
+        setOpen(id, open);
+        syncAll();
+        redraw(open ? id : null);
+        // On phones the note opens below the sketch, so bring it into view
+        if (open && window.matchMedia('(max-width: 1060px)').matches) {
+          var note = map.querySelector('.sys-note[data-for="' + id + '"]');
+          if (note) note.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      });
+    });
+    if (allBtn) allBtn.addEventListener('click', function () {
+      var open = allBtn.textContent === 'Open all';
+      boxes.forEach(function (b) { setOpen(b.getAttribute('data-node'), open); });
+      syncAll();
+      redraw(open ? '*' : null);
+    });
+
     redraw();
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(redraw);
     window.addEventListener('load', redraw);

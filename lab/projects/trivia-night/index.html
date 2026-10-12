@@ -15,7 +15,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Caveat+Brush&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../../../assets/css/site.css?v=202610121035">
   <link rel="stylesheet" href="../../../assets/css/article.css?v=202610121035">
-  <link rel="stylesheet" href="../../../assets/css/lab.css?v=202610121340">
+  <link rel="stylesheet" href="../../../assets/css/lab.css?v=202610121350">
 </head>
 <body>
   <!--
@@ -101,43 +101,57 @@
 
       <section class="case-section">
         <h2 class="case-h">System diagram</h2>
-        <!-- Boxes sit in the middle; each note points at its box (data-for = the box's data-node).
-             The arrows are drawn by assets/js/sysmap.js. On phones the notes stack under the sketch. -->
+        <!-- Boxes sit in the middle; clicking a box opens its note (data-for = the box's data-node).
+             Arrows and the open/close behaviour live in assets/js/sysmap.js. On phones open notes stack under the sketch. -->
+        <div class="sys-hint">
+          <svg class="sys-pen" width="64" height="40" viewBox="0 0 64 40" aria-hidden="true">
+            <g transform="rotate(-28 32 20)">
+              <rect x="10" y="15" width="34" height="10" rx="2" fill="var(--ink)"/>
+              <rect x="40" y="15" width="8" height="10" fill="var(--red)"/>
+              <path d="M10 15 L1 20 L10 25 Z" fill="#e9dcc4" stroke="var(--ink)" stroke-width="1.2" stroke-linejoin="round"/>
+              <path d="M1 20 L4 18.4 L4 21.6 Z" fill="var(--ink)"/>
+              <path d="M18 15 v-3 h14" fill="none" stroke="#c9ccd4" stroke-width="2" stroke-linecap="round"/>
+            </g>
+            <path class="sys-pen-scribble" d="M4 36 q6 -6 12 0 t12 0 t12 0" fill="none" stroke="var(--red)" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          <p>Click a box to read my margin notes</p>
+          <button type="button" class="sys-all" data-sys-all>Open all</button>
+        </div>
         <div class="sysmap" data-sysmap>
           <div class="sys-notes sys-notes--left">
-            <div class="sys-note" data-for="gh">
+            <div class="sys-note" data-for="gh" id="note-gh">
               <h3>GitHub Pages</h3>
               <p>My website's files (HTML, CSS, JS, images) live in my GitHub repo. GitHub Pages publishes them as a public website, and when anyone opens a page, their browser downloads the files from GitHub's servers.</p>
             </div>
-            <div class="sys-note" data-for="qm">
+            <div class="sys-note" data-for="qm" id="note-qm">
               <h3>Quizmaster Browser</h3>
               <p>The Build and Host pages run in the Quizmaster's browser, usually on a laptop. It's where boards are created, by hand or with Claude, and where the game rules run: opening questions, judging answers and updating scores, with every change sent to Firebase for all players to see.</p>
             </div>
-            <div class="sys-note" data-for="cf">
+            <div class="sys-note" data-for="cf" id="note-cf">
               <h3>Cloudflare Worker</h3>
               <p>A small server I set up on Cloudflare, between the Quizmaster Browser and Claude. When the Quizmaster drafts questions with AI, the browser sends the request to the Cloudflare Worker, which checks they're signed in with an allowed Google account, adds the Claude API key and calls Claude. This way, the key never reaches the browser.</p>
             </div>
           </div>
 
           <div class="sys-board" aria-label="Diagram: GitHub Pages serves the Quizmaster Browser and Participant Browsers; both sync through Firebase; the Quizmaster Browser calls Claude through a Cloudflare Worker.">
-            <div class="sys-box sys-box--cloud" data-node="gh" style="grid-area: gh">GitHub Pages</div>
-            <div class="sys-box sys-box--device" data-node="qm" style="grid-area: qm">Quizmaster Browser</div>
-            <div class="sys-box sys-box--cloud" data-node="fb" style="grid-area: fb">Firebase</div>
-            <div class="sys-box sys-box--device" data-node="pb" style="grid-area: pb">Participant Browser</div>
-            <div class="sys-box sys-box--cloud" data-node="cf" style="grid-area: cf">Cloudflare Worker</div>
-            <div class="sys-box sys-box--cloud" data-node="cl" style="grid-area: cl">Claude</div>
+            <button type="button" class="sys-box sys-box--cloud" data-node="gh" style="grid-area: gh" aria-expanded="false" aria-controls="note-gh">GitHub Pages</button>
+            <button type="button" class="sys-box sys-box--device" data-node="qm" style="grid-area: qm" aria-expanded="false" aria-controls="note-qm">Quizmaster Browser</button>
+            <button type="button" class="sys-box sys-box--cloud" data-node="fb" style="grid-area: fb" aria-expanded="false" aria-controls="note-fb">Firebase</button>
+            <button type="button" class="sys-box sys-box--device" data-node="pb" style="grid-area: pb" aria-expanded="false" aria-controls="note-pb">Participant Browser</button>
+            <button type="button" class="sys-box sys-box--cloud" data-node="cf" style="grid-area: cf" aria-expanded="false" aria-controls="note-cf">Cloudflare Worker</button>
+            <button type="button" class="sys-box sys-box--cloud" data-node="cl" style="grid-area: cl" aria-expanded="false" aria-controls="note-cl">Claude</button>
           </div>
 
           <div class="sys-notes sys-notes--right">
-            <div class="sys-note" data-for="fb">
+            <div class="sys-note" data-for="fb" id="note-fb">
               <h3>Firebase</h3>
               <p>Google's backend service that the Quizmaster's and participants' browsers connect to. It signs in the Quizmaster with Google, saves their trivia boards, and holds each live game (teams, questions, buzzes and scores), syncing every change to all browsers in real time.</p>
             </div>
-            <div class="sys-note" data-for="pb">
+            <div class="sys-note" data-for="pb" id="note-pb">
               <h3>Participant Browser</h3>
               <p>The Join a Game page runs in each participant's browser, usually on a phone. Participants enter the room code, create or join a team, and buzz in when a question opens. Each change is sent by the browser to Firebase for all participants and the Quizmaster to see.</p>
             </div>
-            <div class="sys-note" data-for="cl">
+            <div class="sys-note" data-for="cl" id="note-cl">
               <h3>Claude</h3>
               <p>AI model that can help draft the trivia questions. The Quizmaster types a theme for a category, and Claude returns five questions from easy to hard. Any question that Claude isn't sure about comes back with a flag, so the Quizmaster can verify it before the game.</p>
             </div>
@@ -182,7 +196,7 @@
   <script src="../../../data/site.js"></script>
   <script src="../../../assets/js/site.js"></script>
   <script src="../../../assets/js/video.js"></script>
-  <script src="../../../assets/js/sysmap.js?v=202610121340"></script>
+  <script src="../../../assets/js/sysmap.js?v=202610121350"></script>
   <script>
     // Links open in a new tab; any link whose href is still empty is greyed out.
     document.querySelectorAll('.case-actions a').forEach(function (a) {
