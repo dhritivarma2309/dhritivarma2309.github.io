@@ -143,7 +143,9 @@ Write questions that are fun to hear read aloud and fair to answer:
 - Vary the kinds of question within a category (who, what, when, where, how many).
 - Difficulty rises with the value: 100 is something most people in a casual group would know; 300 needs real familiarity; 500 is for a true fan of the theme.
 - Only use facts you are confident are accurate and still true. If you are not fully sure of a fact, still write the question but set "unsure" to true and say in "note" what the host should double-check.
-- The category name is short (at most 24 characters) and based on the theme.`;
+- The category name is short (at most 24 characters) and based on the theme.
+
+Always deliver your questions by calling the save_questions tool, exactly once. Don't write anything else.`;
 
 const TOOL = {
   name: 'save_questions',
@@ -191,10 +193,11 @@ export async function draft(ask, env) {
     },
     body: JSON.stringify({
       model: env.MODEL || 'claude-sonnet-5-5',
-      max_tokens: 2000,
+      max_tokens: 8000,
       system: SYSTEM,
       tools: [TOOL],
-      tool_choice: { type: 'tool', name: TOOL.name },
+      // Newer models refuse a forced tool call, so Claude is asked (in SYSTEM) to use it.
+      tool_choice: { type: 'auto' },
       messages: [{ role: 'user', content: buildMessages(ask) }]
     })
   });
@@ -212,8 +215,12 @@ export async function draft(ask, env) {
   }
   const body = await res.json();
   const use = (body.content || []).find(c => c.type === 'tool_use' && c.name === TOOL.name);
-  if (!use) throw new Error('Claude didn\'t return any questions. Try again.');
-  return shape(use.input, ask);
+  if (use) return shape(use.input, ask);
+  // Fallback: Claude wrote the questions as JSON text instead of calling the tool.
+  const said = (body.content || []).filter(c => c.type === 'text').map(c => c.text).join('\n');
+  const json = said.slice(said.indexOf('{'), said.lastIndexOf('}') + 1);
+  try { if (json) return shape(JSON.parse(json), ask); } catch (e) { /* fall through */ }
+  throw new Error('Claude didn\'t return any questions. Try again.');
 }
 
 // Make Claude's answer exactly what the builder expects.

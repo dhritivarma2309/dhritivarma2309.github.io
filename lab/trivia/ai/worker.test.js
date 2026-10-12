@@ -91,7 +91,7 @@ test('drafts a category: asks Claude properly and returns 5 questions in value o
   assert.equal(sent.headers['x-api-key'], 'sk-ant-test', 'the key is only used here, server-side');
   assert.equal(sent.headers['anthropic-version'], '2023-06-01');
   assert.equal(sent.body.model, 'claude-sonnet-5-5');
-  assert.deepEqual(sent.body.tool_choice, { type: 'tool', name: 'save_questions' });
+  assert.deepEqual(sent.body.tool_choice, { type: 'auto' });
   assert.match(sent.body.messages[0].content, /Theme: Suits\n/);
 });
 
