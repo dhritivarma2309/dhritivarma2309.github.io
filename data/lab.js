@@ -20,13 +20,13 @@
 
 window.LAB = {
   title: "Things I've Built",
-  intro: "Prototypes, agents and side projects I've made with AI",
+  intro: "How I have been using AI to boost productivity and explore personal interests",
 
   projects: [
     {
       title: "Trivia Night",
       type: "Side project",
-      blurb: "Jeopardy-style trivia for video-call game nights: live buzzers on everyone's phone, questions drafted with Claude.",
+      blurb: "Host a Jeopardy-style trivia for friends and family over video call. Live buzzers on everyone's phone, questions drafted by you and Claude.",
       image: "../assets/img/lab/trivia-night.jpg",
       cta: "How It Works",
       video: "",          // add the ~60s MP4 here once it's recorded
