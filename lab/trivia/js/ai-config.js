@@ -8,4 +8,4 @@
    Leave it as null to hide the AI buttons.
    ========================================================================== */
 
-window.TRIVIA_AI_URL = null;
+window.TRIVIA_AI_URL = 'https://trivia-night-ai.dhritivarma.workers.dev';
