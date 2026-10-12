@@ -2,9 +2,9 @@
    TRIVIA NIGHT · player screen (on each player's phone)
    --------------------------------------------------------------------------
    Join with a room code (or the host's link), create or join a team, then:
-   see the scores and board, pick a tile when it's your team's turn, and
-   buzz. Everything the host publishes arrives live; a player only ever
-   writes their own team, buzz and pick (see live.js for the layout).
+   see the scores and board (the host picks; call out the one you want),
+   and buzz. Everything the host publishes arrives live; a player only
+   ever writes their own team and buzz (see live.js for the layout).
    ========================================================================== */
 
 (function () {
@@ -179,13 +179,6 @@
     ctx.room(code, 'buzzes/' + key + '/' + myTeam).set({ at: ctx.TS, by: ctx.uid }).catch(function () {});
   }
 
-  function pick(c, r) {
-    if (!pub || pub.phase !== 'board' || pub.picker !== myTeam) return;
-    ctx.room(code, 'pick').set({ c: c, r: r, team: myTeam, at: ctx.TS }).catch(function () {
-      msg = 'That pick didn\'t go through. Try again.'; render();
-    });
-  }
-
   root.addEventListener('submit', function (e) {
     e.preventDefault();
     var f = e.target;
@@ -198,7 +191,6 @@
     var a = el.getAttribute('data-act');
     if (a === 'join-team') joinTeam(el.getAttribute('data-team'));
     if (a === 'buzz') buzz();
-    if (a === 'pick') pick(+el.getAttribute('data-c'), +el.getAttribute('data-r'));
     if (a === 'switch') { ctx.room(code, 'players/' + ctx.uid).remove(); myTeam = null; remember(); render(); }
     if (a === 'leave') leave();
   });
@@ -211,21 +203,24 @@
   // Timer, and closing the buzzer when time runs out.
   setInterval(function () {
     if (!pub || pub.phase !== 'question' || !pub.q || !ctx) return;
-    var left = Math.max(0, pub.q.deadline - ctx.serverNow());
+    // Once someone buzzes, the clock stops and shows the time that was left.
+    var left = pub.q.stopped ? (pub.q.timeLeft || 0) : Math.max(0, pub.q.deadline - ctx.serverNow());
     if (left === 0 && !expired) { expired = true; render(); return; }
     var el = root.querySelector('[data-slot="timer"]');
     if (!el) return;
     var secs = Math.ceil(left / 1000);
     el.querySelector('.tn-timer-num').textContent = left > 0 ? '0:' + (secs < 10 ? '0' : '') + secs : 'Time';
     el.querySelector('.tn-timer-fill').style.width = (left / 30000 * 100) + '%';
-    el.classList.toggle('is-low', left > 0 && left <= 5000);
+    el.classList.toggle('is-stopped', !!pub.q.stopped);
+    el.classList.toggle('is-low', !pub.q.stopped && left > 0 && left <= 5000);
+    el.classList.toggle('is-done', !pub.q.stopped && left <= 0);
   }, 200);
 
   /* ---- Drawing ---------------------------------------------------------- */
 
   function render() {
     var focusId = document.activeElement && document.activeElement.id;
-    meSlot.innerHTML = myTeam && teamName(myTeam) ? 'You\'re on <b>' + esc(teamName(myTeam)) + '</b>' : code ? 'Room <b>' + code + '</b>' : '';
+    meSlot.innerHTML = myTeam && teamName(myTeam) ? 'You\'re on <b>' + esc(teamName(myTeam)) + '</b>' : code ? 'Room Code <b>' + code + '</b>' : '';
     var html;
     if (view === 'join') html = renderJoin();
     else if (view === 'connecting' || !pub) html = '<section class="tn-p-card"><p class="tn-p-wait">Joining room ' + esc(code) + '…</p></section>';
@@ -281,7 +276,7 @@
     var top = Math.max.apply(null, order.map(function (s) { return t[s] ? t[s].score : 0; }));
     return '<section class="tn-p-scores" aria-label="Scores">' + order.map(function (s) {
       var sc = t[s] ? t[s].score : 0;
-      return '<div class="tn-p-score' + (s === myTeam ? ' is-me' : '') + (pub.phase === 'board' && pub.picker === s ? ' is-picking' : '') + '">' +
+      return '<div class="tn-p-score' + (s === myTeam ? ' is-me' : '') + '">' +
         '<span class="tn-p-score-name">' + esc(t[s] ? t[s].name : '') + '</span>' +
         '<span class="tn-score-num' + (sc < 0 ? ' is-neg' : '') + (sc === top && sc > 0 ? ' is-lead' : '') + '">' + fmt(sc) + '</span></div>';
     }).join('') + '</section>';
@@ -312,21 +307,16 @@
   function renderBoard() {
     var cats = pub.categories || [];
     var played = pub.played || {};
-    var mine = pub.picker === myTeam;
     var head = cats.map(function (c) { return '<div class="tn-cat" role="columnheader">' + esc(c) + '</div>'; }).join('');
     var cells = '';
     for (var r = 0; r < VALUES.length; r++) {
       for (var c = 0; c < cats.length; c++) {
         cells += played[c + '-' + r]
           ? '<div class="tn-tile is-played" role="gridcell"><span class="sr-only">played</span></div>'
-          : mine
-            ? '<button class="tn-tile" type="button" data-act="pick" data-c="' + c + '" data-r="' + r + '" aria-label="' + esc(cats[c]) + ' for ' + VALUES[r] + '">' + VALUES[r] + '</button>'
-            : '<div class="tn-tile is-idle" role="gridcell">' + VALUES[r] + '</div>';
+          : '<div class="tn-tile is-idle" role="gridcell">' + VALUES[r] + '</div>';
       }
     }
-    var line = mine ? 'Your team picks! Tap a question.'
-      : pub.picker ? esc(teamName(pub.picker)) + ' is picking…' : 'The host is picking…';
-    return '<p class="tn-hand tn-p-line' + (mine ? ' is-mine' : '') + '">' + line + '</p>' + note() +
+    return '<p class="tn-hand tn-p-line">The host is picking the next question…</p>' + note() +
       '<div class="tn-board tn-p-board" role="grid" aria-label="Board" style="--cols:' + cats.length + '">' + head + cells + '</div>' +
       '<div class="tn-p-buzz-wrap"><button class="tn-p-buzz is-idle" type="button" disabled>Get ready</button></div>';
   }
@@ -335,9 +325,12 @@
     var q = pub.q;
     var e = myEntry();
     var label, sub = '', cls = 'is-idle', live = false;
-    if (pub.phase === 'reveal') {
-      label = q.winner === myTeam ? 'Correct!' : e && e.status === 'wrong' ? 'Not this time' : 'Answer revealed';
+    if (q.winner) {
+      label = q.winner === myTeam ? 'Correct!' : e && e.status === 'wrong' ? 'Not this time' : 'Answered';
+      sub = q.winner === myTeam ? '+' + q.value : esc(teamName(q.winner)) + ' got it';
       cls = q.winner === myTeam ? 'is-good' : 'is-idle';
+    } else if (pub.phase === 'reveal') {
+      label = e && e.status === 'wrong' ? 'Not this time' : 'Answer revealed';
     } else if (e) {
       if (e.status === 'answering') { label = 'Answer now!'; sub = 'Say it out loud'; cls = 'is-answering'; }
       else if (e.status === 'wrong') { label = 'Wrong'; sub = '−' + q.value; cls = 'is-wrong'; }

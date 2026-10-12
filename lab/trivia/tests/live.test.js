@@ -40,11 +40,27 @@ test('players never see an answer before it is revealed', () => {
   assert.equal(pub.q.answer, null);
   assert.equal(pub.q.key, '1-2');
   assert.ok(!JSON.stringify(pub).includes('A12'));
-  s = G.judge(G.buzz(s, 't4', 1500), true, 2000);
+  s = G.judge(G.buzz(s, 't4', 1500), true);
+  pub = L.project(G, s);
+  assert.equal(pub.teams.t4.score, 300);
+  assert.equal(pub.q.winner, 't4');
+  assert.equal(pub.q.answer, null, 'still hidden after a correct answer, until the host reveals');
+  s = G.reveal(s);
   pub = L.project(G, s);
   assert.equal(pub.q.answer, 'A12');
-  assert.equal(pub.teams.t4.score, 300);
-  assert.equal(pub.picker, 't4');
   assert.deepEqual(pub.order, ['t2', 't4']);
   assert.equal(pub.played['1-2'], true);
+});
+
+test('phones see a frozen timer once someone buzzes, and buzzing stays open for other teams', () => {
+  let s = G.createGame(board, [{ name: 'Bears', id: 't1' }, { name: 'Owls', id: 't2' }]);
+  s = G.pick(s, 0, 0, 1000);
+  let pub = L.project(G, s);
+  assert.equal(pub.q.stopped, false);
+  assert.equal(pub.q.deadline, 31000);
+  s = G.buzz(s, 't1', 11000);
+  pub = L.project(G, s);
+  assert.equal(pub.q.stopped, true);
+  assert.equal(pub.q.timeLeft, 20000);
+  assert.ok(pub.q.deadline > 31000 + 3600 * 1000, 'other teams can still buzz in later');
 });

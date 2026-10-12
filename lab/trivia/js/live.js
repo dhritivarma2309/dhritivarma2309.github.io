@@ -11,11 +11,11 @@
      names/slug  claims a team name, so two teams can't share one
      players/id  which team each player is on: { team }
      buzzes/c-r  one buzz per team per question: { at (server time), by }
-     pick        the picking team's choice of tile: { c, r, team, at }
+     pick        (unused since the host always picks; kept in the rules)
 
    The host's browser runs the rules (game.js) and is the only one that
-   writes the game state. Players only ever write their own team, buzz
-   and pick, and the database rules check each of those.
+   writes the game state. Players only ever write their own team and
+   buzz, and the database rules check both.
    ========================================================================== */
 
 (function (root) {
@@ -55,7 +55,6 @@
       played: {},
       teams: {},
       order: state.teams.map(function (t) { return t.id; }),
-      picker: state.picker || null,
       q: null
     };
     Object.keys(state.played).forEach(function (k) { pub.played[k] = true; });
@@ -69,7 +68,12 @@
         category: q.category,
         text: q.q,
         openedAt: state.q.openedAt,
-        deadline: state.q.deadline,
+        // Buzzing is allowed until `deadline` (the database rules check it).
+        // Once the first buzz stops the clock, buzzing stays open for others,
+        // so the cutoff moves far out and phones show the frozen time instead.
+        deadline: G.timerStopped(state) ? state.q.openedAt + 6 * 3600 * 1000 : state.q.deadline,
+        stopped: G.timerStopped(state),
+        timeLeft: G.timerStopped(state) ? G.timeLeft(state, 0) : null,
         order: G.buzzOrder(state),
         winner: state.q.winner || null,
         ended: state.q.ended || null,

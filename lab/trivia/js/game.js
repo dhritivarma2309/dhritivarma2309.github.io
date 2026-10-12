@@ -6,17 +6,18 @@
    The single-device game uses it today; the live multiplayer version will
    reuse the same rules, so a game plays the same way everywhere.
 
-   Rules (from the v1 spec):
+   Rules (from the v1 spec, as updated after the first live test):
    - Board: 6 categories x 5 questions, worth 100-500 points.
-   - The host picks the first tile; after that, the team that last answered
-     correctly picks. The host can override who picks.
+   - The host always picks the tile (teams can call out which one they want).
    - Buzzers open the moment a question appears. Each team buzzes once.
      Buzzes are ranked by time; the first team in line answers.
-   - Correct: +tile value, tile closes, that team picks next.
-   - Wrong: -tile value, the next team in the buzz order answers.
-   - Timer: 30 seconds. When it ends, nobody new can buzz, but teams already
-     in line can still answer.
-   - The tile closes on a correct answer, or when nobody is left to answer.
+   - Timer: 30 seconds, and it stops at the first buzz. If it runs out with
+     nobody buzzed, the buzzers close. Once stopped, other teams can still
+     buzz in to get in line.
+   - Correct: +tile value, and the buzzers close.
+   - Wrong: -tile value, and the next team in the buzz order answers.
+   - Nothing ever closes a tile on its own: the host reveals the answer
+     (or skips the question), then goes back to the board.
    ========================================================================== */
 
 (function (root) {
@@ -56,7 +57,6 @@
       teams: list,
       played: {},          // "c-r" -> { winner: teamId | null }
       phase: 'board',      // board | question | reveal | final
-      picker: null,        // team id that picks next; null = the host picks
       q: null              // the open question (see pick)
     };
   }
@@ -82,15 +82,28 @@
     }
     return null;
   }
+  // Time left on the clock. Once someone buzzes, the clock stops where it was.
   function timeLeft(s, now) {
     if (!s.q) return 0;
+    if (s.q.stoppedAt != null) return Math.max(0, s.q.deadline - s.q.stoppedAt);
     return Math.max(0, s.q.deadline - now);
   }
+  function timerStopped(s) { return !!(s.q && s.q.stoppedAt != null); }
   function canBuzz(s, teamId, now) {
     if (s.phase !== 'question' || !s.q || s.q.winner) return false;
-    if (now >= s.q.deadline) return false;
+    if (s.q.stoppedAt == null && now >= s.q.deadline) return false;
     if (!findTeam(s, teamId)) return false;
     return !s.q.buzzes.some(function (b) { return b.team === teamId; });
+  }
+  // Where an open question stands, for the host's prompts:
+  // answering | answered | everyone-tried | time-up | open
+  function status(s, now) {
+    if (!s.q || s.phase !== 'question') return null;
+    if (s.q.winner) return 'answered';
+    if (answering(s)) return 'answering';
+    if (s.teams.every(function (t) { return s.q.wrong[t.id]; })) return 'everyone-tried';
+    if (s.q.stoppedAt == null && now >= s.q.deadline) return 'time-up';
+    return 'open';
   }
   // Each buzz with its place (1, 2, 3...) and gap behind the first buzz (ms).
   function buzzOrder(s) {
@@ -119,10 +132,11 @@
     n.q = {
       c: c, r: r, value: VALUES[r],
       openedAt: now, deadline: now + QUESTION_MS,
-      buzzes: [],     // [{ team, at }] in the order they arrived
+      stoppedAt: null, // when the first buzz stopped the clock
+      buzzes: [],     // [{ team, at }] in time order
       wrong: {},      // teamId -> true
       winner: null,
-      ended: null     // why it closed: correct | nobody | revealed | skipped
+      ended: null     // how it closed: correct | revealed | skipped
     };
     return n;
   }
@@ -135,6 +149,9 @@
     var i = n.q.buzzes.length;
     while (i > 0 && n.q.buzzes[i - 1].at > now && !n.q.wrong[n.q.buzzes[i - 1].team] && n.q.buzzes[i - 1].team !== answering(n)) i--;
     n.q.buzzes.splice(i, 0, { team: teamId, at: now });
+    // The first buzz stops the clock (an earlier-stamped buzz moves it back).
+    var at = Math.min(now, n.q.deadline);
+    if (n.q.stoppedAt == null || at < n.q.stoppedAt) n.q.stoppedAt = at;
     return n;
   }
 
@@ -144,16 +161,9 @@
     n.phase = 'reveal';
   }
 
-  // Close the tile when nobody is left who could still answer.
-  function settle(n, now) {
-    if (n.phase !== 'question' || n.q.winner || answering(n)) return n;
-    var everyoneTried = n.teams.every(function (t) { return n.q.wrong[t.id]; });
-    if (everyoneTried || now >= n.q.deadline) close(n, 'nobody');
-    return n;
-  }
-
   // correct: true / false. Judges the team whose turn it is.
-  function judge(s, correct, now) {
+  // The tile stays open either way; only the host's Reveal closes it.
+  function judge(s, correct) {
     if (s.phase !== 'question') return s;
     var id = answering(s);
     if (!id) return s;
@@ -162,34 +172,25 @@
     if (correct) {
       team.score += n.q.value;
       n.q.winner = id;
-      n.picker = id;
-      close(n, 'correct');
-      return n;
+    } else {
+      team.score -= n.q.value;
+      n.q.wrong[id] = true;
     }
-    team.score -= n.q.value;
-    n.q.wrong[id] = true;
-    return settle(n, now);
-  }
-
-  // Call regularly while a question is open (handles the timer running out).
-  function tick(s, now) {
-    if (s.phase !== 'question') return s;
-    if (now < s.q.deadline || answering(s)) return s;
-    return settle(copy(s), now);
-  }
-
-  // Host shows the answer early: no more points change on this tile.
-  function reveal(s) {
-    if (s.phase !== 'question') return s;
-    var n = copy(s);
-    close(n, 'revealed');
     return n;
   }
 
-  // Host throws the question out (e.g. a mistake in it). Scores from this
-  // tile are undone, and the tile is closed.
-  function skip(s) {
+  // Host shows the answer to everyone. No more points change on this tile.
+  function reveal(s) {
     if (s.phase !== 'question') return s;
+    var n = copy(s);
+    close(n, n.q.winner ? 'correct' : 'revealed');
+    return n;
+  }
+
+  // Host throws the question out (e.g. a mistake in it). Points lost on it
+  // are given back, and the tile is closed. Not once someone got it right.
+  function skip(s) {
+    if (s.phase !== 'question' || s.q.winner) return s;
     var n = copy(s);
     Object.keys(n.q.wrong).forEach(function (id) { findTeam(n, id).score += n.q.value; });
     n.q.wrong = {};
@@ -204,13 +205,6 @@
     var n = copy(s);
     n.q = null;
     n.phase = Object.keys(n.played).length >= tileCount(n) ? 'final' : 'board';
-    return n;
-  }
-
-  function setPicker(s, teamId) {
-    if (teamId !== null && !findTeam(s, teamId)) return s;
-    var n = copy(s);
-    n.picker = teamId;
     return n;
   }
 
@@ -241,10 +235,10 @@
     VALUES: VALUES, QUESTION_MS: QUESTION_MS, MAX_TEAMS: MAX_TEAMS,
     createGame: createGame,
     tileCount: tileCount, isPlayed: isPlayed, question: question, answering: answering,
-    timeLeft: timeLeft, canBuzz: canBuzz, buzzOrder: buzzOrder, standings: standings,
-    findTeam: findTeam,
-    pick: pick, buzz: buzz, judge: judge, tick: tick, reveal: reveal, skip: skip,
-    next: next, setPicker: setPicker, adjustScore: adjustScore, setScore: setScore, endGame: endGame
+    timeLeft: timeLeft, timerStopped: timerStopped, canBuzz: canBuzz, status: status,
+    buzzOrder: buzzOrder, standings: standings, findTeam: findTeam,
+    pick: pick, buzz: buzz, judge: judge, reveal: reveal, skip: skip,
+    next: next, adjustScore: adjustScore, setScore: setScore, endGame: endGame
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

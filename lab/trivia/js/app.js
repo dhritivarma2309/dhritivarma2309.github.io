@@ -109,23 +109,13 @@
     var code = room.code;
     ctx.room(code, 'teams').on('value', function (s) { lobby.teams = s.val() || {}; render(); });
     ctx.room(code, 'players').on('value', function (s) { lobby.players = s.val() || {}; render(); });
-    // A team picking from their phone.
-    ctx.room(code, 'pick').on('value', function (s) {
-      var p = s.val();
-      if (!p) return;
-      ctx.room(code, 'pick').remove();
-      if (state && state.phase === 'board' && p.team === state.picker) {
-        ui.peek = false;
-        set(G.pick(state, +p.c, +p.r, now()));
-      }
-    });
     ctx.room(code, 'host').on('value', function (s) {
       if (room && room.code === code && !s.exists()) { leaveRoom(); render(); }  // room closed elsewhere
     });
   }
 
   function unwatchRoom(code) {
-    ['teams', 'players', 'pick', 'host'].forEach(function (p) { ctx.room(code, p).off(); });
+    ['teams', 'players', 'host'].forEach(function (p) { ctx.room(code, p).off(); });
     if (net.buzzRef) net.buzzRef.off();
     net.buzzRef = null; net.buzzKey = null;
   }
@@ -180,7 +170,7 @@
   function normalizeState(s) {
     s.played = s.played || {};
     if (s.q) { s.q.buzzes = s.q.buzzes || []; s.q.wrong = s.q.wrong || {}; s.q.winner = s.q.winner || null; s.q.ended = s.q.ended || null; }
-    s.picker = s.picker || null;
+    if (s.q) s.q.stoppedAt = s.q.stoppedAt == null ? null : s.q.stoppedAt;
     s.teams.forEach(function (t) { t.bot = !!t.bot; });
     return s;
   }
@@ -302,8 +292,8 @@
       set(G.pick(state, +el.getAttribute('data-c'), +el.getAttribute('data-r'), now()));
     },
     'buzz': function (el) { doBuzz(el.getAttribute('data-team')); },
-    'correct': function () { set(G.judge(state, true, now())); },
-    'wrong': function () { set(G.judge(state, false, now())); },
+    'correct': function () { set(G.judge(state, true)); },
+    'wrong': function () { set(G.judge(state, false)); },
     'reveal': function () { set(G.reveal(state)); },
     'skip': function () { if (sure('skip')) set(G.skip(state)); },
     'next': function () { set(G.next(state)); },
@@ -358,7 +348,6 @@
       if (/^-?\d+$/.test(raw)) { state = G.setScore(state, id, +raw); save(); publish(); t.value = team(id).score; }
       else t.value = team(id).score;
     }
-    if (t.name === 'picker') set(G.setPicker(state, t.value === 'host' ? null : t.value));
   });
   app.addEventListener('submit', function (e) { e.preventDefault(); if (!LIVE) actions.start(); });
 
@@ -377,10 +366,8 @@
     Object.keys(botPlan).forEach(function (id) {
       if (t >= botPlan[id]) { delete botPlan[id]; doBuzz(id); }
     });
-    var after = G.tick(state, t);
-    if (after !== state) { set(after); return; }
-    // Time just ran out but a team is still answering: redraw so buzzers close.
-    var expired = G.timeLeft(state, t) <= 0;
+    // Time just ran out with nobody buzzed: redraw so the buzzers close.
+    var expired = !G.timerStopped(state) && G.timeLeft(state, t) <= 0;
     if (expired && !ui.expired) { ui.expired = true; render(); return; }
     if (!expired) ui.expired = false;
     drawTimer();
@@ -393,8 +380,10 @@
     var secs = Math.ceil(left / 1000);
     el.querySelector('.tn-timer-num').textContent = left > 0 ? '0:' + (secs < 10 ? '0' : '') + secs : 'Time';
     el.querySelector('.tn-timer-fill').style.width = (left / G.QUESTION_MS * 100) + '%';
-    el.classList.toggle('is-low', left > 0 && left <= 5000);
-    el.classList.toggle('is-done', left <= 0);
+    var stopped = G.timerStopped(state);
+    el.classList.toggle('is-stopped', stopped);
+    el.classList.toggle('is-low', !stopped && left > 0 && left <= 5000);
+    el.classList.toggle('is-done', !stopped && left <= 0);
   }
 
   /* ---- Drawing --------------------------------------------------------- */
@@ -410,7 +399,7 @@
     else if (!state) html = renderSetup();
     else if (state.phase === 'final') html = renderFinal();
     else { html = renderGame(); top = sureBtn('end', 'End game', 'Tap again to end'); }
-    topActions.innerHTML = (LIVE && room ? '<span class="tn-room-chip" title="Room code">Room <b>' + room.code + '</b></span>' : '') + top;
+    topActions.innerHTML = (LIVE && room ? '<span class="tn-room-chip">Room Code <b>' + room.code + '</b></span>' : '') + top;
     app.innerHTML = (LIVE && room && !net.online ? '<p class="tn-offline" role="status">Reconnecting… Changes will sync when you\'re back online.</p>' : '') + html;
     drawTimer();
     if (focusId) { var f = document.getElementById(focusId); if (f && f !== document.activeElement) f.focus(); }
@@ -498,8 +487,7 @@
   function renderScores() {
     var top = Math.max.apply(null, state.teams.map(function (t) { return t.score; }));
     return '<section class="tn-scores" aria-label="Scores">' + state.teams.map(function (t, i) {
-      var picking = state.phase === 'board' && state.picker === t.id;
-      return '<div class="tn-score' + (picking ? ' is-picking' : '') + '">' +
+      return '<div class="tn-score">' +
         '<div class="tn-score-name">' + (LIVE ? '' : '<span class="tn-key tn-key--sm" aria-hidden="true">' + KEYS[i] + '</span>') + esc(t.name) +
           (t.bot ? '<span class="tn-tag">sim</span>' : '') + '</div>' +
         (ui.fixing ? '' : '<div class="tn-score-num' + (t.score < 0 ? ' is-neg' : '') + (t.score === top && t.score > 0 ? ' is-lead' : '') + '">' + fmt(t.score) + '</div>') +
@@ -523,18 +511,7 @@
           : '<button class="tn-tile" type="button" data-act="pick" data-c="' + c + '" data-r="' + r + '" aria-label="' + esc(cats[c].name) + ' for ' + G.VALUES[r] + '">' + G.VALUES[r] + '</button>';
       }
     }
-    var picker = state.picker ? team(state.picker).name : null;
-    var line = picker
-      ? esc(picker) + ' picks next' + (LIVE ? ' <span class="tn-hand-note">(on their phone, or tap a tile for them)</span>' : '')
-      : 'Host picks the first question';
-    return '<div class="tn-pick-line"><span class="tn-hand">' + line + '</span>' + pickerSelect() + '</div>' +
-      '<div class="tn-board" role="grid" aria-label="Board" style="--cols:' + cats.length + '">' + head + cells + '</div>';
-  }
-
-  function pickerSelect() {
-    var opts = '<option value="host"' + (state.picker === null ? ' selected' : '') + '>Host</option>' +
-      state.teams.map(function (t) { return '<option value="' + t.id + '"' + (state.picker === t.id ? ' selected' : '') + '>' + esc(t.name) + '</option>'; }).join('');
-    return '<label class="tn-picker"><span>Who picks</span><select name="picker" class="tn-input tn-input--sm">' + opts + '</select></label>';
+    return '<div class="tn-board" role="grid" aria-label="Board" style="--cols:' + cats.length + '">' + head + cells + '</div>';
   }
 
   function renderQuestion() {
@@ -544,7 +521,7 @@
     if (revealed) {
       var e = state.q.ended;
       result = e === 'correct' ? esc(team(state.q.winner).name) + ' got it: +' + q.value
-        : e === 'skipped' ? 'Question thrown out. No points changed.'
+        : e === 'skipped' ? 'Question thrown out. No points lost on it.'
         : 'Nobody got it.';
     }
     var pop = ui.justOpened;
@@ -591,15 +568,13 @@
         '<span class="tn-order-note">' + (n ? plural(n, 'player', 'players') + ' connected' : 'Nobody connected') + '</span></span>' +
         (buzzed ? '<span class="tn-tag tn-tag--on">buzzed</span>' : '') + '</li>';
     }).join('');
-    return '<section class="tn-card"><h2 class="tn-card-title">Teams</h2><ul class="tn-live-teams">' + rows + '</ul>' +
-      '<p class="tn-hint">Players buzz on their phones. Late arrivals join with code <b>' + room.code + '</b>.</p></section>';
+    return '<section class="tn-card"><h2 class="tn-card-title">Teams</h2><ul class="tn-live-teams">' + rows + '</ul></section>';
   }
 
   function renderPanel() {
     var open = state.phase === 'question';
     var t = now();
     var order = G.buzzOrder(state);
-    var answeringId = G.answering(state);
     var list = order.length ? order.map(function (o) {
       var tm = team(o.team);
       var note = o.status === 'answering' ? 'Answering now' : o.status === 'wrong' ? 'Wrong · −' + state.q.value
@@ -619,17 +594,23 @@
         judgeBtns + '</li>';
     }).join('') : '<li class="tn-order-empty">' + (open ? 'Nobody has buzzed yet.' : 'Pick a question to open the buzzers.') + '</li>';
 
-    var waiting = open && !answeringId && G.timeLeft(state, t) > 0;
+    // What the host should know (nothing closes on its own; the host reveals).
+    var st = G.status(state, t);
+    var prompt = st === 'answered' ? '<b>' + esc(team(state.q.winner).name) + ' got it!</b> Reveal the answer when you\'re ready.'
+      : st === 'everyone-tried' ? 'Every team has tried. Reveal the answer when you\'re ready.'
+      : st === 'time-up' ? 'Time\'s up and nobody buzzed. Reveal the answer when you\'re ready.'
+      : st === 'open' && order.length ? 'Waiting for more teams to buzz.' : '';
+    var ready = st === 'answered' || st === 'everyone-tried' || st === 'time-up';
     var controls = open
-      ? '<div class="tn-controls"><button class="btn btn--sm" type="button" data-act="reveal">Reveal answer</button>' +
-        sureBtn('skip', 'Skip question', 'Tap again: throw it out') + '</div>' +
+      ? (prompt ? '<p class="tn-prompt' + (ready ? ' is-ready' : '') + '">' + prompt + '</p>' : '') +
+        '<div class="tn-controls"><button class="btn btn--sm' + (ready ? ' btn--solid' : '') + '" type="button" data-act="reveal">Reveal answer</button>' +
+        (state.q.winner ? '' : sureBtn('skip', 'Skip question', 'Tap again: throw it out')) + '</div>' +
         (ui.confirming === 'skip' ? '<p class="tn-hint">Points lost on this question will be given back.</p>' : '')
       : '';
     return '<aside class="tn-panel">' +
       (LIVE ? renderTeamsCard() : renderBuzzers()) +
       '<section class="tn-card"><h2 class="tn-card-title">Buzz order</h2>' +
         '<ol class="tn-order" aria-live="polite">' + list + '</ol>' +
-        (waiting && order.length ? '<p class="tn-hint">Waiting for more teams to buzz.</p>' : '') +
         controls + '</section>' +
     '</aside>';
   }

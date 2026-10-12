@@ -459,3 +459,10 @@
 .tn-p-final .tn-final-list { margin: 20px 0 12px; }
 .tn-cat { hyphens: auto; -webkit-hyphens: auto; }
 .tn-p-board .tn-cat { font-size: clamp(8px, 2.4vw, 10px); }
+
+/* Host prompts and the stopped timer (after the first live test) */
+.tn-prompt { margin: 14px 0 0; padding: 10px 12px; border-radius: 8px; background: var(--paper); font-size: 14.5px; color: var(--ink-soft); }
+.tn-prompt.is-ready { background: var(--tape); color: var(--ink); }
+.tn-timer.is-stopped .tn-timer-num { background: var(--mist); color: var(--board); }
+.tn-timer.is-stopped .tn-timer-num::before { content: "❚❚ "; font-size: 10px; vertical-align: 1px; }
+.tn-timer.is-stopped .tn-timer-fill { background: var(--mist); }
