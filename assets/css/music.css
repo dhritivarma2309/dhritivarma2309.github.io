@@ -761,3 +761,11 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
   .chips::-webkit-scrollbar { display: none; }
   .chip { flex: none; }
 }
+
+/* player footer: caption + Open in Spotify (full playback in the app) + Hide */
+.player-actions { display: flex; gap: 8px; flex: none; flex-wrap: wrap; justify-content: flex-end; }
+.player-actions .btn { height: 38px; padding: 0 14px; font-size: 13px; }
+@media (max-width: 560px) {
+  .player-foot { flex-direction: column; align-items: stretch; }
+  .player-actions { justify-content: flex-start; }
+}

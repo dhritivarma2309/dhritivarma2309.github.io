@@ -75,8 +75,12 @@
     var h = (opts && opts.height) || (sp.type === 'track' || sp.type === 'episode' ? 152 : (opts && opts.tall ? 380 : 352));
     p.innerHTML =
       '<iframe src="' + sp.embed + '" height="' + h + '" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="Spotify player"></iframe>' +
-      '<div class="player-foot"><small>' + ((opts && opts.caption) || 'Player by Spotify. Previews play when logged out.') + '</small>' +
-      '<button class="btn" data-hide>Hide player</button></div>';
+      '<div class="player-foot"><small>' + ((opts && opts.caption) || 'Player by Spotify.') + ' Hearing a preview? Open in Spotify for the full track.</small>' +
+      '<div class="player-actions">' +
+        '<a class="btn btn--solid" href="' + sp.open + '" target="_blank" rel="noopener">' +
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>Open in Spotify</a>' +
+        '<button class="btn" data-hide>Hide player</button>' +
+      '</div></div>';
     p.classList.add('is-open');
     card.classList.add('is-playing');
     var t = $('[data-toggle-label]', card);
@@ -176,7 +180,7 @@
       if (!btn) return;
       if (openCard === card) { closePlayer(card); return; }
       var s = items[idx];
-      openPlayer(card, spotify(s.spotify), { caption: 'Now playing: ' + esc(s.title) + ' · ' + esc(s.artist) + '. Full track if you\'re signed in to Spotify, a preview otherwise.' });
+      openPlayer(card, spotify(s.spotify), { caption: 'Now playing: ' + esc(s.title) + ' · ' + esc(s.artist) + '.' });
     });
 
     // play button shows ■ while this card's player is open, ▶ otherwise
@@ -237,7 +241,7 @@
       var i = +b.getAttribute('data-i');
       if (current === i) { closePlayer(card); return; }
       var t = R.tracks[i];
-      openPlayer(card, spotify(t.spotify), { caption: 'Now playing: ' + esc(t.title) + ' · ' + esc(t.artist) + '. Full track if you\'re signed in to Spotify, a preview otherwise.' });
+      openPlayer(card, spotify(t.spotify), { caption: 'Now playing: ' + esc(t.title) + ' · ' + esc(t.artist) + '.' });
       current = i;
       setActive(i);
     });
@@ -308,7 +312,7 @@
           if (window.matchMedia('(max-width: 520px)').matches) card.after(deck); else slot.after(deck);
           openPlayer(deck, spotify(a.spotify), {
             height: 152,
-            caption: 'Now playing: ' + esc(a.title) + ' · ' + esc(a.artist) + '. Full tracks if you\'re signed in to Spotify, previews otherwise.',
+            caption: 'Now playing: ' + esc(a.title) + ' · ' + esc(a.artist) + '.',
           });
           current = i;
           setActive(i);
