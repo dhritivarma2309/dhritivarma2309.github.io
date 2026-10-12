@@ -38,6 +38,7 @@ window.LAB = {
       buttons: [
         { label: "How It Works", href: "projects/trivia-night/" },
         { label: "Try Now", href: "trivia/", newTab: true },
+        { label: "View Code", href: "https://github.com/dhritivarma2309/dhritivarma2309.github.io/tree/main/lab/trivia", newTab: true },
       ],
       caseStudy: "projects/trivia-night/",
     },
