@@ -47,6 +47,7 @@
 .project h2.placeholder { font-weight: 600; }
 .project .card-link { text-decoration: none; color: inherit; }
 .project .card-link::after { content: ""; position: absolute; inset: 0; z-index: 1; }
+.project .blurb { margin: 8px 6px 0; font-size: 15px; line-height: 1.5; color: var(--ink-soft); }
 .project-foot {
   margin: auto 6px 0;
   padding-top: 20px;
@@ -63,6 +64,15 @@
 .project .read { font-size: 14px; font-weight: 600; color: var(--ink); }
 .project.has-case:hover .read { color: var(--red); }
 .soon { font-family: var(--hand); color: var(--red); font-size: 19px; }
+.project .try { display: inline-flex; align-items: center; }
+
+/* ---------- How It Works video ---------- */
+.video-box { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 16px; background: rgba(31,42,68,.72); }
+.video-frame { position: relative; width: min(960px, 100%); padding: 10px; }
+.video-frame video { display: block; width: 100%; height: auto; max-height: 80vh; border-radius: 2px; background: #000; }
+.video-close { position: absolute; top: -14px; right: -14px; width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--ink); background: var(--paper); color: var(--ink); font-size: 22px; line-height: 1; cursor: pointer; }
+.video-close:hover { color: var(--red); border-color: var(--red); }
+@media (max-width: 760px) { .video-close { top: -10px; right: -6px; } }
 
 @media (max-width: 760px) {
   .projects { margin-top: 48px; }
