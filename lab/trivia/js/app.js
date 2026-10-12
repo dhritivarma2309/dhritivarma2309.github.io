@@ -170,7 +170,6 @@
   function normalizeState(s) {
     s.played = s.played || {};
     if (s.q) { s.q.buzzes = s.q.buzzes || []; s.q.wrong = s.q.wrong || {}; s.q.winner = s.q.winner || null; s.q.ended = s.q.ended || null; }
-    if (s.q) s.q.stoppedAt = s.q.stoppedAt == null ? null : s.q.stoppedAt;
     s.teams.forEach(function (t) { t.bot = !!t.bot; });
     return s;
   }
@@ -191,7 +190,7 @@
     setTimeout(function () { if (ui.flash === id) { ui.flash = null; render(); } }, 450);
   }
   function doBuzz(id) {
-    if (LIVE || !state || !G.canBuzz(state, id, now())) return;
+    if (LIVE || !state || !G.canBuzz(state, id)) return;
     set(G.buzz(state, id, now()));
     flash(id);
   }
@@ -359,32 +358,17 @@
     if (i >= 0 && state.teams[i]) { e.preventDefault(); doBuzz(state.teams[i].id); }
   });
 
-  // ---- Clock: timer display, simulated buzzes, time running out ----
+  // ---- Simulated teams buzz when their moment comes (one-screen mode) ----
   setInterval(function () {
     if (!state || state.phase !== 'question') return;
     var t = now();
     Object.keys(botPlan).forEach(function (id) {
       if (t >= botPlan[id]) { delete botPlan[id]; doBuzz(id); }
     });
-    // Time just ran out with nobody buzzed: redraw so the buzzers close.
-    var expired = !G.timerStopped(state) && G.timeLeft(state, t) <= 0;
-    if (expired && !ui.expired) { ui.expired = true; render(); return; }
-    if (!expired) ui.expired = false;
-    drawTimer();
   }, 100);
 
-  function drawTimer() {
-    var el = app.querySelector('[data-slot="timer"]');
-    if (!el || !state || !state.q) return;
-    var left = G.timeLeft(state, now());
-    var secs = Math.ceil(left / 1000);
-    el.querySelector('.tn-timer-num').textContent = left > 0 ? '0:' + (secs < 10 ? '0' : '') + secs : 'Time';
-    el.querySelector('.tn-timer-fill').style.width = (left / G.QUESTION_MS * 100) + '%';
-    var stopped = G.timerStopped(state);
-    el.classList.toggle('is-stopped', stopped);
-    el.classList.toggle('is-low', !stopped && left > 0 && left <= 5000);
-    el.classList.toggle('is-done', !stopped && left <= 0);
-  }
+  // Buzz times, to the millisecond: 2347 -> "2.347s"
+  function secs(ms) { return (Math.max(0, ms) / 1000).toFixed(3) + 's'; }
 
   /* ---- Drawing --------------------------------------------------------- */
 
@@ -398,10 +382,9 @@
     else if (LIVE && !state) { html = renderLobby(); top = sureBtn('close-room', 'Close room', 'Tap again to close'); }
     else if (!state) html = renderSetup();
     else if (state.phase === 'final') html = renderFinal();
-    else { html = renderGame(); top = sureBtn('end', 'End game', 'Tap again to end'); }
+    else { html = renderGame(); top = sureBtn('end', 'End Game', 'Tap again to end'); }
     topActions.innerHTML = (LIVE && room ? '<span class="tn-room-chip">Room Code <b>' + room.code + '</b></span>' : '') + top;
     app.innerHTML = (LIVE && room && !net.online ? '<p class="tn-offline" role="status">Reconnecting… Changes will sync when you\'re back online.</p>' : '') + html;
-    drawTimer();
     if (focusId) { var f = document.getElementById(focusId); if (f && f !== document.activeElement) f.focus(); }
   }
 
@@ -495,7 +478,7 @@
           '<input id="score-' + t.id + '" class="tn-score-input" type="text" inputmode="numeric" autocomplete="off" data-score="' + t.id + '" value="' + t.score + '">' : '') +
       '</div>';
     }).join('') +
-    '<button class="tn-link-btn tn-fix-toggle" type="button" data-act="fix" aria-pressed="' + ui.fixing + '">' + (ui.fixing ? 'Done fixing' : 'Fix scores') + '</button>' +
+    '<button class="tn-link-btn tn-fix-toggle" type="button" data-act="fix" aria-pressed="' + ui.fixing + '">' + (ui.fixing ? 'Done' : 'Edit Score') + '</button>' +
     '</section>';
   }
 
@@ -527,9 +510,7 @@
     var pop = ui.justOpened;
     ui.justOpened = false;
     return '<article class="tn-question' + (revealed ? ' is-revealed' : '') + (pop ? ' is-new' : '') + '" aria-live="polite">' +
-      '<div class="tn-q-meta"><span>' + esc(q.category) + ' · ' + q.value + '</span>' +
-        (revealed ? '' : '<div class="tn-timer" data-slot="timer"><span class="tn-timer-num">0:30</span><span class="tn-timer-bar"><span class="tn-timer-fill"></span></span></div>') +
-      '</div>' +
+      '<div class="tn-q-meta"><span>' + esc(q.category) + ' · ' + q.value + '</span></div>' +
       '<p class="tn-q-text">' + esc(q.q) + '</p>' +
       (revealed
         ? '<div class="tn-answer"><span class="tn-answer-label">Answer</span><span class="tn-answer-text">' + esc(q.a) + '</span></div>' +
@@ -546,7 +527,7 @@
     var t = now();
     var buzzers = state.teams.map(function (tm, i) {
       var already = state.q && state.q.buzzes.some(function (b) { return b.team === tm.id; });
-      var can = open && G.canBuzz(state, tm.id, t);
+      var can = open && G.canBuzz(state, tm.id);
       var label = !open ? 'Waiting' : already ? 'Buzzed' : can ? 'BUZZ' : 'Closed';
       return '<button class="tn-buzzer' + (can ? ' is-live' : '') + (ui.flash === tm.id ? ' is-flash' : '') + '" type="button" data-act="buzz" data-team="' + tm.id + '"' + (can ? '' : ' disabled') + '>' +
         '<span class="tn-key" aria-hidden="true">' + KEYS[i] + '</span>' +
@@ -590,17 +571,15 @@
       return '<li class="tn-order-row is-' + o.status + '">' +
         '<span class="tn-place">' + o.place + '</span>' +
         '<span class="tn-order-main"><span class="tn-order-name">' + esc(tm.name) + '</span><span class="tn-order-note">' + note + '</span></span>' +
-        '<span class="tn-gap">' + (o.place === 1 ? 'first' : '+' + (o.gap / 1000).toFixed(2) + 's') + '</span>' +
+        '<span class="tn-gap"><b>' + secs(o.at) + '</b>' + (o.place === 1 ? 'first' : '+' + secs(o.gap)) + '</span>' +
         judgeBtns + '</li>';
     }).join('') : '<li class="tn-order-empty">' + (open ? 'Nobody has buzzed yet.' : 'Pick a question to open the buzzers.') + '</li>';
 
     // What the host should know (nothing closes on its own; the host reveals).
-    var st = G.status(state, t);
-    var prompt = st === 'answered' ? '<b>' + esc(team(state.q.winner).name) + ' got it!</b> Reveal the answer when you\'re ready.'
-      : st === 'everyone-tried' ? 'Every team has tried. Reveal the answer when you\'re ready.'
-      : st === 'time-up' ? 'Time\'s up and nobody buzzed. Reveal the answer when you\'re ready.'
+    var st = G.status(state);
+    var prompt = st === 'everyone-tried' ? 'Every team has tried. Reveal the answer when you\'re ready.'
       : st === 'open' && order.length ? 'Waiting for more teams to buzz.' : '';
-    var ready = st === 'answered' || st === 'everyone-tried' || st === 'time-up';
+    var ready = st === 'everyone-tried';
     var controls = open
       ? (prompt ? '<p class="tn-prompt' + (ready ? ' is-ready' : '') + '">' + prompt + '</p>' : '') +
         '<div class="tn-controls"><button class="btn btn--sm' + (ready ? ' btn--solid' : '') + '" type="button" data-act="reveal">Reveal answer</button>' +

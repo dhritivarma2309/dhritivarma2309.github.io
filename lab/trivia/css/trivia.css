@@ -466,3 +466,7 @@
 .tn-timer.is-stopped .tn-timer-num { background: var(--mist); color: var(--board); }
 .tn-timer.is-stopped .tn-timer-num::before { content: "❚❚ "; font-size: 10px; vertical-align: 1px; }
 .tn-timer.is-stopped .tn-timer-fill { background: var(--mist); }
+
+/* Buzz times (to the millisecond): when each team buzzed, and how far behind #1 */
+.tn-gap { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.25; font-variant-numeric: tabular-nums; }
+.tn-gap b { font-weight: 600; color: var(--ink); }

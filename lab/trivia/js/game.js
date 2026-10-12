@@ -10,21 +10,18 @@
    - Board: 6 categories x 5 questions, worth 100-500 points.
    - The host always picks the tile (teams can call out which one they want).
    - Buzzers open the moment a question appears. Each team buzzes once.
-     Buzzes are ranked by time; the first team in line answers.
-   - Timer: 30 seconds, and it stops at the first buzz. If it runs out with
-     nobody buzzed, the buzzers close. Once stopped, other teams can still
-     buzz in to get in line.
-   - Correct: +tile value, and the buzzers close.
+     Buzzes are ranked by time (to the millisecond); the first team in line
+     answers. There is no timer: buzzers stay open until the tile closes.
+   - Correct: +tile value, and the answer is revealed straight away.
    - Wrong: -tile value, and the next team in the buzz order answers.
-   - Nothing ever closes a tile on its own: the host reveals the answer
-     (or skips the question), then goes back to the board.
+   - Otherwise the answer stays hidden until the host reveals it (or skips
+     the question). Then the host goes back to the board.
    ========================================================================== */
 
 (function (root) {
   'use strict';
 
   var VALUES = [100, 200, 300, 400, 500];
-  var QUESTION_MS = 30000;
   var MAX_TEAMS = 4;
 
   function copy(s) { return JSON.parse(JSON.stringify(s)); }
@@ -82,30 +79,21 @@
     }
     return null;
   }
-  // Time left on the clock. Once someone buzzes, the clock stops where it was.
-  function timeLeft(s, now) {
-    if (!s.q) return 0;
-    if (s.q.stoppedAt != null) return Math.max(0, s.q.deadline - s.q.stoppedAt);
-    return Math.max(0, s.q.deadline - now);
-  }
-  function timerStopped(s) { return !!(s.q && s.q.stoppedAt != null); }
-  function canBuzz(s, teamId, now) {
+  function canBuzz(s, teamId) {
     if (s.phase !== 'question' || !s.q || s.q.winner) return false;
-    if (s.q.stoppedAt == null && now >= s.q.deadline) return false;
     if (!findTeam(s, teamId)) return false;
     return !s.q.buzzes.some(function (b) { return b.team === teamId; });
   }
   // Where an open question stands, for the host's prompts:
-  // answering | answered | everyone-tried | time-up | open
-  function status(s, now) {
+  // answering | everyone-tried | open
+  function status(s) {
     if (!s.q || s.phase !== 'question') return null;
-    if (s.q.winner) return 'answered';
     if (answering(s)) return 'answering';
     if (s.teams.every(function (t) { return s.q.wrong[t.id]; })) return 'everyone-tried';
-    if (s.q.stoppedAt == null && now >= s.q.deadline) return 'time-up';
     return 'open';
   }
-  // Each buzz with its place (1, 2, 3...) and gap behind the first buzz (ms).
+  // Each buzz with its place (1, 2, 3...), when it came after the question
+  // appeared (ms), and its gap behind the first buzz (ms).
   function buzzOrder(s) {
     if (!s.q || !s.q.buzzes.length) return [];
     var first = s.q.buzzes[0].at;
@@ -114,7 +102,7 @@
       var status = s.q.winner === b.team ? 'correct'
         : s.q.wrong[b.team] ? 'wrong'
         : b.team === now ? 'answering' : 'waiting';
-      return { place: i + 1, team: b.team, gap: b.at - first, status: status };
+      return { place: i + 1, team: b.team, at: Math.max(0, b.at - s.q.openedAt), gap: b.at - first, status: status };
     });
   }
   function standings(s) {
@@ -131,8 +119,7 @@
     n.phase = 'question';
     n.q = {
       c: c, r: r, value: VALUES[r],
-      openedAt: now, deadline: now + QUESTION_MS,
-      stoppedAt: null, // when the first buzz stopped the clock
+      openedAt: now,  // when the question appeared (buzz times count from here)
       buzzes: [],     // [{ team, at }] in time order
       wrong: {},      // teamId -> true
       winner: null,
@@ -142,16 +129,13 @@
   }
 
   function buzz(s, teamId, now) {
-    if (!canBuzz(s, teamId, now)) return s;
+    if (!canBuzz(s, teamId)) return s;
     var n = copy(s);
     // Keep the line in time order. (In a live game, buzzes can reach the host a
     // few milliseconds out of order; their server times decide who was first.)
     var i = n.q.buzzes.length;
     while (i > 0 && n.q.buzzes[i - 1].at > now && !n.q.wrong[n.q.buzzes[i - 1].team] && n.q.buzzes[i - 1].team !== answering(n)) i--;
     n.q.buzzes.splice(i, 0, { team: teamId, at: now });
-    // The first buzz stops the clock (an earlier-stamped buzz moves it back).
-    var at = Math.min(now, n.q.deadline);
-    if (n.q.stoppedAt == null || at < n.q.stoppedAt) n.q.stoppedAt = at;
     return n;
   }
 
@@ -162,7 +146,7 @@
   }
 
   // correct: true / false. Judges the team whose turn it is.
-  // The tile stays open either way; only the host's Reveal closes it.
+  // Correct reveals the answer at once; wrong passes to the next team.
   function judge(s, correct) {
     if (s.phase !== 'question') return s;
     var id = answering(s);
@@ -172,6 +156,7 @@
     if (correct) {
       team.score += n.q.value;
       n.q.winner = id;
+      close(n, 'correct');
     } else {
       team.score -= n.q.value;
       n.q.wrong[id] = true;
@@ -232,10 +217,10 @@
   }
 
   var api = {
-    VALUES: VALUES, QUESTION_MS: QUESTION_MS, MAX_TEAMS: MAX_TEAMS,
+    VALUES: VALUES, MAX_TEAMS: MAX_TEAMS,
     createGame: createGame,
     tileCount: tileCount, isPlayed: isPlayed, question: question, answering: answering,
-    timeLeft: timeLeft, timerStopped: timerStopped, canBuzz: canBuzz, status: status,
+    canBuzz: canBuzz, status: status,
     buzzOrder: buzzOrder, standings: standings, findTeam: findTeam,
     pick: pick, buzz: buzz, judge: judge, reveal: reveal, skip: skip,
     next: next, adjustScore: adjustScore, setScore: setScore, endGame: endGame

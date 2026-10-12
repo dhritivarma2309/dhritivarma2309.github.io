@@ -26,7 +26,6 @@
   var msg = '';             // a one-line note (errors, "room closed")
   var busy = false;
   var sent = {};            // question key -> true once I've buzzed (before the host confirms)
-  var expired = false;
   var online = true;
 
   function esc(s) {
@@ -77,7 +76,6 @@
     ctx.room(code, 'public').on('value', function (s) {
       var before = pub && pub.q ? pub.q.key : null;
       pub = s.val();
-      if (pub && pub.q && pub.q.key !== before) expired = false;
       render();
     });
     ctx.room(code, 'teams').on('value', function (s) { teams = s.val() || {}; render(); });
@@ -200,21 +198,8 @@
     if (pub && pub.phase === 'question') { e.preventDefault(); buzz(); }
   });
 
-  // Timer, and closing the buzzer when time runs out.
-  setInterval(function () {
-    if (!pub || pub.phase !== 'question' || !pub.q || !ctx) return;
-    // Once someone buzzes, the clock stops and shows the time that was left.
-    var left = pub.q.stopped ? (pub.q.timeLeft || 0) : Math.max(0, pub.q.deadline - ctx.serverNow());
-    if (left === 0 && !expired) { expired = true; render(); return; }
-    var el = root.querySelector('[data-slot="timer"]');
-    if (!el) return;
-    var secs = Math.ceil(left / 1000);
-    el.querySelector('.tn-timer-num').textContent = left > 0 ? '0:' + (secs < 10 ? '0' : '') + secs : 'Time';
-    el.querySelector('.tn-timer-fill').style.width = (left / 30000 * 100) + '%';
-    el.classList.toggle('is-stopped', !!pub.q.stopped);
-    el.classList.toggle('is-low', !pub.q.stopped && left > 0 && left <= 5000);
-    el.classList.toggle('is-done', !pub.q.stopped && left <= 0);
-  }, 200);
+  // Buzz times, to the millisecond: 2347 -> "2.347s"
+  function secs(ms) { return (Math.max(0, ms) / 1000).toFixed(3) + 's'; }
 
   /* ---- Drawing ---------------------------------------------------------- */
 
@@ -354,7 +339,7 @@
       var label = o.status === 'answering' ? 'answering' : o.status === 'wrong' ? 'wrong' : o.status === 'correct' ? 'correct' : '';
       return '<li class="tn-p-order-row is-' + o.status + (o.team === myTeam ? ' is-me' : '') + '">' +
         '<span class="tn-place">' + o.place + '</span><span class="tn-order-name">' + esc(teamName(o.team)) + (o.team === myTeam ? ' (you)' : '') + '</span>' +
-        '<span class="tn-gap">' + (label || (o.place === 1 ? 'first' : '+' + (o.gap / 1000).toFixed(2) + 's')) + '</span></li>';
+        '<span class="tn-gap"><b>' + secs(o.at) + '</b>' + (label || (o.place === 1 ? 'first' : '+' + secs(o.gap))) + '</span></li>';
     }).join('');
     var result = '';
     if (revealed) {
@@ -362,8 +347,7 @@
         : q.ended === 'skipped' ? 'Question thrown out. No points changed.' : 'Nobody got it.';
     }
     return '<article class="tn-question tn-p-question' + (revealed ? ' is-revealed' : '') + '">' +
-        '<div class="tn-q-meta"><span>' + esc(q.category) + ' · ' + q.value + '</span>' +
-          (revealed ? '' : '<div class="tn-timer" data-slot="timer"><span class="tn-timer-num">0:30</span><span class="tn-timer-bar"><span class="tn-timer-fill"></span></span></div>') + '</div>' +
+        '<div class="tn-q-meta"><span>' + esc(q.category) + ' · ' + q.value + '</span></div>' +
         '<p class="tn-q-text">' + esc(q.text) + '</p>' +
         (revealed ? '<div class="tn-answer"><span class="tn-answer-label">Answer</span><span class="tn-answer-text">' + esc(q.answer) + '</span></div><p class="tn-result">' + result + '</p>' : '') +
       '</article>' +

@@ -68,12 +68,9 @@
         category: q.category,
         text: q.q,
         openedAt: state.q.openedAt,
-        // Buzzing is allowed until `deadline` (the database rules check it).
-        // Once the first buzz stops the clock, buzzing stays open for others,
-        // so the cutoff moves far out and phones show the frozen time instead.
-        deadline: G.timerStopped(state) ? state.q.openedAt + 6 * 3600 * 1000 : state.q.deadline,
-        stopped: G.timerStopped(state),
-        timeLeft: G.timerStopped(state) ? G.timeLeft(state, 0) : null,
+        // There's no timer, but the database rules only accept buzzes before
+        // `deadline`, so it's set far out (6 hours) to keep buzzers open.
+        deadline: state.q.openedAt + 6 * 3600 * 1000,
         order: G.buzzOrder(state),
         winner: state.q.winner || null,
         ended: state.q.ended || null,

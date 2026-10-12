@@ -23,8 +23,7 @@ test('buzzers open as soon as the host picks a question', () => {
   let s = G.pick(start(), 0, 3, 1000);
   assert.equal(s.phase, 'question');
   assert.equal(s.q.value, 400);
-  assert.ok(G.canBuzz(s, 't1', 1000));
-  assert.equal(G.timeLeft(s, 11000), 20000);
+  assert.ok(G.canBuzz(s, 't1'));
 });
 
 test('each team buzzes once, and the order is ranked with time gaps', () => {
@@ -35,26 +34,15 @@ test('each team buzzes once, and the order is ranked with time gaps', () => {
   const order = G.buzzOrder(s);
   assert.deepEqual(order.map(o => o.team), ['t2', 't1']);
   assert.deepEqual(order.map(o => o.gap), [0, 310]);
+  assert.deepEqual(order.map(o => o.at), [500, 810], 'time after the question appeared, to the millisecond');
   assert.equal(G.answering(s), 't2');
 });
 
-test('the first buzz stops the timer, and other teams can still buzz in after it would have run out', () => {
+test('there is no timer: buzzers stay open until the tile closes', () => {
   let s = G.pick(start(), 0, 0, 0);
-  s = G.buzz(s, 't1', 12000);
-  assert.ok(G.timerStopped(s));
-  assert.equal(G.timeLeft(s, 12000), 18000);
-  assert.equal(G.timeLeft(s, 60000), 18000, 'stays frozen');
-  assert.ok(G.canBuzz(s, 't2', 45000));
-  s = G.buzz(s, 't2', 45000);
-  assert.deepEqual(G.buzzOrder(s).map(o => o.team), ['t1', 't2']);
-});
-
-test('if time runs out with nobody buzzed, the buzzers close but the answer stays hidden', () => {
-  let s = G.pick(start(), 0, 0, 0);
-  assert.equal(G.status(s, 29999), 'open');
-  assert.equal(G.canBuzz(s, 't1', 30000), false);
-  assert.equal(G.status(s, 30000), 'time-up');
-  assert.equal(s.phase, 'question', 'only the host reveals');
+  s = G.buzz(s, 't1', 90 * 60 * 1000);
+  assert.equal(G.answering(s), 't1', 'a buzz 90 minutes later still counts');
+  assert.equal(G.status(s), 'answering');
 });
 
 test('wrong costs the tile value and passes to the next team in line', () => {
@@ -66,19 +54,26 @@ test('wrong costs the tile value and passes to the next team in line', () => {
   assert.equal(G.answering(s), 't3');
 });
 
-test('correct scores, closes the buzzers, and waits for the host to reveal', () => {
+test('correct scores and reveals the answer straight away', () => {
   let s = G.pick(start(), 1, 1, 0);
   s = G.buzz(s, 't3', 200);
   s = G.judge(s, true);
   assert.equal(score(s, 't3'), 200);
-  assert.equal(s.phase, 'question', 'the answer is not shown yet');
-  assert.equal(G.status(s, 1000), 'answered');
-  assert.equal(G.canBuzz(s, 't1', 1000), false);
-  assert.equal(G.skip(s), s, 'cannot throw out a question someone got right');
-  s = G.reveal(s);
   assert.equal(s.phase, 'reveal');
   assert.equal(s.q.ended, 'correct');
   assert.ok(G.isPlayed(s, 1, 1));
+  assert.equal(G.canBuzz(s, 't1'), false);
+});
+
+test('otherwise the answer waits for the host to reveal it', () => {
+  let s = G.pick(start(), 1, 1, 0);
+  s = G.buzz(s, 't1', 200);
+  s = G.judge(s, false);
+  assert.equal(s.phase, 'question');
+  assert.equal(G.status(s), 'open');
+  s = G.reveal(s);
+  assert.equal(s.phase, 'reveal');
+  assert.equal(s.q.ended, 'revealed');
 });
 
 test('when every team gets it wrong, the tile waits for the host to reveal', () => {
@@ -88,7 +83,7 @@ test('when every team gets it wrong, the tile waits for the host to reveal', () 
   s = G.judge(s, false);
   s = G.judge(s, false);
   assert.equal(s.phase, 'question');
-  assert.equal(G.status(s, 5000), 'everyone-tried');
+  assert.equal(G.status(s), 'everyone-tried');
   s = G.reveal(s);
   assert.equal(s.q.ended, 'revealed');
 });
@@ -148,13 +143,6 @@ test('a late buzz never jumps ahead of a team that is already answering', () => 
   s = G.buzz(s, 't1', 500);
   s = G.buzz(s, 't2', 400); // earlier time, but Alpha is already answering
   assert.deepEqual(G.buzzOrder(s).map(o => o.team), ['t1', 't2']);
-});
-
-test('an earlier-stamped buzz that arrives late moves the stopped clock back', () => {
-  let s = G.pick(start(), 0, 0, 0);
-  s = G.buzz(s, 't1', 5000);
-  s = G.buzz(s, 't2', 4000);
-  assert.equal(G.timeLeft(s, 9999), 26000);
 });
 
 test('the live game can choose its own team ids', () => {
