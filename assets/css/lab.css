@@ -5,7 +5,8 @@
 /* ---------- Hero ---------- */
 .lab-hero { padding: 40px 0 8px; }
 .lab-title { font-size: clamp(56px, 7vw, 76px); margin-top: 4px; }
-.lab-hero .lede { margin-top: 12px; font-size: 18px; }
+.lab-hero .lede { margin-top: 12px; font-size: 18px; max-width: none; }
+@media (min-width: 760px) { .lab-hero .lede { white-space: nowrap; } }
 .lede:empty { display: none; }
 
 /* ---------- Project cards ---------- */
