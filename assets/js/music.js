@@ -451,29 +451,25 @@
     svg.innerHTML = out;
   })();
 
-  // ---------- 05 · Ticket + articles ----------
+  // ---------- Thoughts: blog post cards ----------
 
-  (function liner() {
-    var t = M.ticket;
-    var ticket = $('[data-slot="ticket"]');
-    if (t && ticket) {
-      ticket.innerHTML =
-        '<div><div class="admit">ADMIT ONE</div><div class="artist">' + esc(t.artist) + '</div><div class="where">' + esc(t.venue) + ' · ' + esc(t.date) + '</div></div>' +
-        '<div class="stub"><span>No.</span><span>' + esc(t.number) + '</span></div>';
-    }
-
+  (function thoughts() {
+    var slot = $('[data-slot="thoughts"]');
+    if (!slot) return;
     var colors = ['var(--sky)', 'var(--lilac)', 'var(--sage)'];
-    var artSlot = $('[data-slot="articles"]');
-    if (!artSlot) return;
-    artSlot.innerHTML = (M.articles || []).map(function (a, i) {
+    function ph(s) { return isPlaceholder(s) ? ' placeholder' : ''; }
+    slot.innerHTML = (M.thoughts || []).map(function (a, i) {
       var live = !!a.href;
       var tag = live ? 'a href="' + esc(a.href) + '"' : 'div aria-disabled="true"';
+      var meta = [a.date, a.minutes ? a.minutes + ' min read' : ''].filter(Boolean).map(esc).join(' · ');
       return '<' + tag + ' class="paper article-card tape">' +
         '<div class="header-img" style="background:' + colors[i % 3] + '">' +
-          (a.image ? '<img src="' + esc(a.image) + '" alt="" loading="lazy">' : '<span class="tag" style="position:absolute;left:10px;bottom:12px;font:500 11px/1 var(--mono);background:var(--tape);padding:5px 7px;transform:rotate(-2deg)">Header image</span>') +
+          (a.image ? '<img src="' + esc(a.image) + '" alt="" loading="lazy">' : '') +
+          (a.topic ? '<span class="topic' + ph(a.topic) + '">' + esc(a.topic) + '</span>' : '') +
         '</div>' +
-        '<h3' + (isPlaceholder(a.title) ? ' class="placeholder"' : '') + '>' + esc(a.title) + '</h3>' +
-        '<p class="meta">' + esc(a.minutes) + ' min read' + (live ? '' : '<span class="soon">coming soon</span>') + '</p>' +
+        '<h3 class="' + ph(a.title).trim() + '">' + esc(a.title) + '</h3>' +
+        (a.blurb ? '<p class="blurb' + ph(a.blurb) + '">' + esc(a.blurb) + '</p>' : '') +
+        '<p class="meta">' + meta + (live ? '' : '<span class="soon">coming soon</span>') + '</p>' +
       '</' + (live ? 'a' : 'div') + '>';
     }).join('');
   })();

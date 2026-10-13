@@ -228,11 +228,13 @@ window.MUSIC = {
     },
   ],
 
-  // 05 · Liner Notes: articles
-  articlesIntro: "",
-  articles: [
-    { title: "[Article Title]", minutes: "x", href: "", image: "" },
-    { title: "[Article Title]", minutes: "x", href: "", image: "" },
-    { title: "[Article Title]", minutes: "x", href: "", image: "" },
+  // Thoughts: blog posts about whatever I'm curious about.
+  // Each post: title, date (e.g. "Oct 2026"), minutes (read time), blurb (one line),
+  // topic (a small label), image (optional header image), href (the post's page;
+  // leave "" to show "coming soon").
+  thoughtsIntro: "A place to write about whatever I'm curious about.",
+  thoughts: [
+    { title: "[Post title]", date: "[Month Year]", minutes: "x", topic: "[Topic]", blurb: "[One line on what this post is about.]", href: "", image: "" },
+    { title: "[Post title]", date: "[Month Year]", minutes: "x", topic: "[Topic]", blurb: "[One line on what this post is about.]", href: "", image: "" },
   ],
 };
