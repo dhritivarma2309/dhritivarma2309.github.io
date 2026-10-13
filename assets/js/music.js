@@ -89,6 +89,16 @@
     $('[data-hide]', p).addEventListener('click', function () { closePlayer(card); });
   }
 
+  // Every play / Listen button opens the song or album in Spotify (new tab; the Spotify app on phones),
+  // where signed-in listeners hear the full track. No in-page player, so no 30-second previews.
+  function openSpotify(sp) {
+    if (!sp) return;
+    // a real link click: opens a new tab without being caught by pop-up blockers
+    var a = document.createElement('a');
+    a.href = sp.open; a.target = '_blank'; a.rel = 'noopener';
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+
   function listenButton(sp, label) {
     return '<button class="btn btn--solid" data-listen' + (sp ? '' : ' disabled title="Add a Spotify link in data/music.js"') + '><span class="play"></span>' + (label || 'Listen') + '</button>';
   }
@@ -176,20 +186,8 @@
     });
 
     track.addEventListener('click', function (e) {
-      var btn = e.target.closest('[data-listen]');
-      if (!btn) return;
-      if (openCard === card) { closePlayer(card); return; }
-      var s = items[idx];
-      openPlayer(card, spotify(s.spotify), { caption: 'Now playing: ' + esc(s.title) + ' · ' + esc(s.artist) + '.' });
-    });
-
-    // play button shows ■ while this card's player is open, ▶ otherwise
-    card._onClose = function () {
-      $$('[data-listen]', track).forEach(function (b) { b.innerHTML = PLAY_ICON; b.classList.remove('is-on'); });
-    };
-    track.addEventListener('click', function (e) {
-      var b = e.target.closest('[data-listen]');
-      if (b && openCard === card) { b.innerHTML = STOP_ICON; b.classList.add('is-on'); }
+      if (!e.target.closest('[data-listen]')) return;
+      openSpotify(spotify(items[idx].spotify));
     });
 
     renderTheme(0);
@@ -238,12 +236,7 @@
     list.addEventListener('click', function (e) {
       var b = e.target.closest('.track-play');
       if (!b) return;
-      var i = +b.getAttribute('data-i');
-      if (current === i) { closePlayer(card); return; }
-      var t = R.tracks[i];
-      openPlayer(card, spotify(t.spotify), { caption: 'Now playing: ' + esc(t.title) + ' · ' + esc(t.artist) + '.' });
-      current = i;
-      setActive(i);
+      openSpotify(spotify(R.tracks[+b.getAttribute('data-i')].spotify));
     });
   })();
 
@@ -305,20 +298,7 @@
       shown = list;
       slot.innerHTML = list.map(cardHTML).join('');
       $$('.specimen', slot).forEach(function (card, i) {
-        $('[data-listen]', card).addEventListener('click', function () {
-          if (current === i) { closePlayer(deck); return; }
-          var a = shown[i];
-          // phones (one card per row): open right under the tapped card; otherwise under the whole grid
-          if (window.matchMedia('(max-width: 520px)').matches) card.after(deck); else slot.after(deck);
-          openPlayer(deck, spotify(a.spotify), {
-            height: 152,
-            caption: 'Now playing: ' + esc(a.title) + ' · ' + esc(a.artist) + '.',
-          });
-          current = i;
-          setActive(i);
-          var r = deck.getBoundingClientRect();
-          if (r.bottom > window.innerHeight || r.top < 0) deck.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        });
+        $('[data-listen]', card).addEventListener('click', function () { openSpotify(spotify(shown[i].spotify)); });
       });
     }
 
