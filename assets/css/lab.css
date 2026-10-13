@@ -140,17 +140,34 @@
 }
 
 /* The product: three parts */
-.parts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 8px; }
-.part { display: flex; flex-direction: column; padding: 18px 18px 16px; }
+/* One row per capability: words on the left, the clip large on the right.
+   The rows run wider than the text column (like the System diagram) so the clips are easy to read. */
+.parts {
+  --parts-w: min(1040px, calc(100vw - 48px));
+  width: var(--parts-w);
+  margin: 12px 0 0 calc(50% - var(--parts-w) / 2);
+  display: grid; grid-template-columns: 1fr; gap: 26px;
+}
+.part {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.9fr);
+  grid-template-rows: auto auto 1fr;
+  column-gap: 30px;
+  align-items: start;
+  padding: 22px;
+}
+.part > .persona, .part > h3, .part > p { grid-column: 1; }
+.part > .persona { justify-self: start; }
+.part > .part-media { grid-column: 2; grid-row: 1 / span 3; }
 .part:nth-child(2) { --tape-rot: 3deg; }
 .persona {
   align-self: flex-start;
   font: 500 11px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase;
   color: var(--ink); border: 1.2px solid currentColor; border-radius: 999px; padding: 5px 9px;
 }
-.part h3 { font-size: 20px; line-height: 1.2; font-weight: 700; margin: 12px 0 0; }
-.part p { margin: 8px 0 0; font-size: 15px; line-height: 1.55; color: var(--ink-soft); }
-.part-media { margin-top: auto; padding-top: 16px; }
+.part h3 { font-size: 24px; line-height: 1.2; font-weight: 700; margin: 14px 0 0; }
+.part p { margin: 10px 0 0; font-size: 17px; line-height: 1.6; color: var(--ink-soft); }
+.part-media { margin: 0; padding: 0; }
 .part-media span, .part-media video {
   display: block; width: 100%; aspect-ratio: 16 / 10; border-radius: 2px;
 }
@@ -160,6 +177,15 @@
   font-family: var(--hand); font-size: 19px; color: var(--ink-faint);
 }
 .part-media video { object-fit: cover; background: var(--paper); border: 1px solid var(--rule); }
+
+/* Narrower screens: the rows go back into the text column, words on top, clip full width below */
+@media (max-width: 900px) {
+  .parts { --parts-w: 100%; margin-left: 0; gap: 20px; }
+  .part { grid-template-columns: 1fr; grid-template-rows: none; padding: 18px; }
+  .part > .part-media { grid-column: 1; grid-row: auto; margin-top: 16px; }
+  .part h3 { font-size: 20px; }
+  .part p { font-size: 15px; }
+}
 
 /* My learnings */
 .case-sub { font-family: var(--hand); font-weight: 600; font-size: 28px; color: var(--red); margin: 6px 0 10px; }
@@ -175,7 +201,6 @@
 .next-list li::marker { font-family: var(--hand-bold); color: var(--red); font-size: 22px; }
 
 @media (max-width: 760px) {
-  .parts { grid-template-columns: 1fr; }
 }
 
 
