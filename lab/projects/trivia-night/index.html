@@ -66,8 +66,7 @@
           <p>A Jeopardy-style trivia game for video calls, with a buzzer in every hand.</p>
           <p>It has three core capabilities across two personas: the Quizmaster and the Participants.</p>
         </div>
-        <!-- Each card: a short GIF-style clip goes in .part-media later (landscape 16:10, recorded on the laptop):
-             <video src="../../../assets/video/x.mp4" autoplay muted loop playsinline></video> -->
+        <!-- Each card plays a short silent looping clip (16:10) from assets/video/. To swap one, replace the MP4 and bump its ?v= number. -->
         <div class="parts">
           <article class="paper part">
             <span class="persona">Quizmaster</span>
@@ -85,7 +84,7 @@
             <span class="persona">Participants</span>
             <h3>Join a Game</h3>
             <p>Join the room, pick a team, and buzz in from your phone when you know the answer.</p>
-            <div class="part-media"><span>Video coming soon</span></div>
+            <div class="part-media"><video src="../../../assets/video/join-a-game.mp4" poster="../../../assets/video/join-a-game.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Joining a game: entering the room code, creating Team B, buzzing in, answering and getting it correct"></video></div>
           </article>
         </div>
       </section>
