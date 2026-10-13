@@ -779,3 +779,7 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
   padding: 5px 7px; transform: rotate(-2deg);
 }
 .article-card .blurb { margin: 0 6px 10px; font-size: 15px; line-height: 1.5; color: var(--ink-soft); }
+
+/* Add To Queue: mixtape cassette, reels spin */
+.cassette .reel { transform-box: fill-box; transform-origin: center; animation: spin 3s linear infinite; }
+.queue-art:hover .reel { animation-play-state: paused; }
