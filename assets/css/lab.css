@@ -140,21 +140,15 @@
 }
 
 /* The product: three parts */
-/* One row per capability: words on the left, the clip large on the right.
-   The rows run wider than the text column (like the System diagram) so the clips are easy to read. */
-.parts {
-  --parts-w: min(1040px, calc(100vw - 48px));
-  width: var(--parts-w);
-  margin: 12px 0 0 calc(50% - var(--parts-w) / 2);
-  display: grid; grid-template-columns: 1fr; gap: 26px;
-}
+/* One row per capability, inside the text column: words on the left, the clip large on the right. */
+.parts { margin: 12px 0 0; display: grid; grid-template-columns: 1fr; gap: 22px; }
 .part {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.9fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2.1fr);
   grid-template-rows: auto auto 1fr;
-  column-gap: 30px;
+  column-gap: 24px;
   align-items: start;
-  padding: 22px;
+  padding: 18px;
 }
 .part > .persona, .part > h3, .part > p { grid-column: 1; }
 .part > .persona { justify-self: start; }
@@ -165,8 +159,8 @@
   font: 500 11px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase;
   color: var(--ink); border: 1.2px solid currentColor; border-radius: 999px; padding: 5px 9px;
 }
-.part h3 { font-size: 24px; line-height: 1.2; font-weight: 700; margin: 14px 0 0; }
-.part p { margin: 10px 0 0; font-size: 17px; line-height: 1.6; color: var(--ink-soft); }
+.part h3 { font-size: 21px; line-height: 1.2; font-weight: 700; margin: 12px 0 0; }
+.part p { margin: 8px 0 0; font-size: 15px; line-height: 1.55; color: var(--ink-soft); }
 .part-media { margin: 0; padding: 0; }
 .part-media span, .part-media video {
   display: block; width: 100%; aspect-ratio: 16 / 10; border-radius: 2px;
@@ -179,8 +173,8 @@
 .part-media video { object-fit: cover; background: var(--paper); border: 1px solid var(--rule); }
 
 /* Narrower screens: the rows go back into the text column, words on top, clip full width below */
-@media (max-width: 900px) {
-  .parts { --parts-w: 100%; margin-left: 0; gap: 20px; }
+@media (max-width: 680px) {
+  .parts { gap: 20px; }
   .part { grid-template-columns: 1fr; grid-template-rows: none; padding: 18px; }
   .part > .part-media { grid-column: 1; grid-row: auto; margin-top: 16px; }
   .part h3 { font-size: 20px; }
