@@ -1,7 +1,7 @@
 /* ==========================================================================
-   LAB PAGE CONTENT
+   PROJECTS PAGE CONTENT
    --------------------------------------------------------------------------
-   This is the only file you need to edit to update the Lab page cards.
+   This is the only file you need to edit to update the Projects page cards.
 
    Each project is one card:
      title      the project name (the card's header)
@@ -18,11 +18,11 @@
      cta        (cards without buttons) the button label, default "Try it"
      video      (cards without buttons) an MP4 the button plays in a pop-up
      tryUrl     (cards without buttons) a page the button opens. Neither = greyed out
-     caseStudy  the write-up page, e.g. "projects/my-project/". Clicking the
+     caseStudy  the write-up page, e.g. "my-project/". Clicking the
                 card opens it. "" = shows "coming soon"
 
-   To add a case study: copy the folder lab/projects/project-1/ to
-   lab/projects/<your-project>/, write it, and point caseStudy at it.
+   To add a case study: copy the folder projects/project-1/ to
+   projects/<your-project>/, write it, and point caseStudy at it.
    ========================================================================== */
 
 window.LAB = {
@@ -36,10 +36,10 @@ window.LAB = {
       blurb: "Host a Jeopardy-style trivia for friends and family over video call. Live buzzers on everyone's phone, questions drafted by you and Claude.",
       image: "../assets/img/lab/trivia-night.jpg",
       buttons: [
-        { label: "How It Works", href: "projects/trivia-night/" },
-        { label: "View Code", href: "https://github.com/dhritivarma2309/dhritivarma2309.github.io/tree/main/lab/trivia", newTab: true },
+        { label: "How It Works", href: "trivia-night/" },
+        { label: "View Code", href: "https://github.com/dhritivarma2309/dhritivarma2309.github.io/tree/main/projects/trivia", newTab: true },
       ],
-      caseStudy: "projects/trivia-night/",
+      caseStudy: "trivia-night/",
     },
     { title: "[Project Name]", type: "Prototype", image: "", tryUrl: "", caseStudy: "" },
     { title: "[Project Name]", type: "Side project", image: "", tryUrl: "", caseStudy: "" },

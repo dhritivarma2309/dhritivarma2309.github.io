@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Dhriti Varma — portfolio
+   Portfolio
    Shared styles: notebook / graph-paper aesthetic
    ========================================================================== */
 
@@ -75,14 +75,6 @@ button { font: inherit; color: inherit; }
   padding-bottom: 28px;
 }
 
-.logo {
-  font-family: var(--hand);
-  font-size: 34px;
-  font-weight: 700;
-  text-decoration: none;
-  line-height: 1;
-  white-space: nowrap;
-}
 
 .nav { display: flex; gap: 28px; }
 .nav a {
@@ -201,12 +193,11 @@ button { font: inherit; color: inherit; }
 
 @media (max-width: 860px) {
   .site-header { flex-wrap: wrap; row-gap: 14px; }
-  .nav { order: 3; width: 100%; gap: 22px; }
+  .nav { width: 100%; gap: 22px; }
   .header-links .btn { height: 38px; padding: 0 12px; font-size: 13px; }
 }
 
 @media (max-width: 480px) {
-  .logo { font-size: 28px; }
   .header-links { gap: 6px; }
   .header-links .btn { padding: 0 10px; }
 }
@@ -221,6 +212,6 @@ button { font: inherit; color: inherit; }
 .site-footer .credits a { font-weight: 400; color: inherit; }
 .credits a { color: inherit; }
 
-/* "← Home" / "← Music": a small back link at the top of a page */
+/* "← Home" / "← Personal": a small back link at the top of a page */
 .back-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 20px; font-weight: 600; font-size: 15px; text-decoration: none; color: var(--ink); }
 .back-link:hover { color: var(--red); }

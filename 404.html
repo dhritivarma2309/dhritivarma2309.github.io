@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Keeps this page out of Google until launch. Remove all of these lines to go live in search. -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>Page not found</title>
+  <!--
+    GitHub Pages shows this page for any address that doesn't exist.
+    Old addresses from before the Oct 13, 2026 rename are forwarded:
+      /lab/projects/<x>/  ->  /projects/<x>/
+      /lab/...            ->  /projects/...   (incl. Trivia Night room links)
+      /music/...          ->  /personal/...
+      /tennis/            ->  /
+  -->
+  <script>
+    (function () {
+      var path = location.pathname;
+      var next = path
+        .replace(/^\/lab\/projects\//, '/projects/')
+        .replace(/^\/lab(\/|$)/, '/projects$1')
+        .replace(/^\/music(\/|$)/, '/personal$1')
+        .replace(/^\/tennis(\/.*)?$/, '/');
+      if (next !== path) location.replace(next + location.search + location.hash);
+    })();
+  </script>
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Caveat+Brush&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/site.css?v=202610130900">
+  <style>
+    .stub { padding-top: 90px; padding-bottom: 40px; min-height: 52vh; }
+    .stub .display { font-size: clamp(56px, 9vw, 112px); margin-top: 6px; }
+    .stub .btn { margin-top: 28px; }
+  </style>
+</head>
+<body>
+  <header class="wrap site-header">
+    <nav class="nav" aria-label="Main">
+      <a href="/">Home</a>
+      <a href="/projects/">Projects</a>
+      <a href="/personal/">Personal</a>
+    </nav>
+    <div class="header-links">
+      <a class="btn" href="https://github.com/" data-link="github" target="_blank" rel="noopener">GitHub Repo</a>
+      <a class="btn" href="https://www.linkedin.com/" data-link="linkedin" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </header>
+  <main class="wrap stub">
+    <p class="kicker">404</p>
+    <h1 class="display">Page not found</h1>
+    <p class="lede">This page doesn't exist (or has moved).</p>
+    <a class="btn btn--solid" href="/"><span class="play"></span>Go to Home</a>
+  </main>
+  <footer class="wrap site-footer">
+    <div class="inner">
+      <nav aria-label="Elsewhere">
+        <a href="https://www.linkedin.com/" data-link="linkedin" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://github.com/" data-link="github" target="_blank" rel="noopener">GitHub Repo</a>
+      </nav>
+    </div>
+  </footer>
+  <script src="/data/site.js"></script>
+  <script src="/assets/js/site.js"></script>
+</body>
+</html>

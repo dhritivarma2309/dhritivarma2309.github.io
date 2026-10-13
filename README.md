@@ -10,34 +10,37 @@ I'm a product manager, and I think PMs today should build as well as spec. So I 
 
 | Page | Status | What's there |
 | --- | --- | --- |
-| Music | ✅ Live | Discover carousel, what's on rotation, album ratings, a sketched listening chart, articles |
-| Music → *10 Best Bob Dylan Songs* | ✅ Template | Ranked listicle with a listen-along Spotify playlist |
-| Lab | 🚧 Coming soon | AI prototypes and agents |
-| Lab → *Trivia Night* | 🚧 In progress | Jeopardy-style quiz game for friends. Single-device game, board builder and live rooms built (live rooms need Firebase connected) |
-| Tennis | 🚧 Coming soon | |
 | Home | 🚧 Coming soon | |
+| Projects | ✅ Live | Things I've built with AI: side projects, prototypes and agents, each with a case study |
+| Projects → *Trivia Night* | ✅ Live | Jeopardy-style trivia for friends over video call: phones as buzzers, live rooms on Firebase, questions drafted with Claude through a Cloudflare Worker ([case study](projects/trivia-night/), [code](projects/trivia/)) |
+| Personal | ✅ Live | Creative pursuits: album ratings (working through Rolling Stone's 500 Greatest Albums), playlists and what's on heavy rotation |
+| Personal → *All album ratings* | ✅ Live | Every album I've rated, with search and filters |
 
 ## How it's built
 
 - **Plain HTML, CSS and JavaScript.** No framework and no build step, so the code is easy to read and GitHub Pages serves it as is.
-- **Content lives apart from the layout.** Everything on the Music page comes from [`data/music.js`](data/music.js), so updating a song or a rating is a one-line edit.
-- **Hybrid Spotify player.** Cards load as my own design. Clicking **Listen** opens Spotify's embedded player (inside the card for songs and playlists, in a full-width strip under the album cards), and only one player is open at a time. The page stays light and on-brand, and audio always plays through Spotify (logged-out visitors hear previews).
-- **Notebook look.** Graph-paper background, washi tape, polaroids and hand-drawn SVG doodles. The listening chart is drawn in code with a seeded "pencil wobble", so it looks sketched but renders the same every time.
-- Responsive down to phone width, with keyboard and screen-reader support (carousel arrow keys, ARIA labels, reduced-motion support).
+- **Content lives apart from the layout.** The Projects cards come from [`data/lab.js`](data/lab.js) and the Personal page from [`data/music.js`](data/music.js), so adding a project or an album is a short edit.
+- **Spotify links.** Every Listen button opens the song or album on Spotify in a new tab, so signed-in visitors hear full tracks.
+- **Notebook look.** Graph-paper background, washi tape, polaroids and hand-drawn SVG doodles.
+- Responsive down to phone width, with keyboard and screen-reader support (ARIA labels, reduced-motion support).
 
 ```
 ├── index.html               Home
-├── music/
-│   ├── index.html           Music page (markup)
+├── projects/
+│   ├── index.html           Projects page (cards from data/lab.js)
+│   ├── trivia-night/        Trivia Night case study
+│   ├── trivia/              Trivia Night app (hub, play, host, build; ai/ worker; firebase/ rules; tests/)
+│   └── project-1/           Case study template
+├── personal/
+│   ├── index.html           Personal page (content from data/music.js)
+│   ├── albums/              All album ratings
 │   └── articles/bob-dylan/  Article template
-├── lab/  tennis/            Coming-soon pages
+├── 404.html                 Not-found page; forwards old /lab/ and /music/ links
 ├── data/
-│   ├── site.js              Name, GitHub and LinkedIn links (used on every page)
-│   └── music.js             All Music page content  ← edit this
-└── assets/
-    ├── css/                 site.css (shared), music.css, article.css
-    ├── js/                  site.js (shared), music.js (renders the Music page)
-    └── img/
+│   ├── site.js              GitHub and LinkedIn links (used on every page)
+│   ├── lab.js               Projects page cards  ← edit this
+│   └── music.js             Personal page content  ← edit this
+└── assets/                  css/, js/, img/, video/
 ```
 
 ## Updating content
@@ -52,5 +55,5 @@ Cover images: drop files in `assets/img/covers/` and set `cover: "/assets/img/co
 
 ```bash
 python3 -m http.server 8000
-# open http://localhost:8000/music/
+# open http://localhost:8000/
 ```
