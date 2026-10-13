@@ -159,7 +159,7 @@
   border: 1.5px dashed var(--rule);
   font-family: var(--hand); font-size: 19px; color: var(--ink-faint);
 }
-.part-media video { object-fit: cover; background: var(--sky); }
+.part-media video { object-fit: cover; background: var(--paper); border: 1px solid var(--rule); }
 
 /* My learnings */
 .case-sub { font-family: var(--hand); font-weight: 600; font-size: 28px; color: var(--red); margin: 6px 0 10px; }
