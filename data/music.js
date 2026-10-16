@@ -226,13 +226,6 @@ window.MUSIC = {
       cover: "https://i.scdn.co/image/ab67616d0000b27336c5417732e53e23cb219246",
       spotify: "https://open.spotify.com/album/1To7kv722A8SpZF789MZy7",
     },
-    {
-      // Not on Rolling Stone's 2020 list (it was #445 on the 2003/2012 lists), so it shows as Unranked
-      title: "Fly Like An Eagle", artist: "Steve Miller Band", year: "1976",
-      rating: "gems", favoriteSong: "Fly Like An Eagle", rsRank: "",
-      cover: "https://i.scdn.co/image/ab67616d0000b2732fc23e78e87d793054bba090",
-      spotify: "https://open.spotify.com/album/0fjJOLqG3v7vXRYhz2wxPC",
-    },
   ],
 
   // Thoughts: blog posts about whatever I'm curious about.
