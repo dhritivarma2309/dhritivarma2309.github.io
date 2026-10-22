@@ -226,6 +226,12 @@ window.MUSIC = {
       cover: "https://i.scdn.co/image/ab67616d0000b27336c5417732e53e23cb219246",
       spotify: "https://open.spotify.com/album/1To7kv722A8SpZF789MZy7",
     },
+    {
+      title: "Back To Black", artist: "Amy Winehouse", year: "2006",
+      rating: "respect", favoriteSong: "Back To Black", rsRank: "33",
+      cover: "https://i.scdn.co/image/ab67616d0000b273dc65d5638a3de4a0bdf3c05f",
+      spotify: "https://open.spotify.com/album/097eYvf9NKjFnv4xA9s2oV",
+    },
   ],
 
   // Thoughts: blog posts about whatever I'm curious about.
