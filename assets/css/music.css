@@ -833,3 +833,14 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
 }
 .albums.album-rows[hidden] { display: none; }
 
+
+/* Heavy Rotation rows */
+#heavy-rotation { margin-bottom: 0; }
+#heavy-rotation + .group-lede { margin: 14px 0 44px; }
+.song-rows .ar-len { color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.song-rows .ar-len-m { display: none; }
+@media (max-width: 640px) {
+  .song-rows .ar-len-m { display: inline; }
+  .song-rows .ar-gap { display: none; }
+  .song-rows .arow { grid-template-columns: 30px 48px minmax(0, 1fr) 32px; }
+}

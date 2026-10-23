@@ -240,6 +240,37 @@
     });
   })();
 
+  // ---------- Heavy Rotation: song rows (same layout as Album Ratings) ----------
+
+  (function rotationRows() {
+    var slot = $('[data-slot="rotation-rows"]');
+    if (!slot) return;
+    var tracks = (M.onRotation && M.onRotation.tracks) || [];
+    var PLAY = '<svg width="12" height="12" viewBox="0 0 14 14" aria-hidden="true"><path d="M4 2.5v9l7.5-4.5z" fill="currentColor"/></svg>';
+    slot.classList.add('paper');
+    slot.innerHTML =
+      '<div class="ar-head" aria-hidden="true"><span>#</span><span></span><span>Song</span><span>Length</span><span></span><span></span></div>' +
+      '<ol class="ar-list">' + tracks.map(function (t, i) {
+        var sp = spotify(t.spotify);
+        var art = '<span class="ar-cover" style="background:' + SWATCHES[i % SWATCHES.length] + '">' + (t.cover ? '<img src="' + esc(t.cover) + '" alt="" loading="lazy" onerror="this.remove()">' : '') + '</span>';
+        return '<li class="arow">' +
+          '<span class="rk">' + (i + 1) + '</span>' +
+          (sp ? '<a class="ar-art" href="' + sp.open + '" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">' + art + '</a>' : art) +
+          '<span class="ar-text">' +
+            '<span class="ar-title">' + (sp ? '<a href="' + sp.open + '" target="_blank" rel="noopener" title="Open in Spotify">' + esc(t.title) + '</a>' : esc(t.title)) + '</span>' +
+            '<span class="ar-artist">' + esc(t.artist) + '<span class="ar-len-m"> · ' + esc(t.length || '') + '</span></span>' +
+          '</span>' +
+          '<span class="ar-fav ar-len">' + esc(t.length || '') + '</span>' +
+          '<span class="ar-gap"></span>' +
+          '<button class="track-play" data-i="' + i + '"' + (sp ? '' : ' disabled') + ' aria-label="Play ' + esc(t.title) + ' on Spotify" title="Play on Spotify">' + PLAY + '</button>' +
+        '</li>';
+      }).join('') + '</ol>';
+    slot.addEventListener('click', function (e) {
+      var b = e.target.closest('.track-play');
+      if (b) openSpotify(spotify(tracks[+b.getAttribute('data-i')].spotify));
+    });
+  })();
+
   // ---------- 04 · Album ratings ----------
 
   (function albums() {

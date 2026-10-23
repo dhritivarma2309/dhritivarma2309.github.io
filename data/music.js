@@ -114,7 +114,7 @@ window.MUSIC = {
 
   // 03 · On rotation: the five songs I can't get enough of right now (#1 = most played)
   onRotation: {
-    intro: "The five songs I keep coming back to right now",
+    intro: "The songs I keep coming back to",
     tracks: [
       {
         title: "Born Under Punches", artist: "Talking Heads", length: "5:49",
