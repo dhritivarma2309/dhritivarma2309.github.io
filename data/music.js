@@ -162,9 +162,9 @@ window.MUSIC = {
         spotify: "https://open.spotify.com/track/3zr2s3o2Ye1j6t0ZMdoUYi",
       },
       {
-        title: "Is This It", artist: "The Strokes", length: "2:35",
-        cover: "https://i.scdn.co/image/ab67616d00001e02e61ed6e45c483e652018a827",
-        spotify: "https://open.spotify.com/track/5DeV5m5gzNq0KvlaZs3Eb6",
+        title: "Is This It", artist: "The Strokes", length: "2:31",
+        cover: "https://i.scdn.co/image/ab67616d00001e0213f2466b83507515291acce4",
+        spotify: "https://open.spotify.com/track/0jBE7Fn78EAvmIs3dCd6GO",
       },
     ],
   },
