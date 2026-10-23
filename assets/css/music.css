@@ -844,3 +844,12 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
   .song-rows .ar-gap { display: none; }
   .song-rows .arow { grid-template-columns: 30px 48px minmax(0, 1fr) 32px; }
 }
+
+/* Heavy Rotation doodle: a record on repeat (same size as the turntable) */
+.queue-art { max-width: 240px; }
+@media (max-width: 760px) { .queue-art { max-width: 180px; } }
+.queue-art .hr-vinyl { transform-box: view-box; transform-origin: 120px 102px; animation: spin 4s linear infinite; }
+.queue-art .hr-loop { transform-box: view-box; transform-origin: 120px 102px; animation: hr-loop 6s ease-in-out infinite; }
+@keyframes hr-loop { 0%, 55% { transform: rotate(0deg); } 85%, 100% { transform: rotate(180deg); } }
+.queue-art:hover .hr-vinyl, .queue-art:hover .hr-loop { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .queue-art .hr-vinyl, .queue-art .hr-loop { animation: none; } }

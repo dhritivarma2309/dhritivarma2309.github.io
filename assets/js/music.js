@@ -314,7 +314,7 @@
       shown = list;
       slot.classList.add('paper', 'album-rows');
       slot.innerHTML =
-        '<div class="ar-head" aria-hidden="true"><span>RS #</span><span></span><span>Album</span><span>Favorite song</span><span>Me</span><span></span></div>' +
+        '<div class="ar-head" aria-hidden="true"><span>RS #</span><span></span><span>Album</span><span>Favorite song</span><span></span><span></span></div>' +
         '<ol class="ar-list">' + list.map(rowHTML).join('') + '</ol>';
       slot.hidden = !list.length;
     }
