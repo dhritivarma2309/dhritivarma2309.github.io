@@ -251,56 +251,48 @@
     var tiers = {}; (M.rubric || []).forEach(function (t) { tiers[t.key] = t; });
     var ring = '<svg viewBox="0 0 100 50" preserveAspectRatio="none" fill="none" stroke="#c0352b" stroke-width="2.2" stroke-linecap="round"><path d="M60 3C30 1 3 9 3 26s28 22 52 21 42-8 42-23S72 2 44 4"/></svg>';
 
-    function cardHTML(a, i) {
+    var PLAY = '<svg width="12" height="12" viewBox="0 0 14 14" aria-hidden="true"><path d="M4 2.5v9l7.5-4.5z" fill="currentColor"/></svg>';
+
+    // One compact row per album: rank · cover · title/artist · favorite song · my rating · play (opens Spotify)
+    function rowHTML(a, i) {
       var sp = spotify(a.spotify);
-      return '<article class="paper specimen tape" data-card>' +
-        '<div class="specimen-meta"><span>Rolling Stone Rank</span>' +
-          (a.rsRank ? (M.rsList ? '<a href="' + esc(M.rsList) + '" target="_blank" rel="noopener" title="Rolling Stone\'s 500 Greatest Albums of All Time" aria-label="Number ' + esc(a.rsRank) + ' on Rolling Stone\'s 500 Greatest Albums of All Time">#' + esc(a.rsRank) + '</a>' : '<span>#' + esc(a.rsRank) + '</span>') : '<span>Unranked</span>') +
-        '</div>' +
-        '<div class="specimen-media">' +
-          '<div class="polaroid">' +
-            (sp ? '<a class="cover-link" href="' + sp.open + '" target="_blank" rel="noopener" title="Open in Spotify" aria-label="Open ' + esc(a.title) + ' in Spotify">' + cover(a.cover, i, a.title + ' cover') + '</a>'
-                : cover(a.cover, i, a.title + ' cover')) +
-          '</div>' +
-        '</div>' +
-        '<div class="specimen-body">' +
-          '<h3' + (isPlaceholder(a.title) ? ' class="placeholder"' : '') + '>' +
-            (sp ? '<a class="title-link" href="' + sp.open + '" target="_blank" rel="noopener" title="Open in Spotify">' + esc(a.title) + '</a>' : esc(a.title)) +
-          '</h3>' +
-          (tiers[a.rating] ? '<span class="rating" role="img" title="' + esc(tiers[a.rating].label) + '" aria-label="My rating: ' + esc(tiers[a.rating].label) + '">' + ring + '<span class="emoji">' + tiers[a.rating].emoji + '</span></span>' : '') +
-          '<p class="by">' + esc(a.artist) + '</p>' +
-        '</div>' +
-        ((a.favoriteSong || a.bestSong)
-          ? '<p class="best"><span>Favorite song</span><strong>' + esc(a.favoriteSong || a.bestSong) + '</strong></p>'
-          : '<p class="best" aria-hidden="true" style="visibility:hidden"><span>Favorite song</span><strong>&nbsp;</strong></p>') +
-        '<div class="specimen-actions">' + listenButton(sp).replace('btn btn--solid', 'btn') + '</div>' +
-      '</article>';
+      var t = tiers[a.rating];
+      var fav = a.favoriteSong || a.bestSong || '';
+      var rank = a.rsRank
+        ? (M.rsList ? '<a class="rk" href="' + esc(M.rsList) + '" target="_blank" rel="noopener" title="Rolling Stone\'s 500 Greatest Albums of All Time" aria-label="Number ' + esc(a.rsRank) + ' on Rolling Stone\'s 500 Greatest Albums of All Time">#' + esc(a.rsRank) + '</a>' : '<span class="rk">#' + esc(a.rsRank) + '</span>')
+        : '<span class="rk rk--none">–</span>';
+      var art = '<span class="ar-cover" style="background:' + SWATCHES[i % SWATCHES.length] + '">' + (a.cover ? '<img src="' + esc(a.cover) + '" alt="' + esc(a.title) + ' cover" loading="lazy" onerror="this.remove()">' : '') + '</span>';
+      return '<li class="arow">' +
+        rank +
+        (sp ? '<a class="ar-art" href="' + sp.open + '" target="_blank" rel="noopener" title="Open in Spotify" tabindex="-1" aria-hidden="true">' + art + '</a>' : art) +
+        '<span class="ar-text">' +
+          '<span class="ar-title' + (isPlaceholder(a.title) ? ' placeholder' : '') + '">' +
+            (sp ? '<a href="' + sp.open + '" target="_blank" rel="noopener" title="Open in Spotify">' + esc(a.title) + '</a>' : esc(a.title)) +
+          '</span>' +
+          '<span class="ar-artist">' + esc(a.artist) + (a.year ? '<span class="ar-year"> · ' + esc(a.year) + '</span>' : '') + '</span>' +
+          (fav ? '<span class="ar-fav-m"><span aria-hidden="true">♥</span> ' + esc(fav) + '</span>' : '') +
+        '</span>' +
+        '<span class="ar-fav">' + (fav ? '<span class="sr-only">Favorite song: </span>' + esc(fav) : '') + '</span>' +
+        (t ? '<span class="ar-rating" role="img" title="' + esc(t.label) + '" aria-label="My rating: ' + esc(t.label) + '">' + t.emoji + '</span>' : '<span></span>') +
+        '<button class="track-play" data-listen' + (sp ? '' : ' disabled') + ' aria-label="Play ' + esc(a.title) + ' on Spotify" title="Play on Spotify">' + PLAY + '</button>' +
+      '</li>';
     }
 
-    // One full-width Spotify player strip under the cards ("the deck")
-    var deck = $('#album-deck');
-    var shown = [], current = null;
-
-    function setActive(i) {
-      $$('.specimen', slot).forEach(function (c, j) {
-        var on = j === i;
-        c.classList.toggle('is-active', on);
-        $('[data-listen]', c).innerHTML = on
-          ? '<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" rx="1.5" fill="currentColor"/></svg>Hide player'
-          : '<span class="play"></span>Listen';
-      });
-    }
-    if (deck) deck._onClose = function () { current = null; setActive(-1); };
-
+    var shown = [];
     function render(list) {
-      if (deck && current !== null) closePlayer(deck);
-      if (deck) slot.after(deck);
       shown = list;
-      slot.innerHTML = list.map(cardHTML).join('');
-      $$('.specimen', slot).forEach(function (card, i) {
-        $('[data-listen]', card).addEventListener('click', function () { openSpotify(spotify(shown[i].spotify)); });
-      });
+      slot.classList.add('paper', 'album-rows');
+      slot.innerHTML =
+        '<div class="ar-head" aria-hidden="true"><span>RS #</span><span></span><span>Album</span><span>Favorite song</span><span>Me</span><span></span></div>' +
+        '<ol class="ar-list">' + list.map(rowHTML).join('') + '</ol>';
+      slot.hidden = !list.length;
     }
+    slot.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-listen]');
+      if (!b) return;
+      var rows = $$('.arow', slot);
+      openSpotify(spotify(shown[rows.indexOf(b.closest('.arow'))].spotify));
+    });
 
     // Music page shows the first few (data-limit); the "See all" page adds filters + search
     var limit = parseInt(slot.getAttribute('data-limit'), 10);
