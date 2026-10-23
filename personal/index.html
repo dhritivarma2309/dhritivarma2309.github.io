@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Caveat+Brush&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/site.css?v=202610130900">
-  <link rel="stylesheet" href="../assets/css/music.css?v=202610221957">
+  <link rel="stylesheet" href="../assets/css/music.css?v=202610222005">
 </head>
 <body>
 
@@ -71,39 +71,35 @@
     <section class="section" id="albums" aria-labelledby="albums-title">
       <svg class="doodle doodle--red hide-md" style="left:-80px; top:340px; width:42px" aria-hidden="true"><use href="#i-star"/></svg>
       <div class="section-head section-head--turntable">
-        <svg class="icon turntable" viewBox="0 0 160 130" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="A turntable playing a record">
-                    <!-- plinth -->
-          <path d="M8 3 H152 C156 3 158 5 158 9 L157 120 C157 124 155 126 151 126 H9 C5 126 3 124 3 120 L2 9 C2 5 4 3 8 3 Z" fill="#fff"/>
-          <!-- platter -->
-          <circle cx="60" cy="60" r="51" stroke-width="1.6"/>
-          <!-- record (spins) -->
-          <g class="record">
-            <circle cx="60" cy="60" r="46" fill="#1f2a44" stroke="none"/>
-            <g stroke="#fff" stroke-opacity=".16" stroke-width="1"><circle cx="60" cy="60" r="41"/><circle cx="60" cy="60" r="36"/><circle cx="60" cy="60" r="30"/><circle cx="60" cy="60" r="24"/></g>
-            <path d="M33 33 A38 38 0 0 1 60 22" stroke="#fff" stroke-opacity=".45" stroke-width="3"/>
-            <path d="M87 87 A38 38 0 0 1 60 98" stroke="#fff" stroke-opacity=".25" stroke-width="3"/>
-            <circle cx="60" cy="60" r="15" fill="#c0352b" stroke="none"/>
-            <circle cx="60" cy="60" r="9" stroke="#fcfcf9" stroke-opacity=".6" stroke-width="1"/>
-            <path d="M52 55 h9 M52 59 h6" stroke="#fcfcf9" stroke-width="1.4"/>
-            <circle cx="60" cy="60" r="15" stroke="#1f2a44" stroke-width="1"/>
-            <circle cx="60" cy="60" r="2" fill="#fcfcf9" stroke="none"/>
+        <svg class="icon turntable scorecard" viewBox="28 12 200 174" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="A scorecard of albums being rated, next to an album sleeve">
+          <!-- album sleeve behind the card (tilts gently) -->
+          <g class="sc-sleeve">
+            <rect x="128" y="40" width="92" height="92" rx="3" fill="#f2d5c6"/>
+            <path d="M138 108 c10 -10 18 -10 28 0 s18 10 28 0 s12 -6 18 -2" stroke="#1f2a44" stroke-width="2"/>
+            <circle cx="196" cy="64" r="10" fill="#c0352b" stroke="none"/>
           </g>
-          <!-- tonearm (swings in) -->
-          <g class="arm">
-            <circle cx="134" cy="22" r="9" fill="#fff"/>
-            <circle cx="134" cy="22" r="3.5" fill="currentColor" stroke="none"/>
-            <path d="M134 22 L129 76 Q127 86 117 88 L98 87"/>
-            <path d="M99 82 L87 81 L86 91 L98 92 Z" fill="#fff"/>
-          </g>
-          <!-- controls -->
-          <circle cx="138" cy="106" r="8" fill="#fff"/><path d="M138 101v5"/>
-          <rect x="28" y="113" width="14" height="6" rx="2"/><rect x="47" y="113" width="14" height="6" rx="2"/>
-          <circle class="power" cx="16" cy="116" r="3" stroke="none"/>
-          <!-- notes drifting off the record -->
-          <g class="notes" stroke-width="1.6">
-            <g><path d="M104 30v-10l7-2v9"/><ellipse cx="102" cy="30" rx="2.6" ry="2"/><ellipse cx="109" cy="27" rx="2.6" ry="2"/></g>
-            <g><path d="M92 18v-10c3 1 5 3 5 6"/><ellipse cx="90" cy="18" rx="2.6" ry="2"/></g>
-            <g><path d="M114 44v-9l6-2v8"/><ellipse cx="112" cy="44" rx="2.4" ry="1.9"/><ellipse cx="118" cy="41" rx="2.4" ry="1.9"/></g>
+          <!-- scorecard on a clipboard -->
+          <rect x="30" y="24" width="124" height="160" rx="7" fill="#fff"/>
+          <rect x="66" y="15" width="52" height="18" rx="5" fill="#f4d878"/>
+          <path d="M44 38 h96" stroke="#c0352b" stroke-width="1.8"/>
+          <rect x="46" y="50" width="20" height="20" rx="3" fill="#d3e2ef" stroke-width="1.6"/>
+          <path d="M76 56 h40" stroke="#1f2a44" stroke-width="2"/>
+          <path d="M76 65 h26" stroke="#7d8798" stroke-width="1.6"/>
+          <rect x="46" y="82" width="20" height="20" rx="3" fill="#f2d5c6" stroke-width="1.6"/>
+          <path d="M76 88 h40" stroke="#1f2a44" stroke-width="2"/>
+          <path d="M76 97 h26" stroke="#7d8798" stroke-width="1.6"/>
+          <rect x="46" y="114" width="20" height="20" rx="3" fill="#dfe8cf" stroke-width="1.6"/>
+          <path d="M76 120 h40" stroke="#1f2a44" stroke-width="2"/>
+          <path d="M76 129 h26" stroke="#7d8798" stroke-width="1.6"/>
+          <rect x="46" y="146" width="20" height="20" rx="3" fill="#e7d9ef" stroke-width="1.6"/>
+          <path d="M76 152 h40" stroke="#1f2a44" stroke-width="2"/>
+          <path d="M76 161 h26" stroke="#7d8798" stroke-width="1.6"/>
+          <!-- red-pen marks, written one by one -->
+          <g class="sc-marks" stroke="#c0352b" stroke-width="2.4" transform="translate(-6 0)">
+          <path class="mk mk0" d="M134 58 l5 5 l10 -12" pathLength="100"/>
+          <path class="mk mk1" d="M141 96 c-6 -5 -9 -9 -5 -12 c3 -2 5 0 5 2 c0 -2 2 -4 5 -2 c4 3 1 7 -5 12 z" pathLength="100"/>
+          <path class="mk mk2" d="M134 122 l5 5 l10 -12" pathLength="100"/>
+          <path class="mk mk3" d="M141 160 l2.6 -5.6 l6 -.6 l-4.6 -4 l1.4 -6 l-5.4 3.2 l-5.4 -3.2 l1.4 6 l-4.6 4 l6 .6 z" pathLength="100"/>
           </g>
         </svg>
         <h2 class="display" id="albums-title">Album Ratings</h2>

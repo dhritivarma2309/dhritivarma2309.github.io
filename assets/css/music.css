@@ -853,3 +853,17 @@ a.cover-link:hover .cover { box-shadow: 0 0 0 2px var(--ink); }
 @keyframes hr-loop { 0%, 55% { transform: rotate(0deg); } 85%, 100% { transform: rotate(180deg); } }
 .queue-art:hover .hr-vinyl, .queue-art:hover .hr-loop { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) { .queue-art .hr-vinyl, .queue-art .hr-loop { animation: none; } }
+
+/* Album Ratings doodle: a scorecard being filled in, beside an album sleeve */
+.scorecard .mk { stroke-dasharray: 100 104; stroke-dashoffset: 102; }
+.scorecard .mk0 { animation: sc-mark0 7s ease-in-out infinite; }
+.scorecard .mk1 { animation: sc-mark1 7s ease-in-out infinite; }
+.scorecard .mk2 { animation: sc-mark2 7s ease-in-out infinite; }
+.scorecard .mk3 { animation: sc-mark3 7s ease-in-out infinite; }
+@keyframes sc-mark0 { 0%, 4% { stroke-dashoffset: 102; opacity: 1; } 14%, 86% { stroke-dashoffset: 0; opacity: 1; } 94%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+@keyframes sc-mark1 { 0%, 18% { stroke-dashoffset: 102; opacity: 1; } 30%, 86% { stroke-dashoffset: 0; opacity: 1; } 94%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+@keyframes sc-mark2 { 0%, 34% { stroke-dashoffset: 102; opacity: 1; } 44%, 86% { stroke-dashoffset: 0; opacity: 1; } 94%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+@keyframes sc-mark3 { 0%, 48% { stroke-dashoffset: 102; opacity: 1; } 60%, 86% { stroke-dashoffset: 0; opacity: 1; } 94%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+.scorecard .sc-sleeve { transform-box: view-box; transform-origin: 174px 86px; animation: sc-tilt 7s ease-in-out infinite; }
+@keyframes sc-tilt { 0%, 100% { transform: rotate(6deg); } 50% { transform: rotate(10deg) translateX(3px); } }
+@media (prefers-reduced-motion: reduce) { .scorecard .mk { stroke-dashoffset: 0; } .scorecard .sc-sleeve { transform: rotate(6deg); } }
