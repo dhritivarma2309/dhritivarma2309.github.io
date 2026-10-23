@@ -141,6 +141,31 @@ window.MUSIC = {
         cover: "https://i.scdn.co/image/ab67616d00001e022dde3ceb3548ffbdb77a97e1",
         spotify: "https://open.spotify.com/track/2SlmTRmuDJbFW7Hjzn6fCK",
       },
+      {
+        title: "Five Years", artist: "David Bowie", length: "4:44",
+        cover: "https://i.scdn.co/image/ab67616d00001e02c41f4e1133b0e6c5fcf58680",
+        spotify: "https://open.spotify.com/track/1JIzFhI9Lt5FyslawmHCBi",
+      },
+      {
+        title: "He's Gone", artist: "Organ Fairchild", length: "4:07",
+        cover: "https://i.scdn.co/image/ab67616d00001e02fbadd2bcacfb6de4b9c8d3b0",
+        spotify: "https://open.spotify.com/track/3YenZY1BEx0zLsOLJaexnt",
+      },
+      {
+        title: "Once Upon a Time in the West", artist: "Dire Straits", length: "5:25",
+        cover: "https://i.scdn.co/image/ab67616d00001e027d93116a6bcbd2ec3c79b062",
+        spotify: "https://open.spotify.com/track/6fg1xaDxkuQVJjwrgjx837",
+      },
+      {
+        title: "Song for Zula", artist: "Phosphorescent", length: "6:10",
+        cover: "https://i.scdn.co/image/ab67616d00001e027868c54c6323e3ad935e4dfb",
+        spotify: "https://open.spotify.com/track/3zr2s3o2Ye1j6t0ZMdoUYi",
+      },
+      {
+        title: "Phone, Keys, Wallet", artist: "Lainey Wilson, John Mayer", length: "2:52",
+        cover: "https://i.scdn.co/image/ab67616d00001e0292e55f1e3fb7603e561b33df",
+        spotify: "https://open.spotify.com/track/6ZdlOSd1gmKc09ixTr3pjO",
+      },
     ],
   },
 
