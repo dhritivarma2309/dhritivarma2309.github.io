@@ -162,9 +162,9 @@ window.MUSIC = {
         spotify: "https://open.spotify.com/track/3zr2s3o2Ye1j6t0ZMdoUYi",
       },
       {
-        title: "Phone, Keys, Wallet", artist: "Lainey Wilson, John Mayer", length: "2:52",
-        cover: "https://i.scdn.co/image/ab67616d00001e0292e55f1e3fb7603e561b33df",
-        spotify: "https://open.spotify.com/track/6ZdlOSd1gmKc09ixTr3pjO",
+        title: "Is This It", artist: "The Strokes", length: "2:35",
+        cover: "https://i.scdn.co/image/ab67616d00001e02e61ed6e45c483e652018a827",
+        spotify: "https://open.spotify.com/track/5DeV5m5gzNq0KvlaZs3Eb6",
       },
     ],
   },
