@@ -184,7 +184,7 @@ window.MUSIC = {
   rubric: [
     { key: "masterpiece", emoji: "💖", label: "Masterpiece", note: "Loved it, start to finish." },
     { key: "respect", emoji: "🙌", label: "Deep respect", note: "I see the greatness." },
-    { key: "gems", emoji: "✨", label: "A few gems", note: "Some songs I'll keep." },
+    { key: "gems", emoji: "✨", label: "A few gems", note: "I'll keep some songs." },
     { key: "notforme", emoji: "🤷‍♀️", label: "Not for me", note: "Did not work for me." },
   ],
   // rsRank: the album's place on Rolling Stone's 500 Greatest Albums of All Time (2020 list)
