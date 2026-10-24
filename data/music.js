@@ -257,6 +257,12 @@ window.MUSIC = {
       cover: "https://i.scdn.co/image/ab67616d0000b273dc65d5638a3de4a0bdf3c05f",
       spotify: "https://open.spotify.com/album/097eYvf9NKjFnv4xA9s2oV",
     },
+    {
+      title: "What's Going On", artist: "Marvin Gaye", year: "1971",
+      rating: "respect", favoriteSong: "Mercy Mercy Me (The Ecology)", rsRank: "1",
+      cover: "https://i.scdn.co/image/ab67616d0000b273b36949bee43217351961ffbc",
+      spotify: "https://open.spotify.com/album/2v6ANhWhZBUKkg6pJJBs3B",
+    },
   ],
 
   // Thoughts: blog posts about whatever I'm curious about.
