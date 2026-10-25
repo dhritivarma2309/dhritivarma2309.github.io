@@ -247,7 +247,7 @@ window.MUSIC = {
     },
     {
       title: "MTV Unplugged In New York", artist: "Nirvana", year: "1994",
-      rating: "respect", favoriteSong: "The Man Who Sold The World", rsRank: "279",
+      rating: "respect", favoriteSong: "Where Did You Sleep Last Night", rsRank: "279",
       cover: "https://i.scdn.co/image/ab67616d0000b27336c5417732e53e23cb219246",
       spotify: "https://open.spotify.com/album/1To7kv722A8SpZF789MZy7",
     },
