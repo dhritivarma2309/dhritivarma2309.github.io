@@ -263,6 +263,12 @@ window.MUSIC = {
       cover: "https://i.scdn.co/image/ab67616d0000b273b36949bee43217351961ffbc",
       spotify: "https://open.spotify.com/album/2v6ANhWhZBUKkg6pJJBs3B",
     },
+    {
+      title: "Is This It", artist: "The Strokes", year: "2001",
+      rating: "masterpiece", favoriteSong: "Is This It", rsRank: "114",
+      cover: "https://i.scdn.co/image/ab67616d0000b27313f2466b83507515291acce4",
+      spotify: "https://open.spotify.com/album/2k8KgmDp9oHrmu0MIj4XDE",
+    },
   ],
 
   // Thoughts: blog posts about whatever I'm curious about.
