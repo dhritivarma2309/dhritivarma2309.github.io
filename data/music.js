@@ -183,7 +183,7 @@ window.MUSIC = {
   // How I rate: each album's rating is one of these keys ("masterpiece", "respect", "gems", "notforme")
   rubric: [
     { key: "masterpiece", emoji: "💖", label: "Masterpiece", note: "Loved it, start to finish." },
-    { key: "respect", emoji: "🙌", label: "Deep respect", note: "I see the greatness." },
+    { key: "respect", emoji: "🙌", label: "I really liked it", note: "I see the greatness." },
     { key: "gems", emoji: "✨", label: "A few gems", note: "I'll keep some songs." },
     { key: "notforme", emoji: "🤷‍♀️", label: "Not for me", note: "Did not work for me." },
   ],
