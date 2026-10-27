@@ -264,6 +264,12 @@ window.MUSIC = {
       spotify: "https://open.spotify.com/album/2v6ANhWhZBUKkg6pJJBs3B",
     },
     {
+      title: "Purple Rain", artist: "Prince", year: "1984",
+      rating: "masterpiece", favoriteSong: "Purple Rain", rsRank: "8",
+      cover: "https://i.scdn.co/image/ab67616d0000b2738a2ce3f148f57584269c3782",
+      spotify: "https://open.spotify.com/album/2umoqwMrmjBBPeaqgYu6J9",
+    },
+    {
       title: "Is This It", artist: "The Strokes", year: "2001",
       rating: "masterpiece", favoriteSong: "Is This It", rsRank: "114",
       cover: "https://i.scdn.co/image/ab67616d0000b27313f2466b83507515291acce4",
