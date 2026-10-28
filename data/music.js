@@ -275,6 +275,12 @@ window.MUSIC = {
       cover: "https://i.scdn.co/image/ab67616d0000b27313f2466b83507515291acce4",
       spotify: "https://open.spotify.com/album/2k8KgmDp9oHrmu0MIj4XDE",
     },
+    {
+      title: "In the Aeroplane Over the Sea", artist: "Neutral Milk Hotel", year: "1998",
+      rating: "gems", favoriteSong: "Communist Daughter", rsRank: "376",
+      cover: "https://i.scdn.co/image/ab67616d0000b273bc1e41eed3ddbdfff6f2d74b",
+      spotify: "https://open.spotify.com/album/17q5eeNk3HAjX1gzQnkTX7",
+    },
   ],
 
   // Thoughts: blog posts about whatever I'm curious about.
