@@ -281,6 +281,12 @@ window.MUSIC = {
       cover: "https://i.scdn.co/image/ab67616d0000b273bc1e41eed3ddbdfff6f2d74b",
       spotify: "https://open.spotify.com/album/17q5eeNk3HAjX1gzQnkTX7",
     },
+    {
+      title: "Heaven or Las Vegas", artist: "Cocteau Twins", year: "1990",
+      rating: "notforme", favoriteSong: "–", rsRank: "245",
+      cover: "https://i.scdn.co/image/ab67616d0000b273fe6211303e796f3d5b7a0e02",
+      spotify: "https://open.spotify.com/album/5lEphbceIgaK1XxWeSrC9E",
+    },
   ],
 
   // Thoughts: blog posts about whatever I'm curious about.
