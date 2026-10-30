@@ -287,6 +287,12 @@ window.MUSIC = {
       cover: "https://i.scdn.co/image/ab67616d0000b273fe6211303e796f3d5b7a0e02",
       spotify: "https://open.spotify.com/album/5lEphbceIgaK1XxWeSrC9E",
     },
+    {
+      title: "When We All Fall Asleep, Where Do We Go?", artist: "Billie Eilish", year: "2019",
+      rating: "respect", favoriteSong: "all the good girls go to hell", rsRank: "397",
+      cover: "https://i.scdn.co/image/ab67616d0000b27350a3147b4edd7701a876c6ce",
+      spotify: "https://open.spotify.com/album/0S0KGZnfBGSIssfF54WSJh",
+    },
   ],
 
   // Thoughts: blog posts about whatever I'm curious about.
