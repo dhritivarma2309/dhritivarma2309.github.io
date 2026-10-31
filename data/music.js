@@ -293,6 +293,12 @@ window.MUSIC = {
       cover: "https://i.scdn.co/image/ab67616d0000b27350a3147b4edd7701a876c6ce",
       spotify: "https://open.spotify.com/album/0S0KGZnfBGSIssfF54WSJh",
     },
+    {
+      title: "Brothers in Arms", artist: "Dire Straits", year: "1985",
+      rating: "respect", favoriteSong: "Walk of Life", rsRank: "418",
+      cover: "https://i.scdn.co/image/ab67616d0000b273fb995d2871f084b34afae3b3",
+      spotify: "https://open.spotify.com/album/7jvcSnCnugLcisBCNBm60s",
+    },
   ],
 
   // Thoughts: blog posts about whatever I'm curious about.
