@@ -301,7 +301,7 @@ window.MUSIC = {
     },
     {
       title: "The Rise and Fall of Ziggy Stardust and the Spiders from Mars", artist: "David Bowie", year: "1972",
-      rating: "masterpiece", favoriteSong: "Five Years", rsRank: "40",
+      rating: "masterpiece", favoriteSong: "Starman", rsRank: "40",
       cover: "https://i.scdn.co/image/ab67616d0000b273c41f4e1133b0e6c5fcf58680",
       spotify: "https://open.spotify.com/album/48D1hRORqJq52qsnUYZX56",
     },
