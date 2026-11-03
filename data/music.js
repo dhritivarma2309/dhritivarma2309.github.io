@@ -305,6 +305,12 @@ window.MUSIC = {
       cover: "https://i.scdn.co/image/ab67616d0000b273c41f4e1133b0e6c5fcf58680",
       spotify: "https://open.spotify.com/album/48D1hRORqJq52qsnUYZX56",
     },
+    {
+      title: "Funeral", artist: "Arcade Fire", year: "2004",
+      rating: "respect", favoriteSong: "Neighborhood #1 (Tunnels)", rsRank: "500",
+      cover: "https://i.scdn.co/image/ab67616d0000b2737870762a58313ad6f981d664",
+      spotify: "https://open.spotify.com/album/6ZB8qaR9JNuS0Q0bG1nbcH",
+    },
   ],
 
   // Thoughts: blog posts about whatever I'm curious about.
