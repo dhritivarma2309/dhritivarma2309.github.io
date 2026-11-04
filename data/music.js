@@ -307,7 +307,7 @@ window.MUSIC = {
     },
     {
       title: "Funeral", artist: "Arcade Fire", year: "2004",
-      rating: "respect", favoriteSong: "Neighborhood #1 (Tunnels)", rsRank: "500",
+      rating: "respect", favoriteSong: "Crown of Love", rsRank: "500",
       cover: "https://i.scdn.co/image/ab67616d0000b2737870762a58313ad6f981d664",
       spotify: "https://open.spotify.com/album/6ZB8qaR9JNuS0Q0bG1nbcH",
     },
