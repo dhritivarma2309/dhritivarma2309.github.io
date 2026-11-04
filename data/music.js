@@ -311,6 +311,12 @@ window.MUSIC = {
       cover: "https://i.scdn.co/image/ab67616d0000b2737870762a58313ad6f981d664",
       spotify: "https://open.spotify.com/album/6ZB8qaR9JNuS0Q0bG1nbcH",
     },
+    {
+      title: "Like a Prayer", artist: "Madonna", year: "1989",
+      rating: "notforme", favoriteSong: "Like a Prayer", rsRank: "331",
+      cover: "https://i.scdn.co/image/ab67616d0000b273744ce5f9db16330eb4027f26",
+      spotify: "https://open.spotify.com/album/48AGkmM7iO4jrELRnNZGPV",
+    },
   ],
 
   // Thoughts: blog posts about whatever I'm curious about.
