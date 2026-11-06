@@ -317,6 +317,12 @@ window.MUSIC = {
       cover: "https://i.scdn.co/image/ab67616d0000b273744ce5f9db16330eb4027f26",
       spotify: "https://open.spotify.com/album/48AGkmM7iO4jrELRnNZGPV",
     },
+    {
+      title: "The Queen Is Dead", artist: "The Smiths", year: "1986",
+      rating: "gems", favoriteSong: "Frankly, Mr. Shankly", rsRank: "113",
+      cover: "https://i.scdn.co/image/ab67616d0000b2736236778a208a15eb71079601",
+      spotify: "https://open.spotify.com/album/5Y0p2XCgRRIjna91aQE8q7",
+    },
   ],
 
   // Thoughts: blog posts about whatever I'm curious about.
