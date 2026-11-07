@@ -325,7 +325,7 @@ window.MUSIC = {
     },
     {
       title: "Synchronicity", artist: "The Police", year: "1983",
-      rating: "gems", favoriteSong: "Every Breath You Take", rsRank: "159",
+      rating: "notforme", favoriteSong: "Every Breath You Take", rsRank: "159",
       cover: "https://i.scdn.co/image/ab67616d0000b273c8e97cafeb2acb85b21a777e",
       spotify: "https://open.spotify.com/album/5W9OT0a5iZlBr83a9WMKFY",
     },
